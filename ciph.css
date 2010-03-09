@@ -1,0 +1,91 @@
+#menu {
+	position: relative;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+}
+
+#menu ul {
+	background: #363636;
+	border-bottom: 1px solid #000000;
+	border-top: 1px solid #000000;
+	display: block;
+	font-family: sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	height: 30px;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	width: auto;
+}
+
+#menu li {
+	display: block;
+	float: left;
+	margin: 0;
+	padding: 0;
+}
+
+#menu a {
+	color: #999999;
+	display: block;
+	float: left;
+	font-weight: bold;
+	padding: 8px 20px 0 20px;
+	text-decoration: none;
+}
+
+#menu a:hover {	
+	background: #336699;
+	color: #FFFFFF;
+	height: 22px;
+}
+
+#menu li a.current {
+	background: #114477;
+	color: #FFFFFF;
+	display: inline;
+	float: left;
+	height: 22px;
+	margin: 0;
+}
+
+#menu form {
+	padding-top: 4px;
+}
+
+#login {
+	float: right;
+}
+
+#header {
+	height: 0px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+#content {
+	padding: 5px;
+}
+
+#footer {
+	clear: both;
+	text-align: center;
+}
+
+body {
+	/* background: transparent url("./images/compass_bg.jpg") fixed right bottom no-repeat; */
+	margin: 0px;
+}
+
+form {
+	float: left;
+	text-align: right;
+}
+
+.column {
+	float: left;
+	padding: 0px 20px;
+}

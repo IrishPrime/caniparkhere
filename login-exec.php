@@ -20,6 +20,4 @@ else {
 }
 // Disconnect
 mysql_close();
-
-header("location: index.php?page=ciph");
 ?>

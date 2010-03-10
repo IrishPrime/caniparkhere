@@ -80,9 +80,13 @@ body {
 	margin: 0px;
 }
 
-form {
-	float: left;
-	text-align: right;
+label {
+	display: inline-block;
+	width: 100px;
+}
+
+fieldset {
+	padding-bottom: 0px;
 }
 
 .column {

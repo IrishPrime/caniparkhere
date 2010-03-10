@@ -36,7 +36,7 @@ class data {
 	}
 	
 	public function get_lots() {
-		$sql = "select * from lots;";
+		$sql = "select * from lots order by id asc;";
 		$result = mysql_query($sql);
 		$lots = array();
 		
@@ -54,7 +54,7 @@ class data {
 		}
 	}
 	public function get_passTypes() {
-		$sql = "select * from passTypes;";
+		$sql = "select * from passTypes order by passName asc;";
 		$result = mysql_query($sql);
 		$passTypes = array();
 		

@@ -1,8 +1,5 @@
 <?php
-session_start();
-unset($_SESSION["auth"]);
-unset($_SESSION["admin"]);
-$_SESSION = array();
-session_destroy();
+setcookie("auth", 0, time()-1);
+setcookie("admin", 0, time()-1);
 header("location: ./index.php");
 ?>

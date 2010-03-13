@@ -5,6 +5,30 @@
 	right: 0px;
 }
 
+#menu a {
+	color: #999999;
+	display: block;
+	float: left;
+	font-weight: bold;
+	padding: 8px 10px 8px 10px;
+	text-decoration: none;
+}
+
+#menu a:hover {	
+	background: #336699;
+	color: #FFFFFF;
+	height: auto;
+}
+
+#menu li a.current {
+	background: #114477;
+	color: #FFFFFF;
+	display: inline;
+	float: left;
+	height: 22px;
+	margin: 0;
+}
+
 #menu ul {
 	background: #363636;
 	border-bottom: 1px solid #000000;
@@ -18,38 +42,37 @@
 	margin: 0;
 	padding: 0;
 	position: relative;
-	width: auto;
 }
 
-#menu li {
+#menu ul li {
 	display: block;
 	float: left;
+	position: relative;
 	margin: 0;
 	padding: 0;
 }
 
-#menu a {
-	color: #999999;
+#menu li ul {
+	display: none;
+}
+
+#menu li:hover ul {
+	border: 1px solid #000000;
 	display: block;
-	float: left;
-	font-weight: bold;
-	padding: 8px 20px 0 20px;
-	text-decoration: none;
+	height: auto;
+	position: absolute;
+	top: 30px;
+	z-index: 1;
 }
 
-#menu a:hover {	
-	background: #336699;
-	color: #FFFFFF;
-	height: 22px;
+#menu li:hover ul li {
+	background: #363636;
+	display: block;
 }
 
-#menu li a.current {
-	background: #114477;
-	color: #FFFFFF;
-	display: inline;
-	float: left;
-	height: 22px;
-	margin: 0;
+#menu li:hover ul li a {
+	display: block;
+	width: 100px;
 }
 
 #menu form {
@@ -80,13 +103,24 @@ body {
 	margin: 0px;
 }
 
+fieldset {
+	clear: both;
+	padding-bottom: 0px;
+}
+
+input {
+	margin-bottom: 5px;
+}
+
 label {
 	display: inline-block;
+	margin-bottom: 5px;
+	vertical-align: top;
 	width: 100px;
 }
 
-fieldset {
-	padding-bottom: 0px;
+textarea {
+	margin-bottom: 5px;
 }
 
 .column {

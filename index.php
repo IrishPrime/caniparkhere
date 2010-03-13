@@ -5,13 +5,15 @@
 	if(!is_file("$page.php")) $page="404";
 ?>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>Can I Park Here? - <?php echo $title[$page]; ?></title>
-	<meta http-equiv="X-UA-Compatible" content="IE=8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=8"/>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 	<style type="text/css">@import url("ciph.css");</style>
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
 	<script type="text/javascript" src="http://code.google.com/apis/gears/gears_init.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
 	<script type="text/javascript" src="./maps.js"></script>
 	<script type="text/javascript" src="./ciph.js"></script>
 </head>
@@ -29,8 +31,8 @@
 		<li><a href="?page=wdip" title="<?php echo $title["wdip"]; ?>">Where Did I Park?</a></li>
 		<li><a href="?page=rules" title="<?php echo $title["rules"]; ?>">Rules</a></li>
 		<li><a href="?page=news" title="<?php echo $title["news"]; ?>">News</a></li>
-		<li><a href="?page=FAQ" title="<?php echo $title["FAQ"]; ?>"><acronymn title="Frequently Asked Questions">FAQ</acronymn></a></li>
-		<div><?php include("login.php"); ?></div>
+		<li><a href="?page=FAQ" title="<?php echo $title["FAQ"]; ?>"><acronym title="Frequently Asked Questions">FAQ</acronym></a></li>
+		<?php include("./login.php"); ?>
 	</ul>
 </div>
 

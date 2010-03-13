@@ -10,14 +10,22 @@ $password_salt = "C!p|-|4Mg501337";
 // Default location
 $default_location = "34.668717,-82.837134";
 
+$session_duration = 60*60*24*365;
+
 $title = array(
 	"404" => "Page Not Found",
 	"FAQ" => "Frequently Asked Questions",
-	"admin" => "Admin Control Panel",
+	"admin" => "Administration Tools",
+	"admin-exceptions" => "Administration Tools",
+	"admin-lots" => "Administration Tools",
+	"admin-passes" => "Administration Tools",
+	"admin-rules" => "Administration Tools",
+	"admin-users" => "Administration Tools",
 	"ciph" => "Home",
 	"news" => "News & Updates",
 	"register" => "Register a User Account",
 	"rules" => "Rules & Regulations",
+	"user-profile" => "Edit User Profile",
 	"wcip" => "Where Can I Park?",
 	"wdip" => "Where Did I Park?",
 )

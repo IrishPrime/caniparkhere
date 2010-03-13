@@ -7,17 +7,23 @@ mysql_connect($mysql_server, $mysql_user, $mysql_password) or die("Could not con
 mysql_select_db("ciph") or die(mysql_error());
 
 // Successful connection, setup queries
-$sql = "SELECT id, admin FROM users where email='".$_POST["email"]."' AND password='".md5($_POST["password"].$password_salt)."'";
+$sql = "SELECT id, admin FROM users where email='".stripslashes($_POST["email"])."' AND password='".md5(stripslashes($_POST["password"].$password_salt))."'";
 $result = mysql_query($sql);
 
+ob_start();
 if($row = mysql_fetch_assoc($result)) {
 	session_regenerate_id();
-	$_SESSION["auth"] = $row["id"];
-	$_SESSION["admin"] = $row["admin"];
+	setcookie("auth", $row["id"], time()+$session_duration);
+	setcookie("admin", $row["admin"], time()+$session_duration);
+	// $_SESSION["auth"] = $row["id"];
+	// $_SESSION["admin"] = $row["admin"];
+	echo "Login successful.<br/>\n";
 }
 else {
-	echo "Login failed.<br>\n";
+	echo "Login failed.<br/>\n";
 }
 // Disconnect
 mysql_close();
+header("location: index.php");
+ob_end_flush();
 ?>

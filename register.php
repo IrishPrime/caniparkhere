@@ -30,35 +30,36 @@ function check_form() {
 }
 </script>
 
-<fieldset><legend>New User</legend>
-<form name="register" id="register" method="POST" action="?page=register-exec" onSubmit="check_form()">
-	<label for="fname">First Name</label>
-	<input id="fname" name="fname" type="text"/><br/>
+<fieldset>
+	<legend>New User</legend>
+	<form name="register" id="register" method="POST" action="?page=register-exec" onSubmit="check_form()">
+		<label for="fname">First Name</label>
+		<input id="fname" name="fname" type="text"/><br/>
 
-	<label for="lname">Last Name</label>
-	<input id="lname" name="lname" type="text"/><br/>
+		<label for="lname">Last Name</label>
+		<input id="lname" name="lname" type="text"/><br/>
 
-	<label for="email">E-Mail</label>
-	<input id="email" name="email" type="text"/><br/>
+		<label for="email">E-Mail</label>
+		<input id="email" name="email" type="text"/><br/>
 
-	<label for="pass1">Password</label>
-	<input id="pass1" name="pass1" type="password"/><br/>
+		<label for="pass1">Password</label>
+		<input id="pass1" name="pass1" type="password"/><br/>
 
-	<label for="pass2">Confirm</label>
-	<input id="pass2" name="pass2" type="password"/><br/>
+		<label for="pass2">Confirm</label>
+		<input id="pass2" name="pass2" type="password"/><br/>
 
-	<label for="passtype">Pass Type</label>
-	<select id="passtype" name="passtype">
-		<optgroup label="Pass Type">
-			<?php
-			if(is_array($passes))
-				foreach($passes as $k => $v) {
-					echo "<option value=\"$k\">$v</option>\n";
-				}
-			?>
-		</optgroup>
-	</select><br/>
-	<input type="submit" value="Register" /><br/>
-	<small>All fields required.</small>
-</form>
+		<label for="passtype">Pass Type</label>
+		<select id="passtype" name="passtype">
+			<optgroup label="Pass Type">
+				<?php
+				if(is_array($passes))
+					foreach($passes as $k => $v) {
+						echo "<option value=\"$k\">$v</option>\n";
+					}
+				?>
+			</optgroup>
+		</select><br/>
+		<input type="submit" value="Register" /><br/>
+		<small>All fields required.</small>
+	</form>
 </fieldset>

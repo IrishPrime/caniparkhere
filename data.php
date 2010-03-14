@@ -44,6 +44,7 @@ class data {
 			while ($row = mysql_fetch_assoc($result)) {
 				$lots[$row["id"]] = 
 					array(
+						"id" => $row["id"],
 						"name" => $row["lotName"],
 						"description" => $row["lotDescription"]);
 			}

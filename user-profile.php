@@ -1,7 +1,8 @@
 <?php
 # Edit the current user's profile.
 require_once("./_settings.php");
-require("./data.php");
+require_once("./_logic.php");
+$passes = AllPassTypes();
 ?>
 
 <script>
@@ -30,8 +31,8 @@ require("./data.php");
 			<optgroup label="Permit">
 				<?php
 				if(is_array($passes))
-					foreach($passes as $k => $v) {
-						echo "<option value=\"$k\">$v</option>\n";
+					foreach($passes as $pass) {
+						echo "<option value=\"".$pass["id"]."\">".$pass["name"]."</option>\n";
 					}
 				?>
 			</optgroup>

@@ -5,14 +5,16 @@ require_once("./_data.php");
 
 $data = new data();
 
+// my own comma delimited list helper class
 class cdl {
 	private $cdl = null;
-	private $hasValues = false;
 	private $delimiter = ",";
+	
+	//function __construct() { }
 	
 	function __construct($cdl) {
 		$this->cdl = array();
-		$this->cdl = explode($delimiter, $cdl);
+		if ($cdl != null) $this->cdl = explode($this->delimiter, $cdl);
 	}
 	public function add($item) {
 		$this->cdl[] = (int)$item;
@@ -37,40 +39,65 @@ class cdl {
 		}
 	}
 	public function cdl() {
-		return implode($delimiter, $this->cdl);
+		return implode($this->delimiter, $this->cdl);
 	}
 	public function hasValues() {
-		return $this->hasValues;
+		$count = count($this->cdl);
+		if ($count > 0) return true;
+		else return false;
 	}
 	public function contains($string) {
 		if (in_array($string, $this->cdl)) return true;
 		else return false;
 	}
 	public function isStartNum($num) {
-		if (array_search($num, $this->cdl)) == 0 return true;
+		$key = array_search($num, $this->cdl);
+		$minIndex = 0;
+		if ($key !== false && $key == $minIndex) return true;
 		else return false;
 	}
 	public function isEndNum($num) {
-		if (array_search($num, $this->cdl) == (count($this->cdl)--)) return true;
+		$key = array_search($num, $this->cdl);
+		// get count of objects in cdl,
+		// subtract one to get max index of array
+		$maxIndex = (count($this->cdl) - 1);
+		if ($key !== false && $key == maxIndex) return true;
 		else return false;
 	}
 }
 
+/* function AllLots()
+	returns all lots in database
+*/
 function AllLots() {
 	global $data;
 	$lots = $data->get_lots(null);
 	return $lots;
 }
+
+/* function AllPassTypes()
+	returns all pass types in database
+*/
 function AllPassTypes() {
 	global $data;
-	$passTypes = $data->get_passTypes();
+	$passTypes = $data->get_passTypes(null);
 	return $passTypes;
 }
+
+/* function AllRulesByLot($id)
+	$id = single id of requested lot
+	returns all rules for a specific lot
+*/
 function AllRulesByLot($id) {
 	global $data;
 	$rules = $data->get_rulesForLots($id);
 	return $rules;
 }
+
+/* function AllRulesByPassType($id)
+	$id = single id of requested pass type
+	returns all rules for a specific pass type
+*/
 function AllRulesByPassType($id) {
 	global $data;
 	$rules = $data->get_rulesForPassTypes($id);
@@ -118,6 +145,7 @@ function CanIParkHereNow($lotId, $passTypeId) {
 	park at the requested lot.
 */
 function WhatPassTypesCanParkHere($lotId) {
+
 	global $data;
 	// grab all rules for this lot
 	$rules = $data->get_rulesForLots($lotId);
@@ -131,7 +159,7 @@ function WhatPassTypesCanParkHere($lotId) {
 	if ($rules != null) {
 		foreach ($rules as $rule) {
 			if (doesRuleApply($rule, $requestedTime))
-				$ids.add($rule["passTypeId"]);
+				$ids->add($rule["passTypeId"]);
 		}
 	}
 	
@@ -145,6 +173,7 @@ function WhatPassTypesCanParkHere($lotId) {
 		return null;
 	}
 }
+
 function doesRuleApply($rule, $parkTimestamp) {
 
 	$inDateRange = false;
@@ -152,7 +181,7 @@ function doesRuleApply($rule, $parkTimestamp) {
 	$inDayOfWeek = false;
 
 	// parse times and dates
-	$park = date_parse($parkTimestamp->format('Y-m-d G:i'));
+	$park = getdate($parkTimestamp->format('U')); //->format('Y-m-d G:i')
 	$startDate = date_parse((string)$rule["startDate"]);
 	$startTime = date_parse((string)$rule["startTime"]);
 	$endDate = date_parse((string)$rule["endDate"]);
@@ -212,63 +241,81 @@ function doesRuleApply($rule, $parkTimestamp) {
 	//echo "Start Hour Minutes " . $startHourMinutes->cdl() . "<br>";
 	//echo "End Hour Minutes " . $endHourMinutes->cdl() . "<br>";
 	
-	echo "Start rule logic.<br>";
+	//echo "Start rule logic.<br>";
 	
 	// rule logic
-	echo "Is the year " . $park["year"] . " in the range (" . $years . ")? ";
+	//echo "Is the year " . $park["year"] . " in the range (" . $years->cdl() . ")? ";
 	if ($years->contains($park["year"])) {
-		echo "Yes<br>Is the month " . $park["month"] . " in the range (" . $months . ")? ";
-		if ($months->contains($park["month"])) {
-			if ($years->isStartNum($park["year"]) && $months->isStartNum($park["month"]) {
-				echo "Yes<br>In start month/year; is the day " . $park["day"] . " in the range (" . $startMonthDays . ")? ";
-				if ($startMonthDays->contains($park["day"])) {
-					echo "Yes<br>Date in range.<br>";
+		//echo "Yes<br>Is the month " . $park["mon"] . " in the range (" . $months->cdl() . ")? ";
+		if ($months->contains($park["mon"])) {
+			if ($years->isStartNum($park["year"]) && $months->isStartNum($park["mon"])) {
+				//echo "Yes<br>In start month/year; is the day " . $park["mday"] . " in the range (" . $startMonthDays->cdl() . ")? ";
+				if ($startMonthDays->contains($park["mday"])) {
+					//echo "Yes<br><b>Date in range.</b>";
 					$inDateRange = true;
 				}
+				//else
+					//echo "<b>No.</b>";
 			}
-			elseif ($years->isEndNum($park["year"]) && $months->isEndNum($park["month"])){
-				echo "Yes<br>In end month/year; is the day " . $park["day"] . " in the range (" . $endMonthDays . ")? ";
-				if ($endMonthDays->contains($park["day"])) {
-					echo "Yes<br>Date in range.<br>";
+			elseif ($years->isEndNum($park["year"]) && $months->isEndNum($park["mon"])){
+				//echo "Yes<br>In end month/year; is the day " . $park["mday"] . " in the range (" . $endMonthDays->cdl() . ")? ";
+				if ($endMonthDays->contains($park["mday"])) {
+					//echo "Yes<br><b>Date in range.</b>";
 					$inDateRange = true;
 				}
+				//else
+					//echo "<b>No.</b>";
 			}
 			else {
-				echo "Yes<br>Date in range.<br>";
+				//echo "Yes<br><b>Date in range.</b>";
 				$inDateRange = true;
 			}
 		}
+		//else
+			//echo "<b>No.</b>";
 	}
-	echo "<br>";
+	//else
+		//echo "<b>No.</b>";
+	//echo "<br>";
 	
-	echo "Is the hour " . $park["hour"] . " in the range (" . $hours . ")?";
-	if ($hours->contains($park["hour"])) {
-		if ($hours->isStartNum($park["hour"])) {
-			echo "Yes<br>In first defined hour; is the minute " . $park["minute"] . " in the range (" . $startHourMinutes . ")? ";
-			if ($startHourMinutes->contains($park["minute"])) {	
-				echo "Yes<br>Time in range.<br>";
+	//echo "Is the hour " . $park["hours"] . " in the range (" . $hours->cdl() . ")?";
+	if ($hours->contains($park["hours"])) {
+		if ($hours->isStartNum($park["hours"])) {
+			//echo "Yes<br>In first defined hour; is the minute " . $park["minutes"] . " in the range (" . $startHourMinutes->cdl() . ")? ";
+			if ($startHourMinutes->contains($park["minutes"])) {	
+				//echo "Yes<br><b>Time in range.</b>";
 				$inTimeRange = true;
 			}
+			//else
+				//echo "<b>No.</b>";
 		}
-		elseif ($hours->isEndNum($park["hour"])) {
-			echo "Yes<br>In last defined hour; is the minute " . $park["minute"] . " in the range (" . $endHourMinutes . ")? ";
-			if ($endHourMinutes->contains($park["minute"])) {
-				echo "Yes<br>Time in range.<br>";
+		elseif ($hours->isEndNum($park["hours"])) {
+			//echo "Yes<br>In last defined hour; is the minute " . $park["minutes"] . " in the range (" . $endHourMinutes->cdl() . ")? ";
+			if ($endHourMinutes->contains($park["minutes"])) {
+				//echo "Yes<br><b>Time in range.</b>";
 				$inTimeRange = true;
 			}
+			//else
+				//echo "<b>No.</b>";
 		}
 		else {
-			echo "Yes<br>Time in range.<br>";
+			//echo "Yes<br><b>Time in range.</b>";
 			$inTimeRange = true;
 		}
 	}
+	//else
+		//echo "<b>No.</b>";
+	//echo "<br>";
 	
-	echo "Is the day of the week " . $park["wday"] . " in the range (" . $weekDays . ")? ";
+	//echo "Is the day of the week " . $park["wday"] . " in the range (" . $weekDays->cdl() . ")? ";
 	if ($weekDays->contains($park["wday"])) {
-		echo "Yes<br>Day of week in range.<br>";
+		//echo "Yes<br><b>Day of week in range.</b>";
 		$inDayOfWeek = true;
 	}
+	//else
+		//echo "<b>No.</b>";
 	
+	//echo "<br>";
 	
 	if ($inDateRange && $inTimeRange && $inDayOfWeek) return true;
 	else return false;

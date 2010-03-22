@@ -20,6 +20,9 @@ class data {
 		mysql_select_db($this->db_name, $conn) or die("Can't open database: " . mysql_error());
 	}
 	
+	//public function get_lots() {
+	//	return $this->get_lots(null);
+	//}
 	public function get_lots($ids) {
 		$sql = "select * from lots";
 		if ($ids != null) $sql .= " where id in (" . $ids . ")";
@@ -33,6 +36,7 @@ class data {
 		if (mysql_num_rows($result) != 0) {
 			while ($row = mysql_fetch_assoc($result)) {
 				$lots[$row["id"]] = array(
+						"id" => $row["id"],
 						"name" => $row["lotName"],
 						"description" => $row["lotDescription"]);
 			}
@@ -42,6 +46,9 @@ class data {
 			return null;
 		}
 	}
+	//public function get_passTypes() {
+	//	return $this->get_passTypes(null);
+	//}
 	public function get_passTypes($ids) {
 		$sql = "select * from passTypes";
 		if ($ids != null) $sql .= " where id in (" . $ids . ")";
@@ -56,6 +63,7 @@ class data {
 		if (mysql_num_rows($result) != 0) {
 			while ($row = mysql_fetch_assoc($result)) {
 				$passTypes[$row["id"]] = array (
+					"id" => $row["id"],
 					"name" => $row["passName"]);
 			}
 			//print_r($passTypes);
@@ -78,6 +86,7 @@ class data {
 		if (mysql_num_rows($result) != 0) {
 			while ($row = mysql_fetch_assoc($result)) {
 				$rules[$row["id"]] = array(
+					"id" => $row["id"],
 					"lotId" => $row["lot"],
 					"passTypeId" => $row["passType"],
 					"startDate" => $row["startDate"],
@@ -106,6 +115,7 @@ class data {
 		if (mysql_num_rows($result) != 0) {
 			while ($row = mysql_fetch_assoc($result)) {
 				$rules[$row["id"]] = array(
+					"id" => $row["id"],
 					"name" => $row["ruleName"],
 					"lotId" => $row["lotId"],
 					"passTypeId" => $row["passTypeId"],
@@ -123,6 +133,18 @@ class data {
 		}
 	}
 	
+	public function insert_lot($name, $desc, $coords) {
+		$sql = "insert into lots values ('" . $coords . "', '" . $name . "', '" . $desc . "')";
+		$result = mysql_query($sql);
+		
+		if ($result) { // return id
+			return mysql_insert_id();
+		}
+		else {
+			echo "Couldn't insert lot " + $name + ".";
+			return null;
+		}
+	}
 	public function insert_passType($name) {
 		$sql = "insert into passTypes values (" + $name + ")";
 		$result = mysql_query($sql);
@@ -131,10 +153,23 @@ class data {
 			return mysql_insert_id();
 		}
 		else {
-			//echo "Couldn't insert passtype " + $name + ".";
+			echo "Couldn't insert passtype " + $name + ".";
 			return null;
 		}
 	}
+	public function insert_rule($name) {
+		$sql = "insert into passTypes values (" + $name + ")";
+		$result = mysql_query($sql);
+		
+		if ($result) { // return id
+			return mysql_insert_id();
+		}
+		else {
+			echo "Couldn't insert passtype " + $name + ".";
+			return null;
+		}
+	}
+	
 	public function delete_passType($id) {
 		$sql = "delete from passTypes where id in (" + $id + ")";
 		return mysql_query($sql);

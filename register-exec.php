@@ -23,11 +23,11 @@ mysql_connect($mysql_server, $mysql_user, $mysql_password) or die("Could not con
 mysql_select_db("ciph") or die(mysql_error());
 
 // Successful connection, setup queries
-$sql = "SELECT CONCAT(firstName lastName) as fullName FROM users WHERE email = " . $_POST["email"];
+$sql = "SELECT CONCAT_WS(' ', firstName, lastName) AS fullName FROM users WHERE email='".$_POST["email"]."'";
 $result = mysql_query($sql);
 
 // Unique e-mail?
-if(empty($result)) {
+if(mysql_num_rows($result) == 0) {
 	// Create user
 	echo "Creating user.<br>\n";
 	$sql  = "INSERT INTO users (firstName, lastName, email, password, passType) VALUES('";
@@ -41,7 +41,7 @@ if(empty($result)) {
 else {
 	// Don't create user
 	$row = mysql_fetch_assoc($result);
-	echo $_POST["email"] . " is already registered by " . $result["fullName"] . ".<br>\n";
+	echo $_POST["email"]." is already registered by ".stripslashes($row["fullName"]).".<br>\n";
 }
 
 // Disconnect

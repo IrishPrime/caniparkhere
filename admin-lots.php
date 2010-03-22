@@ -1,10 +1,8 @@
 <?php
 # Create/delete parking lots/areas.
-require_once("_settings.php");
 require("./auth.php");
-include("./data.php");
-$data = new data();
-$lots = $data->get_lots();
+require_once("./_logic.php");
+$lots = AllLots();
 ?>
 
 <fieldset>
@@ -31,7 +29,7 @@ $lots = $data->get_lots();
 			<?php
 			if(is_array($lots))
 				foreach($lots as $lot)
-					echo "\t\t\t\t<option>".$lot["name"]."</option>\n";
+					echo "\t\t\t\t<option value=\"".$lot["id"]."\">".$lot["name"]."</option>\n";
 			?>
 			</optgroup>
 		</select>

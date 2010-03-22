@@ -1,10 +1,9 @@
 <?php
 # Create/delete pass types.
-require_once("_settings.php");
 require("./auth.php");
-include("./data.php");
-$data = new data();
-$passes = $data->get_passTypes();
+require_once("./_logic.php");
+
+$passes = AllPassTypes();
 ?>
 
 <fieldset>
@@ -26,7 +25,7 @@ $passes = $data->get_passTypes();
 			<?php
 			if(is_array($passes))
 				foreach($passes as $pass) {
-					echo "<option value=\"\">".$pass."</option>\n";
+					echo "<option value=\"".$pass["id"]."\">".$pass["name"]."</option>\n";
 				}
 			?>
 			</optgroup>
@@ -45,7 +44,7 @@ $passes = $data->get_passTypes();
 		<?php
 		if(is_array($passes))
 			foreach($passes as $pass) {
-				echo "<input type=\"checkbox\" id=\"$pass\" name=\"$pass\"><label style=\"width: auto;\" for=\"$pass\">".$pass."</label><br/>\n";
+				echo "<input type=\"checkbox\" id=\"".$pass["id"]."\" name=\"".$pass["id"]."\"><label style=\"width: auto;\" for=\"".$pass["id"]."\">".$pass["name"]."</label><br/>\n";
 			}
 		?>
 		<input type="button" value="All"/>

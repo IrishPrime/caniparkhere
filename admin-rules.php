@@ -1,13 +1,10 @@
 <?php
 # Create/delete recurring parking rules.
-require_once("./_settings.php");
 require("./auth.php");
-require("./data.php");
+require_once("./_logic.php");
 
-
-$data = new data();
-$passes = $data->get_passTypes();
-$lots = $data->get_lots();
+$passes = AllPassTypes();
+$lots = AllLots();
 ?>
 
 <script type="text/javascript">
@@ -103,14 +100,14 @@ $lots = $data->get_lots();
 		<input type="button" value="All" onclick=""/>
 		<br/>
 
-		<!-- Pass Types -->
+		<!-- Permit Types -->
 		<label for="create_passes">Permits</label>
 		<select name="create_passes" id="create_passes" multiple="multiple">
 			<optgroup label="Permits">
 			<?php
 				if(is_array($passes))
 					foreach($passes as $pass)
-						echo "<option value=\"\">".$pass."</option>\n";
+						echo "<option value=\"".$pass["id"]."\">".$pass["name"]."</option>\n";
 			?>
 			</optgroup>
 		</select>
@@ -123,7 +120,7 @@ $lots = $data->get_lots();
 			<?php
 				if(is_array($lots))
 					foreach($lots as $lot)
-						echo "<option value=\"\">".$lot["name"]."</option>\n";
+						echo "<option value=\"".$lot["id"]."\">".$lot["name"]."</option>\n";
 			?>
 			</optgroup>
 		</select>

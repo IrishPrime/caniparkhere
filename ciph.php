@@ -1,6 +1,7 @@
 <?php
-include("data.php");
-$data = new data();
+require_once("./_logic.php");
+$passes = AllPassTypes();
+$lots = AllLots();
 ?>
 
 <div id="map_canvas" style="width:100%; height:84%"><script type="text/javascript">initialize();</script></div>
@@ -9,11 +10,9 @@ $data = new data();
 <h2>Pass Types</h2>
 <ol>
 <?php
-$passes = $data->get_passTypes();
-
 if(is_array($passes))
 	foreach($passes as $pass) {
-		echo "<li>".$pass."</li>\n";
+		echo "<li>".$pass["name"]."</li>\n";
 	}
 ?>
 </ol>
@@ -23,8 +22,6 @@ if(is_array($passes))
 <h2>Parking Lots</h2>
 <ol>
 <?php
-$lots = $data->get_lots();
-
 if(is_array($lots))
 	foreach($lots as $lot) {
 		echo "<li>".$lot["name"]." - ".$lot["description"]."</li>\n";

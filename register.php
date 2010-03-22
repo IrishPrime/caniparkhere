@@ -1,7 +1,6 @@
 <?php
-include("data.php");
-$data = new data();
-$passes = $data->get_passTypes();
+require_once("./_logic.php");
+$passes = AllPassTypes();
 ?>
 
 <script type="text/javascript">
@@ -53,8 +52,8 @@ function check_form() {
 			<optgroup label="Pass Type">
 				<?php
 				if(is_array($passes))
-					foreach($passes as $k => $v) {
-						echo "<option value=\"$k\">$v</option>\n";
+					foreach($passes as $pass) {
+						echo "<option value=\"".$pass["id"]."\">".$pass["name"]."</option>\n";
 					}
 				?>
 			</optgroup>

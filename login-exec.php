@@ -15,8 +15,6 @@ if($row = mysql_fetch_assoc($result)) {
 	session_regenerate_id();
 	setcookie("auth", $row["id"], time()+$session_duration);
 	setcookie("admin", $row["admin"], time()+$session_duration);
-	// $_SESSION["auth"] = $row["id"];
-	// $_SESSION["admin"] = $row["admin"];
 	echo "Login successful.<br/>\n";
 }
 else {

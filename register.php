@@ -4,24 +4,24 @@ $passes = AllPassTypes();
 ?>
 
 <script type="text/javascript">
-function check_form() {
-	if(document.register.fname.value == '') {
+function check_form(form) {
+	if(form.fname.value == '') {
 		alert('First name cannot be blank.');
 		return false;
 	}
-	else if(document.register.lname.value == '') {
+	else if(form.lname.value == '') {
 		alert('Last name cannot be blank.');
 		return false;
 	}
-	else if(document.register.email.value == '') {
+	else if(form.email.value == '') {
 		alert('E-mail cannot be blank.');
 		return false;
 	}
-	else if(document.register.pass1.value == '') {
+	else if(form.pass1.value == '') {
 		alert('Password cannot be blank.');
 		return false;
 	}
-	else if(document.register.pass2.value != document.register.pass1.value) {
+	else if(form.pass2.value != form.pass1.value) {
 		alert('Passwords do not match.');
 		return false;
 	}
@@ -31,7 +31,7 @@ function check_form() {
 
 <fieldset>
 	<legend>New User</legend>
-	<form name="register" id="register" method="POST" action="?page=register-exec" onSubmit="check_form()">
+	<form name="register" id="register" method="POST" action="?page=register-exec" onSubmit="return check_form(this)">
 		<label for="fname">First Name</label>
 		<input id="fname" name="fname" type="text"/><br/>
 

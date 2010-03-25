@@ -119,6 +119,10 @@ label {
 	width: 100px;
 }
 
+legend {
+	font-weight: bold;
+}
+
 textarea {
 	margin-bottom: 5px;
 }

@@ -3,6 +3,10 @@
 	require("./_settings.php");
 	isset($_GET["page"]) ? $page = $_GET["page"] : $page = "ciph";
 	if(!is_file("$page.php")) $page="404";
+	
+	require_once("./_logic.php");
+	$passes = GetPassTypes();
+	$lots = GetLots();
 ?>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -14,8 +18,9 @@
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
 	<script type="text/javascript" src="http://code.google.com/apis/gears/gears_init.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
-	<script type="text/javascript" src="./maps.js"></script>
 	<script type="text/javascript" src="./ciph.js"></script>
+	<!-- script type="text/javascript" src="./maps.js"></script -->
+	<?php include("./maps.php"); ?>
 </head>
 
 <body>

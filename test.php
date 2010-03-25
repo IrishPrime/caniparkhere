@@ -1,6 +1,6 @@
 <?php
 
-	require_once("./data.php");
+	require_once("./_data.php");
 
 	$data = new data();
 	echo("<pre>");

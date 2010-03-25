@@ -12,6 +12,16 @@ $default_location = "34.668717,-82.837134";
 
 $session_duration = 60*60*24*365;
 
+$dotw = array(
+	0 => "Sunday",
+	1 => "Monday",
+	2 => "Tuesday",
+	3 => "Wednesday",
+	4 => "Thursday",
+	5 => "Friday",
+	6 => "Saturday",
+);
+
 $title = array(
 	"404" => "Page Not Found",
 	"FAQ" => "Frequently Asked Questions",
@@ -28,5 +38,5 @@ $title = array(
 	"user-profile" => "Edit User Profile",
 	"wcip" => "Where Can I Park?",
 	"wdip" => "Where Did I Park?",
-)
+);
 ?>

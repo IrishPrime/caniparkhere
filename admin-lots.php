@@ -2,7 +2,19 @@
 # Create/delete parking lots/areas.
 require("./auth.php");
 require_once("./_logic.php");
-$lots = AllLots();
+
+$lots = GetLots();
+
+switch($_POST["action"]) {
+	case "create":
+		break;
+	case "edit":
+		break;
+	case "delete":
+		break;
+	default:
+		break;
+}
 ?>
 
 <fieldset>
@@ -15,6 +27,7 @@ $lots = AllLots();
 		</div>
 		<label for="lot_description">Description</label>
 		<textarea id="lot_description" name="lot_description" cols="40"></textarea>
+		<input type="hidden" name="action" value="create"/>
 		<br/>
 		<input type="submit" value="Create Parking Lot"/>
 	</form>
@@ -38,6 +51,7 @@ $lots = AllLots();
 		</div>
 		<label for="lot_description">Description</label>
 		<textarea id="lot_description" name="lot_description" cols="40"></textarea>
+		<input type="hidden" name="action" value="edit"/>
 		<br/>
 		<input type="submit" value="Edit Parking Lot"/>
 	</form>
@@ -52,7 +66,9 @@ $lots = AllLots();
 			}
 		?>
 		<input type="button" value="All"/>
-		<input type="button" value="None"/><br/>
+		<input type="button" value="None"/>
+		<input type="hidden" name="action" value="create"/>
+		<br/>
 		<input type="submit" value="Delete Lots"/>
 	</form>
 </fieldset>

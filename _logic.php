@@ -108,6 +108,7 @@ class data {
 						"name" => $row["lotName"],
 						"description" => $row["lotDescription"],
 						"currentPassTypes" => $currentPasses, //array
+						"rules" => $this->get_rulesForLots($row["id"]), // array
 						"coords" => $coords->cdlArray()); // array
 			}
 			return $lots;
@@ -134,7 +135,8 @@ class data {
 			while ($row = mysql_fetch_assoc($result)) {
 				$passTypes[$row["id"]] = array (
 					"id" => $row["id"],
-					"name" => $row["passName"]);
+					"name" => $row["passName"],
+					"rules" => $this->get_rulesForPassTypes($row["id"])); // array;
 			}
 			//print_r($passTypes);
 			return $passTypes;
@@ -204,40 +206,36 @@ class data {
 	}
 	
 	public function insert_lot($name, $desc, $coords) {
-		$sql = "insert into lots values ('" . $coords . "', '" . $name . "', '" . $desc . "')";
+		$sql = "insert into lots values (\'" 
+			. $coords . "\', \'"
+			. $name . "\', \'"
+			. $desc . "\')";
 		$result = mysql_query($sql);
 		
-		if ($result) { // return id
-			return mysql_insert_id();
-		}
-		else {
-			echo "Couldn't insert lot " + $name + ".";
-			return null;
-		}
+		if ($result) return mysql_insert_id();
+		else return null;
 	}
 	public function insert_passType($name) {
-		$sql = "insert into passTypes values (" + $name + ")";
+		$sql = "insert into passTypes values (\'" . $name . "\')";
 		$result = mysql_query($sql);
 		
-		if ($result) { // return id
-			return mysql_insert_id();
-		}
-		else {
-			echo "Couldn't insert passtype " + $name + ".";
-			return null;
-		}
+		if ($result) return mysql_insert_id();
+		else return null;
 	}
-	public function insert_rule($name) {
-		$sql = "insert into passTypes values (" + $name + ")";
+	public function insert_rule($lotId, $passTypeId, $startDate, $endDate, $startTime, $endTime, $days) {
+		$sql = "insert into rules values ("
+			. $lotId . ","
+			. $passTypeId . ","
+			. "\'" . $startDate . "\',"
+			. "\'" . $endDate . "\',"
+			. "\'" . $startTime . "\',"
+			. "\'" . $endTime . "\',"
+			. "\'" . $days . "\')";
+
 		$result = mysql_query($sql);
 		
-		if ($result) { // return id
-			return mysql_insert_id();
-		}
-		else {
-			echo "Couldn't insert passtype " + $name + ".";
-			return null;
-		}
+		if ($result) return mysql_insert_id();
+		else return null;
 	}
 	
 	public function delete_lot($id) {
@@ -447,7 +445,7 @@ class data {
 $data = new data();
 
 // data functions
-function AllLots() {
+function GetLots() {
 /* function AllLots()
 	returns all lots in database
 */
@@ -455,7 +453,7 @@ function AllLots() {
 	$lots = $data->get_lots(null);
 	return $lots;
 }
-function AllPassTypes() {
+function GetPassTypes() {
 /* function AllPassTypes()
 	returns all pass types in database
 */
@@ -463,23 +461,31 @@ function AllPassTypes() {
 	$passTypes = $data->get_passTypes(null);
 	return $passTypes;
 }
-function AllRulesByLot($id) {
-/* function AllRulesByLot($id)
-	$id = single id of requested lot
-	returns all rules for a specific lot
-*/
+
+function CreateLot($name, $desc, $coords) {
 	global $data;
-	$rules = $data->get_rulesForLots($id);
-	return $rules;
+	return $data->insert_lot($name, $desc, $coords);
 }
-function AllRulesByPassType($id) {
-/* function AllRulesByPassType($id)
-	$id = single id of requested pass type
-	returns all rules for a specific pass type
-*/
+function CreatePassType($name) {
 	global $data;
-	$rules = $data->get_rulesForPassTypes($id);
-	return $rules;
+	return $data->insert_passType($name);
+}
+function CreateRule($lotId, $passTypeId, $startDate, $endDate, $startTime, $endTime, $days) {
+	global $data;
+	return $data->insert_rule($lotId, $passTypeId, $startDate, $endDate, $startTime, $endTime, $days);
+}
+
+function DeleteLot($id) {
+	global $data;
+	return $data->delete_lot($id);
+}
+function DeletePassType($id) {
+	global $data;
+	return $data->delete_passType($id);
+}
+function DeleteRule($id) {
+	global $data;
+	return $data->delete_rule($id);
 }
 
 // logic functions

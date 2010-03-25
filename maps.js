@@ -1,47 +1,49 @@
-var initialLocation = new google.maps.LatLng(34.668717, -82.837134);
-var browserSupportFlag =  new Boolean();
+// lot marker HTML
+var html = "<b>{lotName}</b><br>" +
+	"<i>{lotDescription}</i><br>" +
+	"<br>" +
+	"<u>Current Acceptable Pass Types</u><br>" +
+	"{currentPassTypes}";
+	
+// map options (will eventually come from database)
+var myOptions = {
+	zoom: 14,
+	center: new google.maps.LatLng(34.6825, -82.8379),
+	navigationControl: true,
+	navigationControlOptions: { style: google.maps.NavigationControlStyle.SMALL },
+	mapTypeControl: true,
+	mapTypeControlOptions: { style: google.maps.MapTypeControlStyle.DROPDOWN_MENU },
+	scaleControl: false,
+	mapTypeId: google.maps.MapTypeId.ROADMAP
+}
 
 function initialize() {
-	var myOptions = {
-		zoom: 15,
-		mapTypeId: google.maps.MapTypeId.ROADMAP
-	};
 	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+}
 
-	// Try W3C Geolocation (Preferred)
-	if(navigator.geolocation) {
-		browserSupportFlag = true;
-		navigator.geolocation.getCurrentPosition(function(position) {
-			initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
-			map.setCenter(initialLocation);
-		}, function() {
-				handleNoGeolocation(browserSupportFlag);
-			});
-		// Try Google Gears Geolocation
-	}
-	else if (google.gears) {
-		browserSupportFlag = true;
-		var geo = google.gears.factory.create('beta.geolocation');
-		geo.getCurrentPosition(function(position) {
-			initialLocation = new google.maps.LatLng(position.latitude,position.longitude);
-			map.setCenter(initialLocation);
-		}, function() {
-				handleNoGeoLocation(browserSupportFlag);
-			});
-		// Browser doesn't support Geolocation
-	}
-	else {
-		browserSupportFlag = false;
-		handleNoGeolocation(browserSupportFlag);
-	}
-
-	function handleNoGeolocation(errorFlag) {
-		if(errorFlag == true) {
-			alert("Geolocation service failed.");
-		}
-		else {
-			alert("Your browser doesn't support geolocation.");
-		}
-		map.setCenter(initialLocation);
-	}
+function createPolygon(index, paths, strokeColor, strokeOpacity, strokeWeight, fillColor, fillOpacity) {
+	var lot = new google.maps.Polygon({
+		paths: paths,
+		strokeColor: strokeColor,
+		strokeOpacity: strokeOpacity,
+		strokeWeight: strokeWeight,
+		fillColor: fillColor,
+		fillOpacity: fillOpacity});
+	lot.setMap(map);
+	return lot;
+}
+function populateHTML(lotName, lotDescription, currentPassTypes) {
+	/* LOT HTML
+	var html = 
+		"<b>{lotName}</b><br>" +
+		"<i>{lotDescription}</i><br>" +
+		"<br>" +
+		"<u>Current Acceptable Pass Types</u><br>" +
+		"{currentPassTypes}";
+	*/
+	var output = html;
+	output = output.replace("{lotName}", lotName);
+	output = output.replace("{lotDescription}", lotDescription);
+	output = output.replace("{currentPassTypes}", currentPassTypes);
+	return output;
 }

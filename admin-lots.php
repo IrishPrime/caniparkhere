@@ -27,6 +27,8 @@ switch($_POST["action"]) {
 		</div>
 		<label for="lot_description">Description</label>
 		<textarea id="lot_description" name="lot_description" cols="40"></textarea>
+		<br/>
+		<input type="file" name="create_photo" size="55">
 		<input type="hidden" name="action" value="create"/>
 		<br/>
 		<input type="submit" value="Create Parking Lot"/>
@@ -51,6 +53,8 @@ switch($_POST["action"]) {
 		</div>
 		<label for="lot_description">Description</label>
 		<textarea id="lot_description" name="lot_description" cols="40"></textarea>
+		<br/>
+		<input type="file" name="edit_photo" size="55">
 		<input type="hidden" name="action" value="edit"/>
 		<br/>
 		<input type="submit" value="Edit Parking Lot"/>

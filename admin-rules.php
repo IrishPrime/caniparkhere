@@ -27,11 +27,8 @@ switch($_POST["action"]) {
 		// CreateRule($_POST["create_lots"], $_POST["create_passes"], $_POST["create_start_year"]."-".$_POST["create_start_month"]."-".$_POST["create_start_date"], $_POST["create_end_year"]."-".$_POST["create_end_month"]."-".$_POST["create_end_date"], $_POST["create_start_hour"].":".$_POST["create_start_minute"].":00", $_POST["create_end_hour"].":".$_POST["create_end_minute"].":00", $_POST["create_days"]);
 		break;
 	case "delete":
-		echo "<pre>";
-		print_r($_POST);
 		foreach($_POST["delete_rules"] as $id)
-			// DeleteRule($id);
-		echo "</pre>";
+			DeleteRule($id);
 		break;
 	default:
 		break;
@@ -105,12 +102,6 @@ switch($_POST["action"]) {
 			?>
 			</optgroup>
 		</select>
-		<!--
-		<select name="create_start_meridiem" id="create_start_meridiem">
-			<option>AM</option>
-			<option>PM</option>
-		</select>
-		-->
 		<br/>
 
 		<!-- End Date/Time -->
@@ -174,17 +165,11 @@ switch($_POST["action"]) {
 			?>
 			</optgroup>
 		</select>
-		<!--
-		<select name="create_end_meridiem" id="create_end_meridiem">
-			<option>AM</option>
-			<option>PM</option>
-		</select>
-		-->
 		<br/>
 
 		<!-- Days -->
-		<label for="create_days">Days</label>
-		<div name="create_days" id="create_days">
+		<label for="create_days_checks">Days</label>
+		<div name="create_days_checks" id="create_days_checks">
 			<input type="checkbox" name="create_days[]" id="create_sunday" value="0"/>
 			<label for="create_sunday">Sunday</label>
 			<input type="checkbox" name="create_days[]" id="create_monday" value="1"/>
@@ -200,9 +185,9 @@ switch($_POST["action"]) {
 			<input type="checkbox" name="create_days[]" id="create_saturday" value="6"/>
 			<label for="create_saturday">Saturday</label>
 		</div>
-		<input type="button" value="Weekdays" onclick=""/>
-		<input type="button" value="Weekends" onclick=""/>
-		<input type="button" value="All" onclick=""/>
+		<input type="button" value="Weekdays" id="check_weekdays"/>
+		<input type="button" value="Weekends" id="check_weekends"/>
+		<input type="button" value="All" id="toggle_all"/>
 		<br/>
 
 		<!-- Permit Types -->
@@ -241,15 +226,12 @@ switch($_POST["action"]) {
 		<?php
 			if(is_array($lots))
 				foreach($lots as $lot) {
-					echo "<h2>".$lot["name"]."</h2>";
+					echo "<h2 style=\"margin-top:0\">".$lot["name"]."</h2>";
 					$rules = $lot["rules"];
 					if(is_array($rules))
 						foreach($rules as $rule) {
-							echo "<pre>";
-							print_r($rule);
-							echo "</pre>";
 							echo "<p><input type=\"checkbox\" name=\"delete_rules[]\" id=\"rule_".$rule["id"]."\" value=\"".$rule["id"]."\"/>";
-							echo "<b>".$rule["startDate"]." - ".$rule["endDate"]."</b><br/>";
+							echo "<b>".date("F d, Y", strtotime($rule["startDate"]))." - ".date("F d, Y", strtotime($rule["endDate"]))."</b><br/>";
 							$days = explode(",", $rule["days"]);
 							if(is_array($days))
 								foreach($days as $day)
@@ -259,7 +241,8 @@ switch($_POST["action"]) {
 							echo $passes[$rule["passTypeId"]]["name"];
 							echo "</p>";
 						}
-					else echo "No rules.";
+					else echo "No rules.\n";
+					echo "<hr/>\n";
 				}
 		?>
 		<input type="hidden" name="action" value="delete"/>

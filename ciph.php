@@ -1,4 +1,10 @@
-<div id="map_canvas" style="width:100%; height:84%"><script type="text/javascript">initialize();DisplayAllLots();</script></div>
+<?php include("./maps.php"); ?>
+<div id="map_canvas" style="width:100%; height:84%">
+<script type="text/javascript">
+	initialize();
+	displayAllLots();
+</script>
+</div>
 
 <div class="column" style="border-right: 1px dashed black;">
 <h2>Pass Types</h2>

@@ -3,30 +3,26 @@
 require("./auth.php");
 require_once("./_settings.php");
 
-// Create connection
-mysql_connect($mysql_server, $mysql_user, $mysql_password) or die("Could not connect: " . mysql_error());
-mysql_select_db($mysql_db_name) or die(mysql_error());
-
 // Successful connection, setup queries
 switch($_POST["action"]) {
 	case "promote":
 		$sql = "UPDATE users SET admin=1 WHERE email='".$_POST["promote_user"]."'";
+		echo $_POST["promote_user"]." promoted to administrator.";
 		break;
 	case "demote":
 		$sql = "UPDATE users SET admin=0 WHERE email = '".$_POST["demote_user"]."'";
+		echo $_POST["demote_user"]." demoted from administrator.";
 		break;
 	case "delete":
 		$sql = "DELETE from users WHERE email = '".$_POST["delete_user"]."'";
+		echo $_POST["delete_user"]." deleted.";
 		break;
 	default:
 		$sql = "";
 		break;
 }
 
-$result = mysql_query($sql);
-
-// Disconnect
-mysql_close();
+mysql_query($sql);
 ?>
 
 <fieldset>

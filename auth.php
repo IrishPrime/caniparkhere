@@ -1,7 +1,7 @@
 <?php
 require_once("./_settings.php");
 
-if(isset($_COOKIE["admin"]) && $_COOKIE["admin"] == "1") {
+if(isset($_COOKIE["admin"]) && $_COOKIE["admin"] == "1" && isset($_COOKIE["id"]) && isset($_COOKIE["auth"])) {
 	// Create connection
 	mysql_connect($mysql_server, $mysql_user, $mysql_password) or die("Could not connect: " . mysql_error());
 	mysql_select_db($mysql_db_name) or die(mysql_error());
@@ -14,9 +14,6 @@ if(isset($_COOKIE["admin"]) && $_COOKIE["admin"] == "1") {
 		if($row["password"] != $_COOKIE["auth"] || $row["admin"] != 1) die("Access denied.\n");
 	}
 	else die("Access denied.\n");
-
-	// Disconnect
-	mysql_close();
 }
 else die("Access denied.\n");
 ?>

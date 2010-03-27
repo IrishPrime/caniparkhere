@@ -9,13 +9,14 @@ $passes = GetPassTypes();
 
 switch($_POST["action"]) {
 	case "create":
-		// CreatePassType($_POST["create_pass"]);
+		CreatePassType($_POST["create_pass"]);
 		break;
 	case "edit":
 		// RenamePassType($_POST["edit_select"], $_POST["edit_pass"]);
 		break;
 	case "delete":
-		// DeletePassType($_POST["passes"]);
+		foreach($_POST["passes"] as $id)
+			DeletePassType($id);
 		break;
 	default:
 		break;
@@ -62,7 +63,7 @@ switch($_POST["action"]) {
 		<?php
 		if(is_array($passes))
 			foreach($passes as $pass) {
-				echo "<input type=\"checkbox\" id=\"pass_".$pass["id"]."\" name=\"passes\" value=\"".$pass["id"]."\"><label style=\"width: auto;\" for=\"pass_".$pass["id"]."\">".$pass["name"]."</label><br/>\n";
+				echo "<input type=\"checkbox\" id=\"pass_".$pass["id"]."\" name=\"passes[]\" value=\"".$pass["id"]."\"><label style=\"width: auto;\" for=\"pass_".$pass["id"]."\">".$pass["name"]."</label><br/>\n";
 			}
 		?>
 		<input type="hidden" name="action" value="delete"/>

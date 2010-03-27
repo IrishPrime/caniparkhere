@@ -1,0 +1,1 @@
+<a href="http://maps.google.com/maps/ms?msa=0&msid=103646679501682881134.00000111c752e6670d82a&hl=en&ved=0CBwQkAUwAA&sa=X&ei=gKGVS8ujAansygTr4YyTDw&sig2=yYaQEcDeB0VuEb7WFmOfgw">Google Maps - Clemson University</a>

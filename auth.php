@@ -11,7 +11,7 @@ if(isset($_COOKIE["admin"]) && $_COOKIE["admin"] == "1") {
 	$result = mysql_query($sql);
 
 	if($row = mysql_fetch_assoc($result)) {
-		if($row["password"] != $_COOKIE["auth"] || or $row["admin"] != 1) die("Access denied.\n");
+		if($row["password"] != $_COOKIE["auth"] || $row["admin"] != 1) die("Access denied.\n");
 	}
 	else die("Access denied.\n");
 

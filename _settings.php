@@ -3,6 +3,7 @@
 $mysql_server = "localhost:3306";
 $mysql_user = "mysql";
 $mysql_password = "cpsc123";
+$mysql_db_name = "ciph";
 
 // WARNING: Changing the password salt on a live system will cause all accounts to quit working.
 $password_salt = "C!p|-|4Mg501337";

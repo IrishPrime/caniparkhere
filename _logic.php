@@ -472,7 +472,14 @@ function CreatePassType($name) {
 }
 function CreateRule($lotId, $passTypeId, $startDate, $endDate, $startTime, $endTime, $days) {
 	global $data;
-	return $data->insert_rule($lotId, $passTypeId, $startDate, $endDate, $startTime, $endTime, $days);
+	$ruleIds = array(0);
+	for ($i = 0; $i < count($lotId); $i++) {
+		for ($j = 0; $j < count($passTypeId); $j++) {
+			$ruleIds[] = $data->insert_rule($lotId[$i], $passTypeId[$j], $startDate, $endDate, $startTime, $endTime, $days);
+		}
+	}
+	if (count($ruleIds > 0)) return $ruleIds;
+	else return null; // no ids to return
 }
 
 function DeleteLot($id) {

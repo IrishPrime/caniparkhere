@@ -11,6 +11,16 @@ $lots = GetLots();
 
 switch($_POST["action"]) {
 	case "create":
+		//function CreateRule($lotId, $passTypeId, $startDate, $endDate, $startTime, $endTime, $days) {
+		$startDate = $_POST["create_start_year"] . "-" . $_POST["create_start_month"] . "-" . $_POST["create_start_date"];
+		$endDate = $_POST["create_end_year"] . "-" . $_POST["create_end_month"] . "-" . $_POST["create_end_date"];
+		$startTime = $_POST["create_start_hour"] . ":" . $_POST["create_start_minute"] . ":00";
+		$endTime = $_POST["create_end_hour"] . ":" . $_POST["create_end_minute"] . ":00";
+		$newRuleIds = CreateRule($_POST["create_lots"], $_POST["create_passes"],
+			(string)$startDate, (string)$endDate, (string)$startTime, (string)$endTime,
+			implode($_POST["create_days"], ","));
+		if ($newRuleIds != null) print_r($newRuleIds);
+		else echo "Insert didn't work.";
 		echo "<pre>";
 		print_r($_POST);
 		echo "</pre>";

@@ -4,16 +4,17 @@ require_once("./_settings.php");
 
 // Create connection
 mysql_connect($mysql_server, $mysql_user, $mysql_password) or die("Could not connect: " . mysql_error());
-mysql_select_db("ciph") or die(mysql_error());
+mysql_select_db($mysql_db_name) or die(mysql_error());
 
 // Successful connection, setup queries
-$sql = "SELECT id, admin FROM users where email='".stripslashes($_POST["email"])."' AND password='".md5(stripslashes($_POST["password"].$password_salt))."'";
+$sql = "SELECT id, password, admin FROM users where email='".stripslashes($_POST["email"])."' AND password='".md5(stripslashes($_POST["password"].$password_salt))."'";
 $result = mysql_query($sql);
 
 ob_start();
 if($row = mysql_fetch_assoc($result)) {
 	session_regenerate_id();
-	setcookie("auth", $row["id"], time()+$session_duration);
+	setcookie("id", $row["id"], time()+$session_duration);
+	setcookie("auth", $row["password"], time()+$session_duration);
 	setcookie("admin", $row["admin"], time()+$session_duration);
 	echo "Login successful.<br/>\n";
 }

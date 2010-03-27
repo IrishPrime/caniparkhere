@@ -20,7 +20,7 @@ if(strcmp($_POST["pass1"], $_POST["pass2"]) != 0)
 
 // Create connection
 mysql_connect($mysql_server, $mysql_user, $mysql_password) or die("Could not connect: " . mysql_error());
-mysql_select_db("ciph") or die(mysql_error());
+mysql_select_db($mysql_db_name) or die(mysql_error());
 
 // Successful connection, setup queries
 $sql = "SELECT CONCAT_WS(' ', firstName, lastName) AS fullName FROM users WHERE email='".$_POST["email"]."'";

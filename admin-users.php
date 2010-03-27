@@ -5,7 +5,7 @@ require_once("./_settings.php");
 
 // Create connection
 mysql_connect($mysql_server, $mysql_user, $mysql_password) or die("Could not connect: " . mysql_error());
-mysql_select_db("ciph") or die(mysql_error());
+mysql_select_db($mysql_db_name) or die(mysql_error());
 
 // Successful connection, setup queries
 switch($_POST["action"]) {

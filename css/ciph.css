@@ -75,10 +75,6 @@
 	width: 100px;
 }
 
-#menu form {
-	padding-top: 4px;
-}
-
 #login {
 	float: right;
 }
@@ -116,7 +112,7 @@ label {
 	display: inline-block;
 	margin-bottom: 5px;
 	vertical-align: top;
-	width: 100px;
+	min-width: 100px;
 }
 
 legend {

@@ -16,7 +16,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=8"/>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 	<style type="text/css">@import url("./css/ciph.css");</style>
-	<style type="text/css">@import url("./css/dot-luv/jquery-ui-1.8.custom.css");</style>
+	<style type="text/css">@import url("./css/jquery-ui-1.8.custom.css");</style>
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
 	<script type="text/javascript" src="http://code.google.com/apis/gears/gears_init.js"></script>
 	<script type="text/javascript" src="./js/jquery-1.4.2.min.js"></script>

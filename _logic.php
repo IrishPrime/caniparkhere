@@ -263,15 +263,15 @@ class data {
 	}
 	
 	public function delete_lot($id) {
-		$sql = "DELETE FROM lots WHERE id=(".addslashes($id).")";
+		$sql = "DELETE FROM lots WHERE id=($id)";
 		return mysql_query($sql);
 	}
 	public function delete_passType($id) {
-		$sql = "DELETE FROM passTypes WHERE id=(".addslashes($id).")";
+		$sql = "DELETE FROM passTypes WHERE id=($id)";
 		return mysql_query($sql);
 	}
 	public function delete_rule($id) {
-		$sql = "DELETE FROM rules WHERE id=(".addslashes($id).")";
+		$sql = "DELETE FROM rules WHERE id=($id)";
 		return mysql_query($sql);
 	}
 	

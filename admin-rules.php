@@ -11,7 +11,6 @@ $lots = GetLots();
 
 switch($_POST["action"]) {
 	case "create":
-		//function CreateRule($lotId, $passTypeId, $startDate, $endDate, $startTime, $endTime, $days) {
 		$startDate = $_POST["create_start_year"] . "-" . $_POST["create_start_month"] . "-" . $_POST["create_start_date"];
 		$endDate = $_POST["create_end_year"] . "-" . $_POST["create_end_month"] . "-" . $_POST["create_end_date"];
 		$startTime = $_POST["create_start_hour"] . ":" . $_POST["create_start_minute"] . ":00";
@@ -20,15 +19,11 @@ switch($_POST["action"]) {
 			(string)$startDate, (string)$endDate, (string)$startTime, (string)$endTime,
 			implode($_POST["create_days"], ","));
 		if ($newRuleIds != null) print_r($newRuleIds);
-		else echo "Insert didn't work.";
-		echo "<pre>";
-		print_r($_POST);
-		echo "</pre>";
-		// CreateRule($_POST["create_lots"], $_POST["create_passes"], $_POST["create_start_year"]."-".$_POST["create_start_month"]."-".$_POST["create_start_date"], $_POST["create_end_year"]."-".$_POST["create_end_month"]."-".$_POST["create_end_date"], $_POST["create_start_hour"].":".$_POST["create_start_minute"].":00", $_POST["create_end_hour"].":".$_POST["create_end_minute"].":00", $_POST["create_days"]);
+		else echo "Insert failed.";
 		break;
 	case "delete":
 		foreach($_POST["delete_rules"] as $id)
-			DeleteRule($id);
+			DeleteRule(addslashes($id));
 		break;
 	default:
 		break;
@@ -36,8 +31,22 @@ switch($_POST["action"]) {
 ?>
 
 <script type="text/javascript">
-</script>
+var wd = false;
+var we = false;
+$(document).ready(function() {
+	$("#weekdays").click(function () {
+		var weekdays = "#create_monday, #create_tuesday, #create_wednesday, #create_thursday, #create_friday";
+		$(weekdays).attr("checked", wd = !wd);
+	});
 
+	$("#weekends").click(function () {
+		var weekends = "#create_sunday, #create_saturday";
+		$(weekends).attr("checked", we = !we);
+	});
+	$("#datepicker").datepicker({ changeMonth: true, changeYear: true, dateFormat: "yyyy-mm-dd", minDate: "0d" });
+});
+</script>
+<div type="text" id="datepicker"></div>
 <fieldset>
 	<legend>Create Rule</legend>
 	<form name="create" id="create" method="POST" action="">
@@ -185,9 +194,8 @@ switch($_POST["action"]) {
 			<input type="checkbox" name="create_days[]" id="create_saturday" value="6"/>
 			<label for="create_saturday">Saturday</label>
 		</div>
-		<input type="button" value="Weekdays" id="check_weekdays"/>
-		<input type="button" value="Weekends" id="check_weekends"/>
-		<input type="button" value="All" id="toggle_all"/>
+		<input type="button" value="Weekdays" id="weekdays"/>
+		<input type="button" value="Weekends" id="weekends"/>
 		<br/>
 
 		<!-- Permit Types -->

@@ -15,11 +15,13 @@
 	<title>Can I Park Here? - <?php echo $title[$page]; ?></title>
 	<meta http-equiv="X-UA-Compatible" content="IE=8"/>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-	<style type="text/css">@import url("ciph.css");</style>
+	<style type="text/css">@import url("./css/ciph.css");</style>
+	<style type="text/css">@import url("./css/dot-luv/jquery-ui-1.8.custom.css");</style>
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
 	<script type="text/javascript" src="http://code.google.com/apis/gears/gears_init.js"></script>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
-	<script type="text/javascript" src="./ciph.js"></script>
+	<script type="text/javascript" src="./js/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="./js/jquery-ui-1.8.custom.min.js"></script>
+	<script type="text/javascript" src="./js/ciph.js"></script>
 </head>
 
 <body>

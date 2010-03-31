@@ -5,8 +5,8 @@
 	if(!is_file("$page.php")) $page="404";
 	
 	require_once("./_logic.php");
-	$passes = GetPassTypes();
-	$lots = GetLots();
+	$passes = GetPassTypes("name");
+	$lots = GetLots("name");
 	$globalSettings = GetSettingsForUser(0);
 ?>
 
@@ -53,6 +53,7 @@
 	<img src="./images/php-power-micro2.png" alt="PHP" border="0" />
 	<img src="./images/MySQL.gif" alt="MySQL" border="0" />
 	<img src="./images/Google-Maps.gif" alt="Google Maps" border="0" />
+	<img src="./images/ui-jquery.png" alt="jQuery UI" border="0" />
 </div>
 </body>
 </html>

@@ -41,7 +41,7 @@
 * jQuery UI CSS Framework
 * Copyright (c) 2010 AUTHORS.txt (http://jqueryui.com/about)
 * Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
-* To view and modify this theme, visit http://jqueryui.com/themeroller/?ffDefault=Arial,%20sans-serif&fwDefault=bold&fsDefault=1em&cornerRadius=0px&bgColorHeader=0b3e6f&bgTextureHeader=08_diagonals_thick.png&bgImgOpacityHeader=15&borderColorHeader=000000&fcHeader=ffffff&iconColorHeader=98d2fb&bgColorContent=333333&bgTextureContent=01_flat.png&bgImgOpacityContent=20&borderColorContent=000000&fcContent=d9d9d9&iconColorContent=9ccdfc&bgColorDefault=333333&bgTextureDefault=09_dots_small.png&bgImgOpacityDefault=20&borderColorDefault=000000&fcDefault=ffffff&iconColorDefault=9ccdfc&bgColorHover=00498f&bgTextureHover=09_dots_small.png&bgImgOpacityHover=40&borderColorHover=000000&fcHover=ffffff&iconColorHover=ffffff&bgColorActive=333333&bgTextureActive=03_highlight_soft.png&bgImgOpacityActive=40&borderColorActive=000000&fcActive=75abff&iconColorActive=75abff&bgColorHighlight=0b58a2&bgTextureHighlight=09_dots_small.png&bgImgOpacityHighlight=30&borderColorHighlight=052f57&fcHighlight=ffffff&iconColorHighlight=ffffff&bgColorError=ee5500&bgTextureError=08_diagonals_thick.png&bgImgOpacityError=30&borderColorError=cd0a0a&fcError=000000&iconColorError=000000&bgColorOverlay=aaaaaa&bgTextureOverlay=01_flat.png&bgImgOpacityOverlay=0&opacityOverlay=30&bgColorShadow=aaaaaa&bgTextureShadow=01_flat.png&bgImgOpacityShadow=0&opacityShadow=30&thicknessShadow=8px&offsetTopShadow=-8px&offsetLeftShadow=-8px&cornerRadiusShadow=8px
+* To view and modify this theme, visit http://jqueryui.com/themeroller/?ffDefault=Arial,%20sans-serif&fwDefault=bold&fsDefault=1em&cornerRadius=0px&bgColorHeader=0b3e6f&bgTextureHeader=08_diagonals_thick.png&bgImgOpacityHeader=15&borderColorHeader=000000&fcHeader=ffffff&iconColorHeader=98d2fb&bgColorContent=333333&bgTextureContent=01_flat.png&bgImgOpacityContent=20&borderColorContent=000000&fcContent=ffffff&iconColorContent=9ccdfc&bgColorDefault=333333&bgTextureDefault=09_dots_small.png&bgImgOpacityDefault=20&borderColorDefault=000000&fcDefault=ffffff&iconColorDefault=9ccdfc&bgColorHover=00498f&bgTextureHover=09_dots_small.png&bgImgOpacityHover=40&borderColorHover=000000&fcHover=ffffff&iconColorHover=ffffff&bgColorActive=333333&bgTextureActive=03_highlight_soft.png&bgImgOpacityActive=40&borderColorActive=000000&fcActive=75abff&iconColorActive=75abff&bgColorHighlight=0b58a2&bgTextureHighlight=09_dots_small.png&bgImgOpacityHighlight=30&borderColorHighlight=052f57&fcHighlight=ffffff&iconColorHighlight=ffffff&bgColorError=ee5500&bgTextureError=08_diagonals_thick.png&bgImgOpacityError=30&borderColorError=cd0a0a&fcError=000000&iconColorError=000000&bgColorOverlay=aaaaaa&bgTextureOverlay=01_flat.png&bgImgOpacityOverlay=0&opacityOverlay=30&bgColorShadow=aaaaaa&bgTextureShadow=01_flat.png&bgImgOpacityShadow=0&opacityShadow=30&thicknessShadow=8px&offsetTopShadow=-8px&offsetLeftShadow=-8px&cornerRadiusShadow=8px
 */
 
 
@@ -50,8 +50,8 @@
 .ui-widget { font-family: Arial, sans-serif; font-size: 1em; }
 .ui-widget .ui-widget { font-size: 1em; }
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Arial, sans-serif; font-size: 1em; }
-.ui-widget-content { border: 1px solid #000000; background: #333333 url(images/ui-bg_flat_20_333333_40x100.png) 50% 50% repeat-x; color: #d9d9d9; }
-.ui-widget-content a { color: #d9d9d9; }
+.ui-widget-content { border: 1px solid #000000; background: #333333 url(images/ui-bg_flat_20_333333_40x100.png) 50% 50% repeat-x; color: #ffffff; }
+.ui-widget-content a { color: #ffffff; }
 .ui-widget-header { border: 1px solid #000000; background: #0b3e6f url(images/ui-bg_diagonals-thick_15_0b3e6f_40x40.png) 50% 50% repeat; color: #ffffff; font-weight: bold; }
 .ui-widget-header a { color: #ffffff; }
 
@@ -387,6 +387,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .ui-dialog .ui-dialog-buttonpane button { float: right; margin: .5em .4em .5em 0; cursor: pointer; padding: .2em .6em .3em .6em; line-height: 1.4em; width:auto; overflow:visible; }
 .ui-dialog .ui-resizable-se { width: 14px; height: 14px; right: 3px; bottom: 3px; }
 .ui-draggable .ui-dialog-titlebar { cursor: move; }
+
 /* Slider
 ----------------------------------*/
 .ui-slider { position: relative; text-align: left; }
@@ -403,7 +404,9 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .ui-slider-vertical .ui-slider-handle { left: -.3em; margin-left: 0; margin-bottom: -.6em; }
 .ui-slider-vertical .ui-slider-range { left: 0; width: 100%; }
 .ui-slider-vertical .ui-slider-range-min { bottom: 0; }
-.ui-slider-vertical .ui-slider-range-max { top: 0; }/* Tabs
+.ui-slider-vertical .ui-slider-range-max { top: 0; }
+
+/* Tabs
 ----------------------------------*/
 .ui-tabs { position: relative; padding: .2em; zoom: 1; } /* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
 .ui-tabs .ui-tabs-nav { margin: 0; padding: .2em .2em 0; }
@@ -414,6 +417,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .ui-tabs .ui-tabs-nav li a, .ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a { cursor: pointer; } /* first selector in group seems obsolete, but required to overcome bug in Opera applying cursor: text overall if defined elsewhere... */
 .ui-tabs .ui-tabs-panel { display: block; border: 0; padding: 1em 1.4em; background: none; }
 .ui-tabs .ui-tabs-hide { display: none !important; }
+
 /* Datepicker
 ----------------------------------*/
 .ui-datepicker { width: 17em; padding: .2em .2em 0; }
@@ -474,7 +478,9 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
     left: -4px; /*must have*/
     width: 200px; /*must have*/
     height: 200px; /*must have*/
-}/* Progressbar
+}
+
+/* Progressbar
 ----------------------------------*/
 .ui-progressbar { height:2em; text-align: left; }
 .ui-progressbar .ui-progressbar-value {margin: -1px; height:100%; }

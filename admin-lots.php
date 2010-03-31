@@ -2,8 +2,7 @@
 # Create/delete parking lots/areas.
 require("./auth.php");
 require_once("./_logic.php");
-
-$lots = GetLots();
+include("./adminMaps.php");
 
 switch($_POST["action"]) {
 	case "create":
@@ -15,16 +14,17 @@ switch($_POST["action"]) {
 	default:
 		break;
 }
+
+$lots = GetLots("name");
 ?>
 
 <div id="accordion">
 	<h1><a href="#">Create Parking Lot</a></h1>
+	<div>
 		<form id="create" name="create" method="GET">
 			<label for="lot_name">Lot Name</label>
 			<input id="lot_name" name="lot_name" type="text"/>
-			<div>
-				<h3>[Google Map Here]</h3>
-			</div>
+			<div id="create_map_canvas" style="width: 500px; height: 500px;"></div>
 			<label for="lot_description">Description</label>
 			<textarea id="lot_description" name="lot_description" cols="40"></textarea>
 			<br/>
@@ -32,6 +32,7 @@ switch($_POST["action"]) {
 			<input type="hidden" name="action" value="create"/>
 			<p><input type="submit" value="Create Parking Lot"/></p>
 		</form>
+	</div>
 
 	<h1><a href="#">Edit Parking Lot</a></h1>
 	<div>
@@ -46,9 +47,7 @@ switch($_POST["action"]) {
 				?>
 				</optgroup>
 			</select>
-			<div>
-				<h3>[Google Map Here]</h3>
-			</div>
+			<div id="edit_map_canvas" style="width: 500px; height: 500px;"></div>
 			<label for="lot_description">Description</label>
 			<textarea id="lot_description" name="lot_description" cols="40"></textarea>
 			<br/>
@@ -72,3 +71,8 @@ switch($_POST["action"]) {
 		</form>
 	</div>
 </div>
+
+<script type="text/javascript">
+		initialize();
+</script>
+

@@ -2,7 +2,7 @@
 # Edit the current user's profile.
 require_once("./_settings.php");
 require_once("./_logic.php");
-$passes = AllPassTypes();
+$passes = GetPassTypes("name");
 
 // Successful connection, setup queries
 switch($_POST["action"]) {
@@ -11,14 +11,14 @@ switch($_POST["action"]) {
 		mysql_query($sql);
 		break;
 	case "user_delete":
-		$sql = "DELETE FROM users WHERE id='".addslashes($_COOKIE["auth"])."'";
+		$sql = "DELETE FROM users WHERE id='".addslashes($_COOKIE["id"])."'";
 		mysql_query($sql);
 		break;
 	default:
+		$sql = "SELECT * FROM users WHERE id='".addslashes($_COOKIE["id"])."'";
 		break;
 }
 
-$sql = "SELECT * FROM users WHERE id='".addslashes($_COOKIE["auth"])."'";
 $result = mysql_query($sql);
 $row = mysql_fetch_assoc($result);
 ?>
@@ -49,50 +49,49 @@ function check_form(form) {
 }
 </script>
 
-<fieldset>
-	<legend>Edit Profile</legend>
-	<form name="user_edit" id="user_edit" method="POST" action="?page=user-profile" onSubmit="return check_form(this)">
-		<label for="edit_fname">First Name</label>
-		<input id="edit_fname" name="edit_fname" type="text" value="<?php echo stripslashes($row['firstName']); ?>"/><br/>
+<div id="accordion">
+	<h1><a href="#">Edit Profile</a></h1>
+	<div>
+		<form name="user_edit" id="user_edit" method="POST" action="?page=user-profile" onSubmit="return check_form(this)">
+			<label for="edit_fname">First Name</label>
+			<input id="edit_fname" name="edit_fname" type="text" value="<?php echo stripslashes($row["firstName"]); ?>"/><br/>
 
-		<label for="edit_lname">Last Name</label>
-		<input id="edit_lname" name="edit_lname" type="text" value="<?php echo stripslashes($row['lastName']); ?>"/><br/>
+			<label for="edit_lname">Last Name</label>
+			<input id="edit_lname" name="edit_lname" type="text" value="<?php echo stripslashes($row["lastName"]); ?>"/><br/>
 
-		<label for="edit_email">E-Mail</label>
-		<input id="edit_email" name="edit_email" type="text" value="<?php echo stripslashes($row['email']); ?>"/><br/>
+			<label for="edit_email">E-Mail</label>
+			<input id="edit_email" name="edit_email" type="text" value="<?php echo stripslashes($row["email"]); ?>"/><br/>
 
-		<label for="edit_pass1">Password</label>
-		<input id="edit_pass1" name="edit_pass1" type="password" value=""/><br/>
+			<label for="edit_pass1">Password</label>
+			<input id="edit_pass1" name="edit_pass1" type="password" value=""/><br/>
 
-		<label for="edit_pass2">Confirm</label>
-		<input id="edit_pass2" name="edit_pass2" type="password" value=""/><br/>
+			<label for="edit_pass2">Confirm</label>
+			<input id="edit_pass2" name="edit_pass2" type="password" value=""/><br/>
 
-		<label for="edit_passtype">Permit</label>
-		<select id="edit_passtype" name="edit_passtype">
-			<optgroup label="Permit">
-				<?php
-				if(is_array($passes))
-					foreach($passes as $pass) {
-						if($pass["id"] == $row["passType"]) echo "<option value=\"".$pass["id"]."\" selected=\"selected\">".$pass["name"]."</option>\n";
-						else echo "<option value=\"".$pass["id"]."\">".$pass["name"]."</option>\n";
-					}
-				?>
-			</optgroup>
-		</select>
-		<input type="hidden" name="action" value="user_edit"/>
-		<br/>
-		<input type="submit" value="Edit Profile" /><br/>
-		<small>All fields required.</small>
-	</form>
-</fieldset>
+			<label for="edit_passtype">Pass</label>
+			<select id="edit_passtype" name="edit_passtype">
+				<optgroup label="Passes">
+					<?php
+					if(is_array($passes))
+						foreach($passes as $pass) {
+							if($pass["id"] == $row["passType"]) echo "<option value=\"".$pass["id"]."\" selected=\"selected\">".$pass["name"]."</option>\n";
+							else echo "<option value=\"".$pass["id"]."\">".$pass["name"]."</option>\n";
+						}
+					?>
+				</optgroup>
+			</select>
+			<input type="hidden" name="action" value="user_edit"/>
+			<p><input type="submit" value="Edit Profile" /></p>
+		</form>
+	</div>
 
-<fieldset>
-	<legend>Delete Account</legend>
-	<form name="user_delete" id="user_edit" method="POST" action="?page=user-profile">
-		<label for="delete_password">Password</label>
-		<input type="password" name="delete_password" id="delete_password" value=""/>
-		<input type="hidden" name="action" value="user_delete"/>
-		<br/>
-		<input type="submit" value="Delete Account"/>
-	</form>
-</fieldset>
+	<h1><a href="#">Delete Account</a></h1>
+	<div>
+		<form name="user_delete" id="user_edit" method="POST" action="?page=user-profile">
+			<label for="delete_password">Password</label>
+			<input type="password" name="delete_password" id="delete_password" value=""/>
+			<input type="hidden" name="action" value="user_delete"/>
+			<p><input type="submit" value="Delete Account"/></p>
+		</form>
+	</div>
+</div>

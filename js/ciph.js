@@ -3,6 +3,7 @@ $(document).ready(function() {
 		header: "h1",
 		autoHeight: false,
 		collapsible: true,
+		active: false,
 	});
 
 	$("#nested_accordion").accordion({
@@ -12,7 +13,7 @@ $(document).ready(function() {
 		active: false,
 	});
 
-	$("input:submit, input:button, input:checkbox").button();
+	$("input:submit, input:button, input:checkbox, button").button();
 });
 
 function clear_text(field) {

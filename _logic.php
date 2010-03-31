@@ -63,6 +63,21 @@ class cdl {
 		if ($key !== false && $key == maxIndex) return true;
 		else return false;
 	}
+	public function split($axis) {
+		// split array items up by $axis
+		// left side is this cdl
+		// right side is returned
+		$left = array();
+		$right = array();
+		foreach ($this->cdl as $i) {
+			$split = explode($axis, $i);
+			$left[] = $split[0];
+			$right[] = $split[1];
+		}
+		$this->cdl = $left;
+		
+		return $right;
+	}
 }
 	
 class data {
@@ -87,23 +102,50 @@ class data {
 		if (mysql_num_rows($result) != 0) {
 			$lots = array();
 			while ($row = mysql_fetch_assoc($result)) {
-				$coords = new cdl($row["lotCoords"], ";"); // parse coords from string
-				$currentPasses = $this->whatPassTypesCanParkHere($row["id"]);
-				$rules = $this->get_rulesForLots($row["id"]);
-				$scheme = $this->get_scheme($row["lotScheme"]);
+				$id = $row["id"];
+				$name = $row["name"];
+				$desc = $row["descrip"];
+				$pic = $row["pic"];
+				$scheme = $row["scheme"];
+				
+				// change data
+				$coords = new cdl($row["coords"], ";"); // parse coords from string
+				$scheme = $this->get_scheme($scheme);
+				$currentPasses = $this->whatPassTypesCanParkHere($id);
+				$middle = $this->findLatLngAverage($row["coords"]);
 			
-				$lots[$row["id"]] = array(
-						"id" => $row["id"],
-						"name" => $row["lotName"],
-						"description" => $row["lotDescription"],
-						"currentPassTypes" => $currentPasses, // array
-						"rules" => $rules, // array
+				$lots[$id] = array(
+						"id" => $id,
+						"name" => $name,
+						"description" => $desc,
+						"picture" => $pic,
+						"middle" => $middle,
 						"coords" => $coords->cdlArray(), // array
-						"picture" => $row["lotPicture"],
-						"scheme" => $scheme); // array
+						"scheme" => $scheme, // array
+						"currentPassTypes" => $currentPasses); // array
 			}
 		}
+		//debug($lots);
 		return $lots;
+	}
+	private function findLatLngAverage($coords) {
+		// write middle point for each polygon
+		$both = new cdl($coords, ";");
+		$lngs = $both->split(",");
+		$lats = $both->cdlArray();
+		$latAvg = 0;
+		$lngAvg = 0;
+		
+		foreach ($lats as $lat)
+			$latAvg += floatval($lat);
+		foreach ($lngs as $lng)
+			$lngAvg += floatval($lng);
+		
+		$latAvg /= count($lats);
+		$lngAvg /= count($lngs);
+		//echo "Lat Avg = $latAvg<br>";
+		//echo "Lng Avg = $lngAvg<br>";
+		return "$latAvg, $lngAvg";
 	}
 	private function create_passTypes($result) {
 		$passTypes = null;
@@ -112,36 +154,82 @@ class data {
 			while ($row = mysql_fetch_assoc($result)) {
 				$passTypes[$row["id"]] = array (
 					"id" => $row["id"],
-					"name" => $row["passName"],
-					"rules" => $this->get_rulesForPassTypes($row["id"])); // array;
+					"name" => $row["name"]);
 			}
 		}
 		return $passTypes;
 	}
-	private function create_rules($result) {
+	private function create_rulesByLots($lots, $times, $result) {
 		$rules = null;
-		if (mysql_num_rows($result) != 0) {
+		if (mysql_num_rows($lots) != 0) {
 			$rules = array();
-			while ($row = mysql_fetch_assoc($result)) {
+			// create lot array to hold rules
+			while ($row = mysql_fetch_assoc($lots)) {
 				$rules[$row["id"]] = array(
-					"id" => $row["id"],
-					"lotId" => $row["lot"],
-					"passTypeId" => $row["passType"],
-					"startDate" => $row["startDate"],
-					"endDate" => $row["endDate"],
-					"startTime" => $row["startTime"],
-					"endTime" => $row["endTime"],
-					"days" => $row["days"]);
+					"name" => $row["name"],
+					"description" => $row["descrip"],
+					"rules" => array());
+			}
+			// create unique rule combination entries
+			if (mysql_num_rows($times) != 0) {
+				while ($row = mysql_fetch_assoc($times)) {
+					$lot = $row["lot"];
+					$key = $this->key($row);
+					$rules[$lot]["rules"][$key] = array(
+						"startDate" => $row["startDate"],
+						"startTime" => $row["startTime"],
+						"endDate" => $row["endDate"],
+						"endTime" => $row["endTime"],
+						"days" => $row["days"],
+						"passTypes" => array());
+				}
+				
+				// create modified passType object for each rule
+				if (mysql_num_rows($result) != 0) {
+					while ($row = mysql_fetch_assoc($result)) {
+						$lot = $row["lot"];
+						$key = $this->key($row);
+						$passTypeId = $row["passTypeId"];
+						$rules[$lot]["rules"][$key]["passTypes"][$passTypeId] = array(
+							"ruleId" => $row["ruleId"],
+							"id" => $row["passTypeId"],
+							"name" => $row["name"]);
+					}
+				}
 			}
 		}
+		//debug($rules);
 		return $rules;
+	}
+	private function key($row) {
+		$startDate = $row["startDate"];
+		$startTime = $row["startTime"];
+		$endDate = $row["endDate"];
+		$endTime = $row["endTime"];
+		$days = $row["days"];
+		return ("[" . $startDate . "][" . $startTime . "][". $endDate . "][" . $endTime . "][" . $days . "]");
+	}
+	private function create_exceptions($result) {
+		$exceptions = null;
+		if (mysql_num_rows($result) != 0) {
+			$exceptions = array();
+			while ($row = mysql_fetch_assoc($result)) {
+				$exceptions[$row["id"]] = array(
+					"id" => $row["id"],
+					"lot" => $row["lot"],
+					"passType" => $row["passType"],
+					"start" => $row["start"],
+					"end" => $row["end"]);
+			}
+		}
+		return $exceptions;
 	}
 	private function create_settings($result) {
 		$settings = null;
 		if (mysql_num_rows($result) != 0) {
 			$settings = array();
 			while ($row = mysql_fetch_assoc($result)) {
-				$settings[$row["settingName"]] = $row["settingValue"];
+				$settings[$row["name"]] = $row["value"];
 			}
 		}
 		return $settings;
@@ -151,69 +239,101 @@ class data {
 		if (mysql_num_rows($result) != 0) {
 				$row = mysql_fetch_assoc($result);
 				$scheme = array(
-					"id" => $row["schemeId"],
-					"name" => $row["schemeName"],
-					"lineColor" => $row["schemeLineColor"],
-					"lineWidth" => $row["schemeLineWidth"],
-					"lineOpacity" => $row["schemeLineOpacity"],
-					"fillColor" => $row["schemeFillColor"],
-					"fillOpacity" => $row["schemeFillOpacity"]);
+					"id" => $row["id"],
+					"name" => $row["name"],
+					"lineColor" => $row["lineColor"],
+					"lineWidth" => $row["lineWidth"],
+					"lineOpacity" => $row["lineOpacity"],
+					"fillColor" => $row["fillColor"],
+					"fillOpacity" => $row["fillOpacity"]);
 		}
 		return $scheme;
 	}
 	
-	public function get_lots($ids) {
+	public function get_lots($ids, $sortColumn) {
 		$sql = "select * from lots";
 		if ($ids != null) $sql .= " where id in (" . $ids . ")";
-		$sql .= " order by id asc";
+		if ($sortColumn == null) $sortColumn = "name";
+		$sql .= " order by " . $sortColumn . " asc";
+		
 		$result = mysql_query($sql);
 		if (!$result) die("MySQL error: get_lots($ids)");
 		else return $this->create_lots($result);
 	}
-	public function get_passTypes($ids) {
+	public function get_passTypes($ids, $sortColumn) {
 		$sql = "select * from passTypes";
 		if ($ids != null) $sql .= " where id in (" . $ids . ")";
-		$sql .= " order by passName asc";
+		if ($sortColumn == null) $sortColumn = "name"; // was id
+		$sql .= " order by " . $sortColumn . " asc";
+		
 		$result = mysql_query($sql);
 		if (!$result) die("MySQL error: get_passTypes($ids)");
 		else return $this->create_passTypes($result);
 	}
-	public function get_rulesForLots($ids) {
-		$sql = "select * from rules";
+	private function get_passTypesByTime($startDate, $endDate, $startTime, $endTime, $days) {
+		$sql = "select passType from rules"
+			. " inner join passTypes on passTypes.id = rules.passType where"
+			. " startDate = " . $this->addSingleQuotes($startDate)
+			. " and endDate = " . $this->addSingleQuotes($endDate)
+			. " and startTime = " . $this->addSingleQuotes($startTime)
+			. " and endTime = " . $this->addSingleQuotes($endTime)
+			. " and days = " . $this->addSingleQuotes($days)
+			. " order by name asc";
+		$result = mysql_query($sql);
+		if (!$result) die("MySQL error: get_passTypesByTime($ids)");
+		else {
+			$ruleIds = array();
+			while ($row = mysql_fetch_assoc($result))
+				$ruleIds[] = $row["passType"];
+			return $this->get_passTypes(implode(',', $ruleIds), "name");
+		}
+	}
+	public function get_rulesByLot($id) {
+		$sql = "select id, name, descrip from lots";
+			if ($id != null) $sql .= " where id in (" . $id . ")";
+			$sql .= " order by name asc";
+		$lots = mysql_query($sql);
+		//echo $sql . "<br>";
+		
+		$sql = "select lot, startDate, startTime, endDate, endTime, days from rules"
+			. " group by lot, startDate, startTime, endDate, endTime, days";
+		if ($id != null) $sql .= " having lot in (" . $id . ")";
+		$sql .= " order by endDate desc, endTime desc, days asc";
+		$times = mysql_query($sql);
+		//echo $sql . "<br>";
+		
+		$sql = "select lot, startDate, startTime, endDate, endTime, days,"
+			. " rules.id as ruleId, passTypes.id as passTypeId, name"
+			. " from rules inner join passTypes on passTypes.id = rules.passType";
+			if ($id != null) $sql .= " where lot in (" . $id . ")";
+			$sql .= " order by name asc";
+		$result = mysql_query($sql);
+		//echo $sql . "<br>";
+		
+		if (!lots || !times || !$result) die("MySQL error: get_rulesByLots($ids)");
+		else return $this->create_rulesByLots($lots, $times, $result);
+	}
+	public function get_exceptionsByLots($ids) {
+		$sql = "select * from exceptions";
 		if ($ids != null) $sql .= " where lot in (" . $ids . ")";
-		$sql .= " order by startDate, endDate";
+		$sql .= " order by end desc";
+		
 		$result = mysql_query($sql);
-		if (!$result) die("MySQL error: get_rulesForLots($ids)");
-		else return $this->create_rules($result);
-	}
-	public function get_rulesForPassTypes($ids) {
-		$sql = "select * from rules";
-		if ($ids != null) $sql .= " where passType in (" . $ids . ")";
-		$sql .= " order by startDate, endDate";
-		$result = mysql_query($sql);
-		if (!$result) die("MySQL error: get_rulesForPassTypes($ids)");
-		else return $this->create_rules($result);
-	}
-	public function get_settingsById($ids) {
-		$sql = "select * from settings";
-		if ($ids != null) $sql .= " where settingId in (" . $ids . ")";
-		$sql .= " order by settingId";
-		$result = mysql_query($sql);
-		if (!$result) die("MySQL error: get_settingsById($ids)");
-		else return $this->create_settings($result);
+		if (!$result) die("MySQL error: get_exceptionsByLots($ids)");
+		else return $this->create_exceptions($result);
 	}
 	public function get_settingsByUser($ids) {
 		$sql = "select * from settings";
-		if ($ids != null) $sql .= " where userId in (" . $ids . ")";
-		$sql .= " order by settingId";
+		if ($ids != null) $sql .= " where user in (" . $ids . ")";
+		$sql .= " order by id";
 		$result = mysql_query($sql);
 		if (!$result) die("MySQL error: get_settingsByUser($ids)");
 		else return $this->create_settings($result);
 	}
 	public function get_scheme($id) {
 		$sql = "select * from schemes";
-		if ($id != null) $sql .= " where schemeId in (" . $id . ")";
-		$sql .= " order by schemeId";
+		if ($id != null) $sql .= " where id in (" . $id . ")";
+		$sql .= " order by id";
 		$result = mysql_query($sql);
 		if (!result) die ("MySQL error: get_schemes($ids)");
 		else return $this->create_scheme($result);
@@ -222,34 +342,36 @@ class data {
 	private function addSingleQuotes($string) {
 		return "'" . $string . "'";
 	}
-	public function insert_lot($name, $desc, $coords) {
-		$sql = "INSERT INTO lots "
-			. "(lotCoords, lotName, lotDescription) "
+	public function insert_lot($name, $desc, $pic, $coords, $scheme) {
+		$sql = "insert into lots "
+			. "(name, desc, pic, coords, scheme) "
 			. "values (" 
-			. $this->addSingleQuotes($coords) . ", "
 			. $this->addSingleQuotes($name) . ", "
-			. $this->addSingleQuotes($desc) . ")";
+			. $this->addSingleQuotes($desc) . ", "
+			. $this->addSingleQuotes($pic) . ", "
+			. $this->addSingleQuotes($coords) . ", "
+			. $scheme . ")";
 		$result = mysql_query($sql);
 		
 		if ($result) return mysql_insert_id();
-		else return null;
+		else return false;
 	}
 	public function insert_passType($name) {
-		$sql = "INSERT INTO passTypes "
-			.	"(passName) "
+		$sql = "insert into passTypes "
+			.	"(name) "
 			. "values ("
 			. $this->addSingleQuotes($name) . ")";
 		$result = mysql_query($sql);
 		
 		if ($result) return mysql_insert_id();
-		else return null;
+		else return false;
 	}
-	public function insert_rule($lotId, $passTypeId, $startDate, $endDate, $startTime, $endTime, $days) {
-		$sql = "INSERT INTO rules "
+	public function insert_rule($lot, $passType, $startDate, $endDate, $startTime, $endTime, $days) {
+		$sql = "insert into rules "
 			.	"(lot, passType, startDate, endDate, startTime, endTime, days) "
 			. "values ("
-			. $lotId . ", "
-			. $passTypeId . ", "
+			. $lot . ", "
+			. $passType . ", "
 			. $this->addSingleQuotes($startDate) . ", "
 			. $this->addSingleQuotes($endDate) . ", "
 			. $this->addSingleQuotes($startTime) . ", "
@@ -257,58 +379,77 @@ class data {
 			. $this->addSingleQuotes($days) . ")";
 
 		$result = mysql_query($sql);
-		
-		if ($result) return mysql_insert_id();
-		else return null;
-	}
-	
-	public function delete_lot($id) {
-		$sql = "DELETE FROM lots WHERE id=($id)";
-		return mysql_query($sql);
-	}
-	public function delete_passType($id) {
-		$sql = "DELETE FROM passTypes WHERE id=($id)";
-		return mysql_query($sql);
-	}
-	public function delete_rule($id) {
-		$sql = "DELETE FROM rules WHERE id=($id)";
-		return mysql_query($sql);
-	}
-	
-	public function whatPassTypesCanParkHere($lotId) {
-	/* function WhatPassTypesCanParkHere($lotId)
-		$lotId = single id of requested lot
-		returns passType data, null on no passTypes
 
-		Returns an array of passtypes that can currently
-		park at the requested lot.
-	*/
-		// grab all rules for this lot
-		$rules = $this->get_rulesForLots($lotId);
+		//echo $sql . "<br>";
+		if ($result) return mysql_insert_id();
+		else return false;
+	}
+	public function insert_exception($lot, $passType, $start, $end) {
+		$sql = "insert into exceptions "
+			. "(lot, passType, start, end) "
+			. "values ("
+			. $lot . ", "
+			. $passType . ", "
+			. $this->addSingleQuotes($start) . ", "
+			. $this->addSingleQuotes($end) . ")";
+			
+			$result = mysql_query($sql);
+			
+			if ($result) return mysql_insert_id();
+			else return false;
+	}
+	
+	public function update_passType($id, $name) {
+		$sql = "update passTypes set name = "
+			. $this->addSingleQuotes($name)
+			. " where id = $id";
+		return mysql_query($sql);
+	}
+	
+	public function delete_lot($ids) {
+		$sql = "delete from lots where id in (" . $ids . ")";
+		return mysql_query($sql);
+	}
+	public function delete_passType($ids) {
+		$sql = "delete from passTypes where id in (" . $ids . ")";
+		return mysql_query($sql);
+	}
+	public function delete_rule($ids) {
+		$sql = "delete from rules where id in (" . $ids . ")";
+		//echo $sql + "<br>";
+		return mysql_query($sql);
+	}
+	public function delete_exception($ids) {
+		$sql = "delete from exceptions where id in (" . $ids . ")";
+		return mysql_query($sql);
+	}
+	
+	private function whatPassTypesCanParkHere($id) {
+	// returns array of passTypes, null = no pass types
+	
 		// set requested timestamp
 		$requestedTime = new DateTime("now");
 		
-		$noIds = true;
-		$ids = new cdl(null, null);
+		// get rules
+		$rules = $this->get_rulesByLot($id);
+		$rules = $rules[$id]["rules"];
+		
+		$passTypes = null;
 		
 		// search for rules that apply to this passType
 		if ($rules != null) {
 			foreach ($rules as $rule) {
-				if ($this->doesRuleApply($rule, $requestedTime))
-					$ids->add($rule["passTypeId"]);
+				if ($this->doesRuleApply($rule, $requestedTime)) {
+					if ($passTypes == null) $passTypes = array();
+					foreach ($rule["passTypes"] as $pass)
+						$passTypes[$pass["id"]] = $pass;
+				}
 			}
 		}
 		
-		// if there were ids, grab data
-		if ($ids->hasValues()) {
-			$passTypes = $this->get_passTypes($ids->cdl(null));
-			return $passTypes;
-		}
-		else {
-			return null;
-		}
+		return $passTypes;
 	}
-	public function doesRuleApply($rule, $parkTimestamp) {
+	private function doesRuleApply($rule, $parkTimestamp) {
 
 		$inDateRange = false;
 		$inTimeRange = false;
@@ -468,74 +609,111 @@ class data {
 
 $data = new data();
 
-function GetLots() {
-/* function AllLots()
-	returns all lots in database
-*/
+// Data load methods.
+//
+// Lots and PassTypes
+//  Can be sorted by any field,
+//  but default to "name" if $sortColumn is null.
+// Settings
+//  $id = user id, 0 = global, null = all
+// Schemes
+//	$ids = single scheme id, null = all schemes
+function GetLots($sortColumn) {
 	global $data;
-	$lots = $data->get_lots(null);
-	return $lots;
+	return $data->get_lots(null, $sortColumn);
 }
-function GetPassTypes() {
-/* function AllPassTypes()
-	returns all pass types in database
-*/
+function GetPassTypes($sortColumn) {
 	global $data;
-	$passTypes = $data->get_passTypes(null);
-	return $passTypes;
-}
-function GetSettings($id) {
-	global $data;
-	$settings = $data->get_settingsById($id);
-	return $settings;
+	return $data->get_passTypes(null, $sortColumn);
 }
 function GetSettingsForUser($id) {
 	global $data;
-	$settings = $data->get_settingsByUser($id);
-	return $settings;
+	return $data->get_settingsByUser($id);
+}
+function GetSchemes($id) {
+	global $data;
+	return $data->get_schemes($id);
+}
+function GetRulesByLot($id) {
+	global $data;
+	return $data->get_rulesByLot($id);
 }
 
-function CreateLot($name, $desc, $coords) {
+// Creation methods.
+// The only unique is CreateRules, where $lots
+//  and $passTypes need to be arrays where the rule will apply.
+// All functions return the ID of the newly created object,
+//  false on an unsuccessful database insertion.
+// CreateRules will give an array of IDs of the created rules,
+//  any entry that didn't go through will be false.
+function CreateLot($name, $desc, $pic, $coords, $scheme) {
 	global $data;
-	return $data->insert_lot($name, $desc, $coords);
+	return $data->insert_lot($name, $desc, $pic, $coords, $scheme);
 }
 function CreatePassType($name) {
 	global $data;
 	return $data->insert_passType($name);
 }
-function CreateRule($lotId, $passTypeId, $startDate, $endDate, $startTime, $endTime, $days) {
+function CreateRules($lots, $passTypes, $startDate, $endDate, $startTime, $endTime, $days) {
 	global $data;
 	$ruleIds = array(0);
-	for ($i = 0; $i < count($lotId); $i++) {
-		for ($j = 0; $j < count($passTypeId); $j++) {
-			$ruleIds[] = $data->insert_rule($lotId[$i], $passTypeId[$j], $startDate, $endDate, $startTime, $endTime, $days);
+	foreach ($lots as $lot) {
+		foreach ($passTypes as $pass) {
+			$newId = $data->insert_rule($lot, $pass, $startDate, $endDate, $startTime, $endTime, $days);
+			if ($newId !== false) $ruleIds[] = $newId;
 		}
 	}
+	
+	//debug($lots);
+	//debug($passTypes);
 	if (count($ruleIds > 0)) return $ruleIds;
-	else return null; // no ids to return
+	else return false; // no ids to return
+}
+function CreateException($lot, $passType, $start, $end) {
+	global $data;
+	return $data->insert_exception($lot, $passType, $startDate, $endDate, $startTime, $endTime, $days);
 }
 
-function DeleteLot($id) {
+// Update methods.
+function RenamePassType($id, $newName) {
 	global $data;
-	return $data->delete_lot($id);
-}
-function DeletePassType($id) {
-	global $data;
-	return $data->delete_passType($id);
-}
-function DeleteRule($id) {
-	global $data;
-	return $data->delete_rule($id);
+	return $data->update_passType($id, $newName);
 }
 
+// Deletion methods.
+// A single delete method takes a single value with the ID
+//  of the object to delete from the database.
+// The multiple delete methods take an array of IDs and deletes
+//  every object.
+// Functions return false if the deletion wasn't successful, true if it was.
+function DeleteLots($ids) {
+	global $data;
+	return $data->delete_lot(implode(',', $ids));
+}
+function DeletePassTypes($ids) {
+	global $data;
+	return $data->delete_passType(implode(',', $ids));
+}
+function DeleteRules($ids) {
+	global $data;
+	return $data->delete_rule(implode(',', $ids));
+}
+function DeleteExceptions($ids) {
+	global $data;
+	return $data->delete_exception(implode(',', $ids));
+}
+
+// Deprecated method, you can find a list
+//  of parkable pass types in each lot.
 function CanIParkHereNow($lotId, $passTypeId) {
 /*  function CanIParkHereNow($lotId, $passId)
 	$lotId = single id of requested lot
 	$passId = single id of requested pass type
 	returns results for that lot
+*/
 
-	Returns if you can or can not park in the requested
-	lot(s) based on current time of day and the passtype sent.		
+	// Returns if you can or can not park in the requested
+	// lot(s) based on current time of day and the passtype sent.		
 
 	global $data;
 	// grab all rules for this lot
@@ -560,7 +738,12 @@ function CanIParkHereNow($lotId, $passTypeId) {
 	}
 	
 	return $results;
-*/
+}
+
+function debug($a) {
+echo "<pre>";
+print_r($a);
+echo "</pre>";
 }
 
 ?>

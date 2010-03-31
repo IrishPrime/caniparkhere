@@ -1,23 +1,43 @@
 <?php
 # Create/delete temporary parking rule exceptions for limited time events.
+
 require("./auth.php");
 require_once("./_logic.php");
 
 switch($_POST["action"]) {
 	case "create":
-		$startDate = addslashes($_POST["create_start_date"]);
-		$endDate = addslashes($_POST["create_end_date"]);
-		$startTime = $_POST["create_start_hour"] . ":" . $_POST["create_start_minute"] . ":00";
-		$endTime = $_POST["create_end_hour"] . ":" . $_POST["create_end_minute"] . ":00";
-		$newRuleIds = CreateRule($_POST["create_lots"], $_POST["create_passes"],
-			(string)$startDate, (string)$endDate, (string)$startTime, (string)$endTime,
-			implode($_POST["create_days"], ","));
-		if ($newRuleIds != null) print_r($newRuleIds);
-		else echo "Insert failed.";
+		$start = $_POST["create_start_date"]." ".$_POST["create_start_hour"].":".$_POST["create_start_minute"].":00";
+		$end = $_POST["create_end_date"]." ".$_POST["create_end_hour"].":".$_POST["create_end_minute"].":00";
+		$newExceptionIds = CreateException($_POST["create_lots"], $_POST["create_passes"], (string)$start, (string)$end, $_POST["allow"]);
+
+		echo "<div class=\"ui-widget\">\n";
+		if($newExceptionIds != null) {
+			echo "\t<div class=\"ui-state-highlight ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
+			echo "\t\t<p><span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>\n";
+		}
+		else {
+			echo "\t<div class=\"ui-state-error ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
+			echo "\t\t<p><span class=\"ui-icon ui-icon-alert\" style=\"float: left; margin-right: .3em;\"></span>\n";
+		}
+		echo "\t\tExceptions Created: <strong>".count($newExceptionIds)."</strong></p>\n";
+		echo "\t</div>\n";
+		echo "</div>\n";
 		break;
 	case "delete":
-		foreach($_POST["delete_rules"] as $id)
-			DeleteRule(addslashes($id));
+		$results = @DeleteExceptions($_POST["delete_exceptions"]);
+
+		echo "<div class=\"ui-widget\">\n";
+		if($results) {
+			echo "\t<div class=\"ui-state-highlight ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
+			echo "\t\t<p><span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>\n";
+		}
+		else {
+			echo "\t<div class=\"ui-state-error ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
+			echo "\t\t<p><span class=\"ui-icon ui-icon-alert\" style=\"float: left; margin-right: .3em;\"></span>\n";
+		}
+		echo "\t\tExceptions Deleted: <strong>".count($_POST["delete_exceptions"])."</strong></p>\n";
+		echo "\t</div>\n";
+		echo "</div>\n";
 		break;
 	default:
 		break;
@@ -25,6 +45,7 @@ switch($_POST["action"]) {
 
 $passes = GetPassTypes("name");
 $lots = GetLots("name");
+// $lot_exceptions = GetExceptionsByLot(null);
 ?>
 
 <script type="text/javascript">
@@ -45,159 +66,199 @@ $(document).ready(function() {
 		showAnim: "drop",
   	});
 
-	$("#create_days_checks").buttonset();
+	$("#allowance").buttonset();
+
+	$("#create_help_dialog").dialog({
+		autoOpen: false,
+		width: 600,
+		show: "drop",
+		hide: "drop",
+	});
+	$("#create_help_opener").hover(function() {
+		$(this).toggleClass("ui-state-hover");
+	});
+	$("#create_help_opener").click(function() {
+		$("#create_help_dialog").dialog("open");
+		return false;
+	});
+
+	$("#delete_help_dialog").dialog({
+		autoOpen: false,
+		width: 600,
+		show: "drop",
+		hide: "drop",
+	});
+	$("#delete_help_opener").hover(function() {
+		$(this).toggleClass("ui-state-hover");
+	});
+	$("#delete_help_opener").click(function() {
+		$("#delete_help_dialog").dialog("open");
+		return false;
+	});
 });
 </script>
 
-<div id="accordion">
-	<div>
-		<h1><a href="#">Create Rule</a></h1>
-		<div>
-			<form name="create" id="create" method="POST" action="">
-				<!-- Start Date/Time -->
-				<label for="create_start_datepicker">Start Date</label>
-				<input type="text" name="create_start_datepicker" id="create_start_datepicker"/>
-				<input type="hidden" name="create_start_date" id="create_start_date"/>
-				<label for="create_start_hour">Start Time</label>
-				<select name="create_start_hour" id="create_start_hour">
-					<optgroup label="Hour">
-					<?php
-						for($i = 0; $i <= 23; $i++) {
-							echo "<option value=\"$i\">";
-							printf("%02d", $i);
-							echo "</option>";
-						}
-					?>
-					</optgroup>
-				</select>
-				:
-				<select name="create_start_minute" id="create_start_minute">
-					<optgroup label="Minute">
-					<?php
-						for($i = 0; $i <= 59; $i++) {
-							echo "<option value=\"$i\">";
-							printf("%02d", $i);
-							echo "</option>";
-						}
-					?>
-					</optgroup>
-				</select>
-				<br/>
+<div id="tabs">
+	<ul>
+		<li><a href="#create_tab">Create Exception</a></li>
+		<li><a href="#delete_tab">Delete Exceptions</a></li>
+	</ul>
 
-				<!-- End Date/Time -->
-				<label for="create_end_datepicker">End Date</label>
-				<input type="text" name="create_end_datepicker" id="create_end_datepicker"/>
-				<input type="hidden" name="create_end_date" id="create_end_date"/>
-				<label for="create_end_hour">End Time</label>
-				<select name="create_end_hour" id="create_end_hour">
-					<optgroup label="Hour">
-					<?php
-						for($i = 0; $i <= 23; $i++) {
-							echo "<option value=\"$i\">";
-							printf("%02d", $i);
-							echo "</option>";
-						}
-					?>
-					</optgroup>
-				</select>
-				:
-				<select name="create_end_minute" id="create_end_minute">
-					<optgroup label="Minute">
-					<?php
-						for($i = 0; $i <= 59; $i++) {
-							echo "<option value=\"$i\">";
-							printf("%02d", $i);
-							echo "</option>";
-						}
-					?>
-					</optgroup>
-				</select>
-				<br/>
+	<div id="create_tab">
+		<form name="create" id="create" method="POST" action="">
+			<!-- Start Date -->
+			<label for="create_start_datepicker" style="width: 120px;"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>Start Date/Time</label>
+			<input type="text" name="create_start_datepicker" id="create_start_datepicker"/>
+			<input type="hidden" name="create_start_date" id="create_start_date"/>
+			<!-- Start Time -->
+			<select name="create_start_hour" id="create_start_hour">
+				<optgroup label="Hour">
+				<?php
+					for($i = 0; $i <= 23; $i++) {
+						echo "<option value=\"$i\">";
+						printf("%02d", $i);
+						echo "</option>";
+					}
+				?>
+				</optgroup>
+			</select>
+			:
+			<select name="create_start_minute" id="create_start_minute">
+				<optgroup label="Minute">
+				<?php
+					for($i = 0; $i <= 59; $i++) {
+						echo "<option value=\"$i\">";
+						printf("%02d", $i);
+						echo "</option>";
+					}
+				?>
+				</optgroup>
+			</select>
+			<br/>
 
-				<!-- Days -->
-				<label for="create_days_checks">Days</label>
-				<div name="create_days_checks" id="create_days_checks">
-					<input type="checkbox" name="create_days[]" id="create_sunday" value="0"/>
-					<label for="create_sunday">Sunday</label>
+			<!-- End Date -->
+			<label for="create_end_datepicker" style="width: 120px;"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>End Date/Time</label>
+			<input type="text" name="create_end_datepicker" id="create_end_datepicker"/>
+			<input type="hidden" name="create_end_date" id="create_end_date"/>
+			<!-- End Time -->
+			<select name="create_end_hour" id="create_end_hour">
+				<optgroup label="Hour">
+				<?php
+					for($i = 0; $i <= 23; $i++) {
+						echo "<option value=\"$i\">";
+						printf("%02d", $i);
+						echo "</option>";
+					}
+				?>
+				</optgroup>
+			</select>
+			:
+			<select name="create_end_minute" id="create_end_minute">
+				<optgroup label="Minute">
+				<?php
+					for($i = 0; $i <= 59; $i++) {
+						echo "<option value=\"$i\">";
+						printf("%02d", $i);
+						echo "</option>";
+					}
+				?>
+				</optgroup>
+			</select>
+			<br/>
 
-					<input type="checkbox" name="create_days[]" id="create_monday" value="1"/>
-					<label for="create_monday">Monday</label>
+			<!-- Pass Types -->
+			<select name="create_passes[]" id="create_passes" multiple="multiple" size="15">
+				<optgroup label="Passes">
+				<?php
+					if(is_array($passes))
+						foreach($passes as $pass)
+							echo "<option value=\"".$pass["id"]."\">".$pass["name"]."</option>\n";
+				?>
+				</optgroup>
+			</select>
 
-					<input type="checkbox" name="create_days[]" id="create_tuesday" value="2"/>
-					<label for="create_tuesday">Tuesday</label>
+			<!-- Parking Lots -->
+			<select name="create_lots[]" id="create_lots" multiple="multiple" size="15">
+				<optgroup label="Parking Lots" id="test">
+				<?php
+					if(is_array($lots))
+						foreach($lots as $lot)
+							echo "<option value=\"".$lot["id"]."\">".$lot["name"]."</option>\n";
+				?>
+				</optgroup>
+			</select>
 
-					<input type="checkbox" name="create_days[]" id="create_wednesday" value="3"/>
-					<label for="create_wednesday">Wednesday</label>
+			<!-- Allownace -->
+			<div id="allowance">
+				<input type="radio" name="allownace" id="disallow" checked="checked" value="0"/>
+				<label for="disallow">Disallow</label>
 
-					<input type="checkbox" name="create_days[]" id="create_thursday" value="4"/>
-					<label for="create_thursday">Thursday</label>
+				<input type="radio" name="allownace" id="allow" value="1"/>
+				<label for="allow">Allow</label>
+			</div>
 
-					<input type="checkbox" name="create_days[]" id="create_friday" value="5"/>
-					<label for="create_friday">Friday</label>
-
-					<input type="checkbox" name="create_days[]" id="create_saturday" value="6"/>
-					<label for="create_saturday">Saturday</label>
-				</div>
-				<br/>
-
-				<!-- Pass Types -->
-				<select name="create_passes[]" id="create_passes" multiple="multiple" size="15">
-					<optgroup label="Passes">
-					<?php
-						if(is_array($passes))
-							foreach($passes as $pass)
-								echo "<option value=\"".$pass["id"]."\">".$pass["name"]."</option>\n";
-					?>
-					</optgroup>
-				</select>
-
-				<!-- Parking Lots -->
-				<select name="create_lots[]" id="create_lots" multiple="multiple" size="15">
-					<optgroup label="Parking Lots" id="test">
-					<?php
-						if(is_array($lots))
-							foreach($lots as $lot)
-								echo "<option value=\"".$lot["id"]."\">".$lot["name"]."</option>\n";
-					?>
-					</optgroup>
-				</select>
-				<input type="hidden" name="action" value="create"/>
-				<p><input type="submit" value="Create Rule"/></p>
-			</form>
+			<input type="hidden" name="action" value="create"/>
+			<p><input type="submit" value="Create Exception"/></p>
+		</form>
+		<a href="#" id="create_help_opener" class="ui-state-default ui-corner-all" style="padding: .4em 1em .4em 20px;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;"></span>Help</a>
+		<div id="create_help_dialog" title="Create Exception Help">
+			<p>Exceptions need only be defined when normal rules must be temporarily overwritten.</p>
+			<p>The <strong>Start Date/Time</strong> determines when the exception becomes active.</p>
+			<p>The <strong>End Date/Time</strong> determines when the exception is no longer needed and normal parking rules will resume.</p>
+			<p>Select <strong>Allow</strong> or <strong>Disallow</strong> to set the type of exception to be applied.</p>
 		</div>
 	</div>
 
-	<div id="nested_accordion">
-		<h1><a href="#">Delete Rules</a></h1>
-		<div>
+	<div id="delete_tab">
+		<div id="nested_accordion">
 			<form name="delete" id="delete" method="POST" action="">
 				<?php
-					if(is_array($lots))
-						foreach($lots as $lot) {
-							echo "<h2 style=\"margin-top:0\"><a href=\"#\">".$lot["name"]."</a></h2>";
-							$rules = $lot["rules"];
-							echo "<div>";
-							if(is_array($rules))
-								foreach($rules as $rule) {
-									echo "<input type=\"checkbox\" name=\"delete_rules[]\" id=\"rule_".$rule["id"]."\" value=\"".$rule["id"]."\"/>";
-									echo "<label for=\"rule_".$rule["id"]."\">".date("F d, Y", strtotime($rule["startDate"]))." - ".date("F d, Y", strtotime($rule["endDate"]))."</label><br/>";
-									$days = explode(",", $rule["days"]);
-									if(is_array($days))
-										foreach($days as $day)
-											echo $dotw[$day]." ";
-									echo "<br/>";
-									echo "From ".$rule["startTime"]." until ".$rule["endTime"]."<br/>";
-									echo $passes[$rule["passTypeId"]]["name"];
-									echo "<br/><br/>";
+				if(is_array($lot_exceptions)) {
+					// If we have exceptions
+					foreach($lot_exceptions as $lot_exception) {
+						if(!empty($lot_exception["exceptions"])) {
+							// If the lot has exceptions
+							echo "\t<h2><a href=\"#\">".$lot_exception["name"]."</a></h2>";
+							echo "\t<div>";
+							echo "\t\t<div class=\"ui-widget\">\n";
+							echo "\t\t\t<div class=\"ui-state-highlight ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
+							echo "\t\t\t\t<p><span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>\n";
+							echo "\t\t\t\t<strong>".$lot_exception["description"]."&nbsp;</strong></p>\n";
+							echo "\t\t\t</div>\n";
+							echo "\t\t</div>\n";
+
+							foreach($lot_exception["exceptions"] as $exception) {
+								echo "<p class=\"ui-state-default ui-corner-all ui-helper-clearfix\" style=\"padding:0px;\">";
+								echo "<span class=\"ui-icon ui-icon-calendar\" style=\"float:left; margin:1.3em 1em;\"></span>";
+								echo date("F d, Y", strtotime($exception["startDate"]))." - ".date("F d, Y", strtotime($exception["endDate"]))."<br/>\n";
+								echo date("H:i A", strtotime($exception["startTime"]))." - ".date("H:i A", strtotime($exception["endTime"]))."<br/>\n";
+								echo "</p>";
+								if(is_array($exception["passTypes"])) {
+									foreach($exception["passTypes"] as $pass) {
+										echo "<input type=\"checkbox\" id=\"delete_pass_".$pass["id"]."_exception_".$pass["exceptionId"]."\" name=\"delete_exceptions[]\" value=\"".$pass["exceptionId"]."\"/>\n";
+										echo "<label for=\"delete_pass_".$pass["id"]."_exception_".$pass["exceptionId"]."\">".$pass["name"]."</label><br/>\n";
+									}
 								}
-							else echo "No rules.\n";
-							echo "</div>\n";
+							}
+							echo "\t</div>";
 						}
+					}
+				}
+				else {
+					echo "<h2><a href=\"#\">No Exceptions</a></h2>\n";
+					echo "<div>No exceptions defined. Normal parking rules apply.</div>\n";
+				}
 				?>
 				<input type="hidden" name="action" value="delete"/>
 				<br/>
-				<input type="submit" value="Delete Rules"/>
+				<input type="submit" value="Delete Exceptions"/>
 			</form>
+			<a href="#" id="delete_help_opener" class="ui-state-default ui-corner-all" style="padding: .4em 1em .4em 20px;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;"></span>Help</a>
+			<div id="delete_help_dialog" title="Delete Exceptions Help">
+				<p>Select a <strong>Parking Lot</strong> to expand it, displaying its exceptions. Exceptions are sorted by <strong>End Date</strong> then <strong>Days</strong>.</p>
+				<p>Select <strong>Passes</strong> to be removed from the rule set. Clicking the <strong>Rule Header</strong> will toggle all pass types within that rule.</p>
+				<p>Collapsing a <strong>Parking Lot</strong> will not clear your selections.</p>
+			</div>
 		</div>
 	</div>
 </div>

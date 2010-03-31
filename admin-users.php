@@ -31,9 +31,15 @@ mysql_query($sql);
 	});
 </script>
 
-<div id="accordion">
-	<h1><a href="#">Promote to Administrator</a></h1>
-	<div>
+<div id="tabs">
+	<ul>
+		<li><a href="#promote_tab">Promote to Administrator</a></li>
+		<li><a href="#demote_tab">Demote from Administrator</a></li>
+		<li><a href="#delete_tab">Delete User</a></li>
+	</ul>
+
+	<!-- Promote Tab -->
+	<div id="promote_tab">
 		<form id="promote" name="promote" method="POST" action="?page=admin-users">
 			<label for="promote_user">E-Mail</label>
 			<input type="text" id="promote_user" name="promote_user"/>
@@ -43,8 +49,8 @@ mysql_query($sql);
 		</form>
 	</div>
 
-	<h1><a href="#">Demote from Administrator</a></h1>
-	<div>
+	<!-- Demote Tab -->
+	<div id="demote_tab">
 		<form id="demote" name="demote" method="POST" action="?page=admin-users">
 			<label for="demote_user">E-Mail</label>
 			<input type="text" id="demote_user" name="demote_user"/>
@@ -54,8 +60,8 @@ mysql_query($sql);
 		</form>
 	</div>
 
-	<h1><a href="#">Delete User</a></h1>
-	<div>
+	<!-- Delete Tab -->
+	<div id="delete_tab">
 		<form id="delete" name="delete" method="POST" action="?page=admin-users">
 			<label for="delete_user">E-Mail</label>
 			<input type="text" id="delete_user" name="delete_user"/>

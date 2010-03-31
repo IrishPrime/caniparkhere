@@ -102,138 +102,137 @@ $(document).ready(function() {
 });
 </script>
 
-<div id="accordion">
-	<div>
-		<h1><a href="#">Create Rule</a></h1>
-		<div>
-			<form name="create" id="create" method="POST" action="">
-				<!-- Start Date -->
-				<label for="create_start_datepicker">Start Date</label>
-				<input type="text" name="create_start_datepicker" id="create_start_datepicker"/>
-				<input type="hidden" name="create_start_date" id="create_start_date"/>
-				<br/>
-				<!-- End Date -->
-				<label for="create_end_datepicker">End Date</label>
-				<input type="text" name="create_end_datepicker" id="create_end_datepicker"/>
-				<input type="hidden" name="create_end_date" id="create_end_date"/>
-				<br/>
+<div id="tabs">
+	<ul>
+		<li><a href="#create_tab">Create Rule</a></li>
+		<li><a href="#delete_tab">Delete Rules</a></li>
+	</ul>
 
-				<!-- Start Time -->
-				<label for="create_start_hour">Start Time</label>
-				<select name="create_start_hour" id="create_start_hour">
-					<optgroup label="Hour">
-					<?php
-						for($i = 0; $i <= 23; $i++) {
-							echo "<option value=\"$i\">";
-							printf("%02d", $i);
-							echo "</option>";
-						}
-					?>
-					</optgroup>
-				</select>
-				:
-				<select name="create_start_minute" id="create_start_minute">
-					<optgroup label="Minute">
-					<?php
-						for($i = 0; $i <= 59; $i++) {
-							echo "<option value=\"$i\">";
-							printf("%02d", $i);
-							echo "</option>";
-						}
-					?>
-					</optgroup>
-				</select>
-				<br/>
-				<!-- End Time -->
-				<label for="create_end_hour">End Time</label>
-				<select name="create_end_hour" id="create_end_hour">
-					<optgroup label="Hour">
-					<?php
-						for($i = 0; $i <= 23; $i++) {
-							echo "<option value=\"$i\">";
-							printf("%02d", $i);
-							echo "</option>";
-						}
-					?>
-					</optgroup>
-				</select>
-				:
-				<select name="create_end_minute" id="create_end_minute">
-					<optgroup label="Minute">
-					<?php
-						for($i = 0; $i <= 59; $i++) {
-							echo "<option value=\"$i\">";
-							printf("%02d", $i);
-							echo "</option>";
-						}
-					?>
-					</optgroup>
-				</select>
-				<br/>
+	<div id="create_tab">
+		<form id="create" method="POST" action="">
+			<!-- Start Date -->
+			<label for="create_start_datepicker"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>Start Date</label>
+			<input type="text" name="create_start_datepicker" id="create_start_datepicker"/>
+			<input type="hidden" name="create_start_date" id="create_start_date"/>
+			<br/>
+			<!-- End Date -->
+			<label for="create_end_datepicker"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>End Date</label>
+			<input type="text" name="create_end_datepicker" id="create_end_datepicker"/>
+			<input type="hidden" name="create_end_date" id="create_end_date"/>
+			<br/>
 
-				<!-- Days -->
-				<label for="create_days_checks">Days</label>
-				<div name="create_days_checks" id="create_days_checks">
-					<input type="checkbox" name="create_days[]" id="create_sunday" value="0"/>
-					<label for="create_sunday">Sunday</label>
+			<!-- Start Time -->
+			<label for="create_start_hour">Start Time</label>
+			<select name="create_start_hour" id="create_start_hour">
+				<optgroup label="Hour">
+				<?php
+					for($i = 0; $i <= 23; $i++) {
+						echo "<option value=\"$i\">";
+						printf("%02d", $i);
+						echo "</option>";
+					}
+				?>
+				</optgroup>
+			</select>
+			:
+			<select name="create_start_minute" id="create_start_minute">
+				<optgroup label="Minute">
+				<?php
+					for($i = 0; $i <= 59; $i++) {
+						echo "<option value=\"$i\">";
+						printf("%02d", $i);
+						echo "</option>";
+					}
+				?>
+				</optgroup>
+			</select>
+			<br/>
+			<!-- End Time -->
+			<label for="create_end_hour">End Time</label>
+			<select name="create_end_hour" id="create_end_hour">
+				<optgroup label="Hour">
+				<?php
+					for($i = 0; $i <= 23; $i++) {
+						echo "<option value=\"$i\">";
+						printf("%02d", $i);
+						echo "</option>";
+					}
+				?>
+				</optgroup>
+			</select>
+			:
+			<select name="create_end_minute" id="create_end_minute">
+				<optgroup label="Minute">
+				<?php
+					for($i = 0; $i <= 59; $i++) {
+						echo "<option value=\"$i\">";
+						printf("%02d", $i);
+						echo "</option>";
+					}
+				?>
+				</optgroup>
+			</select>
+			<br/>
 
-					<input type="checkbox" name="create_days[]" id="create_monday" value="1"/>
-					<label for="create_monday">Monday</label>
+			<!-- Days -->
+			<div name="create_days_checks" id="create_days_checks">
+				<input type="checkbox" name="create_days[]" id="create_sunday" value="0"/>
+				<label for="create_sunday">Sunday</label>
 
-					<input type="checkbox" name="create_days[]" id="create_tuesday" value="2"/>
-					<label for="create_tuesday">Tuesday</label>
+				<input type="checkbox" name="create_days[]" id="create_monday" value="1"/>
+				<label for="create_monday">Monday</label>
 
-					<input type="checkbox" name="create_days[]" id="create_wednesday" value="3"/>
-					<label for="create_wednesday">Wednesday</label>
+				<input type="checkbox" name="create_days[]" id="create_tuesday" value="2"/>
+				<label for="create_tuesday">Tuesday</label>
 
-					<input type="checkbox" name="create_days[]" id="create_thursday" value="4"/>
-					<label for="create_thursday">Thursday</label>
+				<input type="checkbox" name="create_days[]" id="create_wednesday" value="3"/>
+				<label for="create_wednesday">Wednesday</label>
 
-					<input type="checkbox" name="create_days[]" id="create_friday" value="5"/>
-					<label for="create_friday">Friday</label>
+				<input type="checkbox" name="create_days[]" id="create_thursday" value="4"/>
+				<label for="create_thursday">Thursday</label>
 
-					<input type="checkbox" name="create_days[]" id="create_saturday" value="6"/>
-					<label for="create_saturday">Saturday</label>
-				</div>
-				<br/>
+				<input type="checkbox" name="create_days[]" id="create_friday" value="5"/>
+				<label for="create_friday">Friday</label>
 
-				<!-- Pass Types -->
-				<select name="create_passes[]" id="create_passes" multiple="multiple" size="15">
-					<optgroup label="Passes">
-					<?php
-						if(is_array($passes))
-							foreach($passes as $pass)
-								echo "<option value=\"".$pass["id"]."\">".$pass["name"]."</option>\n";
-					?>
-					</optgroup>
-				</select>
-
-				<!-- Parking Lots -->
-				<select name="create_lots[]" id="create_lots" multiple="multiple" size="15">
-					<optgroup label="Parking Lots" id="test">
-					<?php
-						if(is_array($lots))
-							foreach($lots as $lot)
-								echo "<option value=\"".$lot["id"]."\">".$lot["name"]."</option>\n";
-					?>
-					</optgroup>
-				</select>
-				<input type="hidden" name="action" value="create"/>
-				<p><input type="submit" value="Create Rule"/></p>
-			</form>
-			<a href="#" id="create_help_opener" class="ui-state-default ui-corner-all" style="padding: .4em 1em .4em 20px;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;"></span>Help</a>
-			<div id="create_help_dialog" title="Create Rule Help">
-				<p>Rules need only be defined for when people <em>are</em> allowed to park.</p>
-				<p>The <strong>Start Date</strong> and <strong>End Date</strong> determine the range for when the rule is active. Leave the <strong>End Date</strong> blank if you do not wish to set a limit on the rule.</p>
-				<p>The <strong>Start Time</strong> and <strong>End Time</strong> determine the range of times people with the selected <strong>Passes</strong> will be allowed to park in the selected <strong>Parking Lots</strong>.</p>
-				<p>Check all <strong>Days</strong> the rule should apply to.</p>
+				<input type="checkbox" name="create_days[]" id="create_saturday" value="6"/>
+				<label for="create_saturday">Saturday</label>
 			</div>
+
+			<!-- Pass Types -->
+			<select name="create_passes[]" id="create_passes" multiple="multiple" size="15">
+				<optgroup label="Passes">
+				<?php
+					if(is_array($passes))
+						foreach($passes as $pass)
+							echo "<option value=\"".$pass["id"]."\">".$pass["name"]."</option>\n";
+				?>
+				</optgroup>
+			</select>
+
+			<!-- Parking Lots -->
+			<select name="create_lots[]" id="create_lots" multiple="multiple" size="15">
+				<optgroup label="Parking Lots" id="test">
+				<?php
+					if(is_array($lots))
+						foreach($lots as $lot)
+							echo "<option value=\"".$lot["id"]."\">".$lot["name"]."</option>\n";
+				?>
+				</optgroup>
+			</select>
+			<input type="hidden" name="action" value="create"/>
+			<p><input type="submit" value="Create Rule"/></p>
+		</form>
+		<a href="#" id="create_help_opener" class="ui-state-default ui-corner-all" style="padding: .4em 1em .4em 20px;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;"></span>Help</a>
+		<div id="create_help_dialog" title="Create Rule Help">
+			<p>Rules need only be defined for when people <em>are</em> allowed to park.</p>
+			<p>The <strong>Start Date</strong> and <strong>End Date</strong> determine the range for when the rule is active. Leave the <strong>End Date</strong> blank if you do not wish to set a limit on the rule.</p>
+			<p>The <strong>Start Time</strong> and <strong>End Time</strong> determine the range of times people with the selected <strong>Passes</strong> will be allowed to park in the selected <strong>Parking Lots</strong>.</p>
+			<p>Check all <strong>Days</strong> the rule should apply to.</p>
 		</div>
 	</div>
 
-	<div id="nested_accordion">
-		<h1><a href="#">Delete Rules</a></h1>
-		<div>
+	<div id="delete_tab">
+		<div id="nested_accordion">
 			<form name="delete" id="delete" method="POST" action="">
 				<?php
 				if(is_array($lot_rules)) {

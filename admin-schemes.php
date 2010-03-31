@@ -61,9 +61,14 @@ $(function() {
 
 
 
-<div id="accordion">
-	<h1><a href="#">Create Color Scheme</a></h1>
-	<div>
+<div id="tabs">
+	<ul>
+		<li><a href="#create_tab">Create Color Scheme</a></li>
+		<li><a href="#delete_tab">Delete Color Schemes</a></li>
+	</ul>
+
+	<!-- Create Tab -->
+	<div id="create_tab">
 		<form>
 			<p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
 			<span class="ui-icon ui-icon-pencil" style="float:left; margin:-2px 5px 0 0;"></span>
@@ -80,7 +85,7 @@ $(function() {
 		</form>
 	</div>
 
-	<h1><a href="#">Delete Color Schemes</a></h1>
-	<div>
+	<!-- Delete Tab -->
+	<div id="delete_tab">
 	</div>
 </div>

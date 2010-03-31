@@ -1,4 +1,6 @@
 $(document).ready(function() {
+	$("#tabs").tabs({ fx: { opacity: "toggle", duration: "fast" } });
+
 	$("#accordion").accordion({
 		header: "h1",
 		autoHeight: false,

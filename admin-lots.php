@@ -2,7 +2,7 @@
 # Create/delete parking lots/areas.
 require("./auth.php");
 require_once("./_logic.php");
-include("./adminMaps.php");
+// include("./adminMaps.php");
 
 switch($_POST["action"]) {
 	case "create":
@@ -18,13 +18,70 @@ switch($_POST["action"]) {
 $lots = GetLots("name");
 ?>
 
-<div id="accordion">
-	<h1><a href="#">Create Parking Lot</a></h1>
-	<div>
+<script type="text/javascript">
+// map options
+var myOptions = {
+	zoom: <?php echo $globalSettings["mapZoom"]; ?>,
+	center: new google.maps.LatLng(<?php echo $globalSettings["mapCenter"]; ?>),
+	mapTypeId: <?php echo $globalSettings["mapTypeId"]; ?>,
+	navigationControl: true,
+	navigationControlOptions: { style: google.maps.NavigationControlStyle.SMALL },
+	mapTypeControl: true,
+	mapTypeControlOptions: { style: google.maps.MapTypeControlStyle.DROPDOWN_MENU },
+	scaleControl: false
+}
+
+// define icon
+var image = new google.maps.MarkerImage(
+	'<?php echo $globalSettings["markerImage"]; ?>', // URL
+	new google.maps.Size(24, 24), // icon size
+	new google.maps.Point(0,0), // origin for the image is 0,0
+	new google.maps.Point(0, 24) // anchor for the image is base of paw at 0,24
+);
+var shadow = new google.maps.MarkerImage(
+	'<?php echo $globalSettings["markerShadow"]; ?>', // URL
+	new google.maps.Size(37, 34), // icon size
+	new google.maps.Point(0, 0), // origin ?
+	new google.maps.Point(9, 34) // anchor ?
+);
+var shape = {
+	coord: [1, 1, 1, 20, 18, 20, 18 , 1],
+	type: 'poly' 
+}
+
+var createMap;
+var editMap;
+
+function initialize() {
+	createMap = new google.maps.Map(document.getElementById("create_map_canvas"), myOptions);
+	editMap = new google.maps.Map(document.getElementById("edit_map_canvas"), myOptions);
+}
+</script>
+
+<div id="tabs">
+	<ul>
+		<li><a href="#create_edit_tab">Create/Edit Parking Lot</a></li>
+		<li><a href="#delete_tab">Delete Parking Lots</a></li>
+	</ul>
+
+	<!-- Create/Edit Tab -->
+	<div id="create_edit_tab">
 		<form id="create" name="create" method="GET">
 			<label for="lot_name">Lot Name</label>
 			<input id="lot_name" name="lot_name" type="text"/>
-			<div id="create_map_canvas" style="width: 500px; height: 500px;"></div>
+			<select id="lot_list" name="lot_list">
+				<optgroup label="New Lot">
+					<option value="">Create New Lot</a>
+				</optgroup>
+				<optgroup label="Existing Lots">
+				<?php
+				if(is_array($lots))
+					foreach($lots as $lot)
+						echo "\t\t\t\t<option value=\"".$lot["id"]."\">".$lot["name"]."</option>\n";
+				?>
+				</optgroup>
+			</select>
+			<div id="create_map_canvas" style="width: 100%; height: 65%;"></div>
 			<label for="lot_description">Description</label>
 			<textarea id="lot_description" name="lot_description" cols="40"></textarea>
 			<br/>
@@ -34,31 +91,8 @@ $lots = GetLots("name");
 		</form>
 	</div>
 
-	<h1><a href="#">Edit Parking Lot</a></h1>
-	<div>
-		<form id="edit" name="edit" method="GET">
-			<label for="lot_list">Lot Name</label>
-			<select id="lot_list" name="lot_list">
-				<optgroup label="Parking Lots">
-				<?php
-				if(is_array($lots))
-					foreach($lots as $lot)
-						echo "\t\t\t\t<option value=\"".$lot["id"]."\">".$lot["name"]."</option>\n";
-				?>
-				</optgroup>
-			</select>
-			<div id="edit_map_canvas" style="width: 500px; height: 500px;"></div>
-			<label for="lot_description">Description</label>
-			<textarea id="lot_description" name="lot_description" cols="40"></textarea>
-			<br/>
-			<input type="file" name="edit_photo" size="55">
-			<input type="hidden" name="action" value="edit"/>
-			<p><input type="submit" value="Edit Parking Lot"/></p>
-		</form>
-	</div>
-
-	<h1><a href="#">Delete Parking Lots</a></h1>
-	<div>
+	<!-- Delete Tab -->
+	<div id="delete_tab">
 		<form id="delete" name="delete" method="GET">
 			<?php
 			if(is_array($lots))
@@ -73,6 +107,5 @@ $lots = GetLots("name");
 </div>
 
 <script type="text/javascript">
-		initialize();
+	$(document).ready(initialize());
 </script>
-

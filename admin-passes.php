@@ -21,9 +21,14 @@ switch($_POST["action"]) {
 $passes = GetPassTypes("name");
 ?>
 
-<div id="accordion">
-	<h1><a href="#">Create Pass Type</a></h1>
-	<div>
+<div id="tabs">
+	<ul>
+		<li><a href="#create_tab">Create Pass Type</a></li>
+		<li><a href="#edit_tab">Edit Pass Type</a></li>
+		<li><a href="#delete_tab">Delete Pass Type</a></li>
+	</ul>
+
+	<div id="create_tab">
 		<form id="create" name="create" method="POST" action="">
 			<label for="create_pass">Pass Type</label>
 			<input id="create_pass" name="create_pass" type="text"/>
@@ -33,8 +38,7 @@ $passes = GetPassTypes("name");
 		</form>
 	</div>
 
-	<h1><a href="#">Edit Pass Type</a></h1>
-	<div>
+	<div id="edit_tab">
 		<form id="edit" name="edit" method="POST" action="">
 			<label for="edit_select">Select Pass</label>
 			<select id="edit_select" name="edit_select">
@@ -55,8 +59,7 @@ $passes = GetPassTypes("name");
 		</form>
 	</div>
 
-	<h1><a href="#">Delete Pass Type</a></h1>
-	<div>
+	<div id="delete_tab">
 		<form id="delete" name="delete" method="POST" action="">
 			<select id="delete_passes" name="delete_passes[]" multiple="multiple" size="15">
 				<optgroup label="Passes">

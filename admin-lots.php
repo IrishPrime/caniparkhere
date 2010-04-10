@@ -85,6 +85,16 @@ function initialize() {
 			<label for="lot_description">Description</label>
 			<textarea id="lot_description" name="lot_description" cols="40"></textarea>
 			<br/>
+			<label for="lot_scheme">Color Scheme</label>
+			<select id="lot_scheme" name="lot_scheme">
+				<optgroup label="Color Schemes">
+				<?php
+					foreach($schemes as $scheme) {
+						echo "<option value=\"".$scheme["id"]."\">".$scheme["name"]."</option>\n";
+					}
+				?>
+				</optgroup>
+			</select>
 			<input type="hidden" name="action" value="create"/>
 			<p><input type="submit" value="Create Parking Lot"/></p>
 		</form>

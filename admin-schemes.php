@@ -85,6 +85,7 @@ while($row = mysql_fetch_assoc($result)) {
 			hex = hexFromRGB(red, green, blue);
 
 		$("#swatch").css("background-color", "#" + hex);
+		$("#create_line_color").val("#" + hex);
 	}
 
 	$(function() {
@@ -111,8 +112,18 @@ while($row = mysql_fetch_assoc($result)) {
 	<!-- Create Tab -->
 	<div id="create_tab">
 		<form id="create_scheme" name="create_scheme">
-			<label for="create_name"><span class="ui-icon ui-icon-pencil" style="float: right; margin-right: .3em;"></span>Scheme Name</label>
-			<input type="text" name="create_name"/>
+			<label for="create_name">Scheme Name</label>
+			<input type="text" name="create_name"/><br/>
+
+			<label for="create_line_width">Line Width</label>
+			<input type="text" name="create_line_width" value="10"/><br/>
+
+			<label for="create_line_opacity">Line Opacity</label>
+			<input type="text" name="create_line_opacity" value="0.8"/><br/>
+
+			<label for="create_fill_opacity">Fill Opacity</label>
+			<input type="text" name="create_fill_opacity" value="0.3"/><br/>
+
 			<p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
 			<span class="ui-icon ui-icon-gear" style="float:left; margin:0 5px 0 0;"></span>
 			Colorpicker</p>
@@ -122,6 +133,7 @@ while($row = mysql_fetch_assoc($result)) {
 			<div id="blue"></div>
 
 			<div id="swatch" class="ui-widget-content ui-corner-all"></div>
+			<input type="hidden" name="create_line_color" id="create_line_color"/>
 
 			<input type="hidden" name="action" value="create"/><br/>
 			<p><input type="submit" value="Create Color Scheme"/></p>

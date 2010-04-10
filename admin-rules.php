@@ -90,16 +90,17 @@ $(document).ready(function() {
 		<li><a href="#delete_tab">Delete Rules</a></li>
 	</ul>
 
+	<!-- Create Tab -->
 	<div id="create_tab">
 		<form id="create" method="POST" action="">
 			<!-- Start Date -->
 			<label for="create_start_datepicker"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>Start Date</label>
-			<input type="text" name="create_start_datepicker" id="create_start_datepicker" value="<?php echo date("m-d-Y"); ?>"/>
+			<input type="text" name="create_start_datepicker" id="create_start_datepicker"/>
 			<input type="hidden" name="create_start_date" id="create_start_date"/>
 			<br/>
 			<!-- End Date -->
 			<label for="create_end_datepicker"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>End Date</label>
-			<input type="text" name="create_end_datepicker" id="create_end_datepicker" value="<?php echo date("m-d-Y"); ?>"/>
+			<input type="text" name="create_end_datepicker" id="create_end_datepicker"/>
 			<input type="hidden" name="create_end_date" id="create_end_date"/>
 			<br/>
 
@@ -213,6 +214,7 @@ $(document).ready(function() {
 		</div>
 	</div>
 
+	<!-- Delete Tab -->
 	<div id="delete_tab">
 		<div id="nested_accordion">
 			<form name="delete" id="delete" method="POST" action="">
@@ -225,9 +227,8 @@ $(document).ready(function() {
 							echo "\t<h2><a href=\"#\">".$lot_rule["name"]."</a></h2>";
 							echo "\t<div>";
 							echo "\t\t<div class=\"ui-widget\">\n";
-							echo "\t\t\t<div class=\"ui-state-highlight ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
-							echo "\t\t\t\t<p><span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>\n";
-							echo "\t\t\t\t<strong>".$lot_rule["description"]."&nbsp;</strong></p>\n";
+							echo "\t\t\t$ui_info";
+							echo "\t\t\t\t<strong>".$lot_rule["description"]."&nbsp;</strong>\n";
 							echo "\t\t\t</div>\n";
 							echo "\t\t</div>\n";
 

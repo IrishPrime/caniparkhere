@@ -7,27 +7,39 @@ require_once("./_settings.php");
 switch($_POST["action"]) {
 	case "promote":
 		$sql = "UPDATE users SET admin=1 WHERE email='".$_POST["promote_user"]."'";
-		echo $_POST["promote_user"]." promoted to administrator.";
+		echo "<div class=\"ui-widget\">\n";
+		if(mysql_query($sql)) {
+			printf("%sPromoted User: <strong>%s</strong>\n\t</div>\n</div>\n", $ui_info, $_POST["promote_user"]);
+		} else {
+			printf("%sFailed to Promote User: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n</div>\n", $ui_alert, $_POST["promote_user"]);
+		}
 		break;
 	case "demote":
 		$sql = "UPDATE users SET admin=0 WHERE email = '".$_POST["demote_user"]."'";
-		echo $_POST["demote_user"]." demoted from administrator.";
+		echo "<div class=\"ui-widget\">\n";
+		if(mysql_query($sql)) {
+			printf("%sDemoted User: <strong>%s</strong>\n\t</div>\n</div>\n", $ui_info, $_POST["demote_user"]);
+		} else {
+			printf("%sFailed to Demote User: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n</div>\n", $ui_alert, $_POST["demote_user"]);
+		}
 		break;
 	case "delete":
 		$sql = "DELETE from users WHERE email = '".$_POST["delete_user"]."'";
+		echo "<div class=\"ui-widget\">\n";
+		if(mysql_query($sql)) {
+			printf("%sDemoted User: <strong>%s</strong>\n\t</div>\n</div>\n", $ui_info, $_POST["demote_user"]);
+		} else {
+			printf("%sFailed to Demote User: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n</div>\n", $ui_alert, $_POST["demote_user"]);
+		}
 		echo $_POST["delete_user"]." deleted.";
 		break;
 	default:
 		break;
 }
 
-mysql_query($sql);
-
 $admin_query = "SELECT id, email, firstName, lastName FROM users WHERE admin = '1'";
 $admin_results = mysql_query($admin_query);
-$admins = array();
 while($row = mysql_fetch_assoc($admin_results))
-	// $admins[$row["id"]] = stripslashes($row["lastName"].", ".$row["firstName"]." (".$row["email"].")");
 	$admins[$row["id"]] = stripslashes($row["email"]);
 ?>
 

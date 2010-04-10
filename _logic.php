@@ -294,10 +294,10 @@ class data {
 	}
 
 	public function get_lots($ids, $sortColumn) {
-		$sql = "select * from lots";
-		if ($ids != null) $sql .= " where id in (" . $ids . ")";
+		$sql = "SELECT * FROM lots";
+		if ($ids != null) $sql .= " WHERE id in (" . $ids . ")";
 		if ($sortColumn == null) $sortColumn = "name";
-		$sql .= " order by " . $sortColumn . " asc";
+		$sql .= " ORDER BY " . $sortColumn . " ASC";
 
 		$result = mysql_query($sql);
 		if (!$result) die("MySQL error: get_lots($ids)");
@@ -371,9 +371,9 @@ class data {
 		else return $this->create_rulesByLots($lots, $times, $result); 
 	}
 	public function get_exceptionsByLots($ids) {
-		$sql = "select * from exceptions";
-		if ($ids != null) $sql .= " where lot in (" . $ids . ")";
-		$sql .= " order by end desc";
+		$sql = "SELECT * FROM exceptions";
+		if ($ids != null) $sql .= " WHERE lot IN (" . $ids . ")";
+		$sql .= " ORDER BY end DESC";
 
 		$result = mysql_query($sql);
 		if (!$result) die("MySQL error: get_exceptionsByLots($ids)");
@@ -388,11 +388,11 @@ class data {
 		else return $this->create_settings($result);
 	}
 	public function get_scheme($id) {
-		$sql = "select * from schemes";
+		$sql = "SELECT * FROM schemes";
 		if ($id != null) $sql .= " where id in (" . $id . ")";
-		$sql .= " order by id";
+		$sql .= " ORDER BY id";
 		$result = mysql_query($sql);
-		if (!result) die ("MySQL error: get_schemes($ids)");
+		if (!$result) die ("MySQL error: get_schemes($id)");
 		else return $this->create_scheme($result);
 	}
 
@@ -414,9 +414,9 @@ class data {
 		else return false;
 	}
 	public function insert_passType($name) {
-		$sql = "insert into passTypes "
+		$sql = "INSERT INTO passTypes "
 			.	"(name) "
-			. "values ("
+			. "VALUES ("
 			. $this->addSingleQuotes($name) . ")";
 		$result = mysql_query($sql);
 
@@ -455,9 +455,9 @@ class data {
 	}
 
 	public function update_passType($id, $name) {
-		$sql = "update passTypes set name = "
+		$sql = "UPDATE passTypes SET name = "
 			. $this->addSingleQuotes($name)
-			. " where id = $id";
+			. " WHERE id = $id";
 		return mysql_query($sql);
 	}
 
@@ -466,7 +466,7 @@ class data {
 		return mysql_query($sql);
 	}
 	public function delete_passType($ids) {
-		$sql = "delete from passTypes where id in (" . $ids . ")";
+		$sql = "DELETE FROM passTypes WHERE id IN (" . $ids . ")";
 		return mysql_query($sql);
 	}
 	public function delete_rule($ids) {

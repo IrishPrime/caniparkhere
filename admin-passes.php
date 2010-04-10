@@ -6,13 +6,34 @@ require_once("./_logic.php");
 
 switch($_POST["action"]) {
 	case "create":
-		CreatePassType($_POST["create_pass"]);
+		$passID = @CreatePassType($_POST["create_pass"]);
+
+		echo "<div class=\"ui-widget\">\n";
+		if($passID > 0) {
+			printf("%sCreated Pass: <strong>%s</strong>\n\t</div>\n</div>\n", $ui_info, $_POST["create_pass"]);
+		} else {
+			printf("%sFailed to create pass: <strong>%s</strong>\n\t</div>\n</div>\n", $ui_alert, $_POST["create_pass"]);
+		}
 		break;
 	case "edit":
-		RenamePassType($_POST["edit_select"], $_POST["edit_pass"]);
+		$result = @RenamePassType($_POST["edit_select"], $_POST["edit_pass"]);
+
+		echo "<div class=\"ui-widget\">\n";
+		if($result) {
+			printf("%sRenamed Pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n</div>\n", $ui_info, $_POST["edit_select"], $_POST["edit_pass"]);
+		} else {
+			printf("%sFailed to rename pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n</div>\n", $ui_alert, $_POST["edit_select"], $_POST["edit_pass"]);
+		}
 		break;
 	case "delete":
-		DeletePassTypes($_POST["delete_passes"]);
+		$result = @DeletePassTypes($_POST["delete_passes"]);
+
+		echo "<div class=\"ui-widget\">\n";
+		if($result) {
+			printf("%sDeleted Passes: <strong>%d</strong>\n\t</div>\n</div>\n", $ui_info, count($_POST["delete_passes"]));
+		} else {
+			printf("%sFailed to delete passes: <strong>%d</strong>\n\t</div>\n</div>\n", $ui_alert, count($_POST["delete_passes"]));
+		}
 		break;
 	default:
 		break;

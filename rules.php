@@ -22,9 +22,8 @@ if(is_array($lots)) {
 			echo "\t<h1><a href=\"#\">".$lot["name"]."</a></h1>";
 			echo "\t<div>";
 			echo "\t\t<div class=\"ui-widget\">\n";
-			echo "\t\t\t<div class=\"ui-state-highlight ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
-			echo "\t\t\t\t<p><span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>\n";
-			echo "\t\t\t\t<strong>".$lot["description"]."&nbsp;</strong></p>\n";
+			echo "\t\t\t$ui_info";
+			echo "\t\t\t\t<strong>".$lot["description"]."&nbsp;</strong>\n";
 			echo "\t\t\t</div>\n";
 			echo "\t\t</div>\n";
 

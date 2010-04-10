@@ -14,7 +14,7 @@ var myOptions = {
 	mapTypeControl: true,
 	mapTypeControlOptions: { style: google.maps.MapTypeControlStyle.DROPDOWN_MENU },
 	scaleControl: false,
-	mapTypeId: google.maps.MapTypeId.ROADMAP
+	mapTypeId: google.maps.MapTypeId.HYBRID
 }
 
 function initialize() {

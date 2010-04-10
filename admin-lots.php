@@ -85,7 +85,6 @@ function initialize() {
 			<label for="lot_description">Description</label>
 			<textarea id="lot_description" name="lot_description" cols="40"></textarea>
 			<br/>
-			<input type="file" name="create_photo" size="55">
 			<input type="hidden" name="action" value="create"/>
 			<p><input type="submit" value="Create Parking Lot"/></p>
 		</form>

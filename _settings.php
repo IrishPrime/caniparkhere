@@ -40,4 +40,8 @@ $title = array(
 	"wcip" => "Where Can I Park?",
 	"wdip" => "Where Did I Park?",
 );
+
+// UI Elements
+$ui_info = "\t<div class=\"ui-state-highlight ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n\t\t<span class=\"ui-icon ui-icon-info\" style=\"float: left; margin: .1em .3em 0 0;\"></span>\n";
+$ui_alert = "\t<div class=\"ui-state-error ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n\t\t<span class=\"ui-icon ui-icon-alert\" style=\"float: left; margin: .1em .3em 0 0;\"></span>\n";
 ?>

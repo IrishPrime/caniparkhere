@@ -10,38 +10,20 @@ switch($_POST["action"]) {
 		$endDate = $_POST["create_end_date"];
 		$startTime = $_POST["create_start_hour"] . ":" . $_POST["create_start_minute"] . ":00";
 		$endTime = $_POST["create_end_hour"] . ":" . $_POST["create_end_minute"] . ":00";
-		$newRuleIds = CreateRules($_POST["create_lots"], $_POST["create_passes"],
+		$newRuleIds = @CreateRules($_POST["create_lots"], $_POST["create_passes"],
 			(string)$startDate, (string)$endDate, (string)$startTime, (string)$endTime,
 			implode($_POST["create_days"], ","));
 
 		echo "<div class=\"ui-widget\">\n";
-		if($newRuleIds != null) {
-			echo "\t<div class=\"ui-state-highlight ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
-			echo "\t\t<p><span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>\n";
-		}
-		else {
-			echo "\t<div class=\"ui-state-error ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
-			echo "\t\t<p><span class=\"ui-icon ui-icon-alert\" style=\"float: left; margin-right: .3em;\"></span>\n";
-		}
-		echo "\t\tRules Created: <strong>".count($newRuleIds)."</strong></p>\n";
-		echo "\t</div>\n";
-		echo "</div>\n";
+		echo ($newRuleIds != null) ? $ui_info : $ui_alert;
+		echo "\t\tRules Created: <strong>".count($newRuleIds)."</strong>\n\t</div>\n</div>\n";
 		break;
 	case "delete":
 		$results = @DeleteRules($_POST["delete_rules"]);
 
 		echo "<div class=\"ui-widget\">\n";
-		if($results) {
-			echo "\t<div class=\"ui-state-highlight ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
-			echo "\t\t<p><span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>\n";
-		}
-		else {
-			echo "\t<div class=\"ui-state-error ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
-			echo "\t\t<p><span class=\"ui-icon ui-icon-alert\" style=\"float: left; margin-right: .3em;\"></span>\n";
-		}
-		echo "\t\tRules Deleted: <strong>".count($_POST["delete_rules"])."</strong></p>\n";
-		echo "\t</div>\n";
-		echo "</div>\n";
+		echo $results ? $ui_info : $ui_alert;
+		echo "\t\tRules Deleted: <strong>".count($_POST["delete_rules"])."</strong>\n\t</div>\n</div>\n";
 		break;
 	default:
 		break;
@@ -112,12 +94,12 @@ $(document).ready(function() {
 		<form id="create" method="POST" action="">
 			<!-- Start Date -->
 			<label for="create_start_datepicker"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>Start Date</label>
-			<input type="text" name="create_start_datepicker" id="create_start_datepicker"/>
+			<input type="text" name="create_start_datepicker" id="create_start_datepicker" value="<?php echo date("m-d-Y"); ?>"/>
 			<input type="hidden" name="create_start_date" id="create_start_date"/>
 			<br/>
 			<!-- End Date -->
 			<label for="create_end_datepicker"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>End Date</label>
-			<input type="text" name="create_end_datepicker" id="create_end_datepicker"/>
+			<input type="text" name="create_end_datepicker" id="create_end_datepicker" value="<?php echo date("m-d-Y"); ?>"/>
 			<input type="hidden" name="create_end_date" id="create_end_date"/>
 			<br/>
 

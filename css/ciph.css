@@ -96,6 +96,7 @@
 
 body {
 	/* background: transparent url("./images/compass_bg.jpg") fixed right bottom no-repeat; */
+	font-family: sans-serif;
 	margin: 0px;
 }
 
@@ -121,9 +122,4 @@ legend {
 
 textarea {
 	margin-bottom: 5px;
-}
-
-.column {
-	float: left;
-	padding: 0px 20px;
 }

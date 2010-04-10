@@ -6,38 +6,21 @@ require_once("./_logic.php");
 
 switch($_POST["action"]) {
 	case "create":
+		debug($_POST);
 		$start = $_POST["create_start_date"]." ".$_POST["create_start_hour"].":".$_POST["create_start_minute"].":00";
 		$end = $_POST["create_end_date"]." ".$_POST["create_end_hour"].":".$_POST["create_end_minute"].":00";
-		$newExceptionIds = CreateException($_POST["create_lots"], $_POST["create_passes"], (string)$start, (string)$end, $_POST["allow"]);
+		$newExceptions = @CreateExceptions($_POST["create_lots"], $_POST["create_passes"], $start, $end, $_POST["allowance"]);
 
 		echo "<div class=\"ui-widget\">\n";
-		if($newExceptionIds != null) {
-			echo "\t<div class=\"ui-state-highlight ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
-			echo "\t\t<p><span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>\n";
-		}
-		else {
-			echo "\t<div class=\"ui-state-error ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
-			echo "\t\t<p><span class=\"ui-icon ui-icon-alert\" style=\"float: left; margin-right: .3em;\"></span>\n";
-		}
-		echo "\t\tExceptions Created: <strong>".count($newExceptionIds)."</strong></p>\n";
-		echo "\t</div>\n";
-		echo "</div>\n";
+		echo count($newExceptions) > 0 ? $ui_info : $ui_alert;
+		echo "\t\tExceptions Created: <strong>".count($newExceptions)."</strong>\n\t</div>\n</div>\n";
 		break;
 	case "delete":
 		$results = @DeleteExceptions($_POST["delete_exceptions"]);
 
 		echo "<div class=\"ui-widget\">\n";
-		if($results) {
-			echo "\t<div class=\"ui-state-highlight ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
-			echo "\t\t<p><span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>\n";
-		}
-		else {
-			echo "\t<div class=\"ui-state-error ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
-			echo "\t\t<p><span class=\"ui-icon ui-icon-alert\" style=\"float: left; margin-right: .3em;\"></span>\n";
-		}
-		echo "\t\tExceptions Deleted: <strong>".count($_POST["delete_exceptions"])."</strong></p>\n";
-		echo "\t</div>\n";
-		echo "</div>\n";
+		echo $results ? $ui_info : $ui_alert;
+		echo "\t\tExceptions Deleted: <strong>".count($_POST["delete_exceptions"])."</strong>\n\t</div>\n</div>\n";
 		break;
 	default:
 		break;
@@ -45,7 +28,6 @@ switch($_POST["action"]) {
 
 $passes = GetPassTypes("name");
 $lots = GetLots("name");
-// $lot_exceptions = GetExceptionsByLot(null);
 ?>
 
 <script type="text/javascript">
@@ -114,11 +96,7 @@ $(document).ready(function() {
 			<select name="create_start_hour" id="create_start_hour">
 				<optgroup label="Hour">
 				<?php
-					for($i = 0; $i <= 23; $i++) {
-						echo "<option value=\"$i\">";
-						printf("%02d", $i);
-						echo "</option>";
-					}
+					for($i = 0; $i <= 23; $i++) printf("<option value=\"%02d\">%02d</option>\n", $i, $i);
 				?>
 				</optgroup>
 			</select>
@@ -126,11 +104,7 @@ $(document).ready(function() {
 			<select name="create_start_minute" id="create_start_minute">
 				<optgroup label="Minute">
 				<?php
-					for($i = 0; $i <= 59; $i++) {
-						echo "<option value=\"$i\">";
-						printf("%02d", $i);
-						echo "</option>";
-					}
+					for($i = 0; $i <= 59; $i++) printf("<option value=\"%02d\">%02d</option>\n", $i, $i);
 				?>
 				</optgroup>
 			</select>
@@ -144,11 +118,7 @@ $(document).ready(function() {
 			<select name="create_end_hour" id="create_end_hour">
 				<optgroup label="Hour">
 				<?php
-					for($i = 0; $i <= 23; $i++) {
-						echo "<option value=\"$i\">";
-						printf("%02d", $i);
-						echo "</option>";
-					}
+					for($i = 0; $i <= 23; $i++) printf("<option value=\"%02d\">%02d</option>\n", $i, $i);
 				?>
 				</optgroup>
 			</select>
@@ -156,11 +126,7 @@ $(document).ready(function() {
 			<select name="create_end_minute" id="create_end_minute">
 				<optgroup label="Minute">
 				<?php
-					for($i = 0; $i <= 59; $i++) {
-						echo "<option value=\"$i\">";
-						printf("%02d", $i);
-						echo "</option>";
-					}
+					for($i = 0; $i <= 59; $i++) printf("<option value=\"%02d\">%02d</option>\n", $i, $i);
 				?>
 				</optgroup>
 			</select>
@@ -190,10 +156,10 @@ $(document).ready(function() {
 
 			<!-- Allownace -->
 			<div id="allowance">
-				<input type="radio" name="allownace" id="disallow" checked="checked" value="0"/>
+				<input type="radio" name="allowance" id="disallow" checked="checked" value="0"/>
 				<label for="disallow">Disallow</label>
 
-				<input type="radio" name="allownace" id="allow" value="1"/>
+				<input type="radio" name="allowance" id="allow" value="1"/>
 				<label for="allow">Allow</label>
 			</div>
 

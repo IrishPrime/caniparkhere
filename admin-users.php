@@ -18,16 +18,23 @@ switch($_POST["action"]) {
 		echo $_POST["delete_user"]." deleted.";
 		break;
 	default:
-		$sql = "SELECT id, email, firstName, lastName FROM users WHERE admin = '1'";
 		break;
 }
 
 mysql_query($sql);
+
+$admin_query = "SELECT id, email, firstName, lastName FROM users WHERE admin = '1'";
+$admin_results = mysql_query($admin_query);
+$admins = array();
+while($row = mysql_fetch_assoc($admin_results))
+	// $admins[$row["id"]] = stripslashes($row["lastName"].", ".$row["firstName"]." (".$row["email"].")");
+	$admins[$row["id"]] = stripslashes($row["email"]);
 ?>
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		$("#demote_user").autocomplete();
+		var admins = ["<?php echo implode("\", \"", $admins); ?>"];
+		$("#demote_user").autocomplete({source: admins});
 	});
 </script>
 

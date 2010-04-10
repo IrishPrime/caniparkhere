@@ -14,7 +14,7 @@
 <head>
 	<title>Can I Park Here? - <?php echo $title[$page]; ?></title>
 	<meta http-equiv="X-UA-Compatible" content="IE=8"/>
-	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 	<style type="text/css">@import url("./css/ciph.css");</style>
 	<style type="text/css">@import url("./css/jquery-ui-1.8.custom.css");</style>
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
@@ -26,8 +26,7 @@
 
 <body>
 <!-- Header -->
-<div id="header">
-</div>
+<div id="header"></div>
 
 <!-- Menu -->
 <div id="menu">
@@ -49,11 +48,11 @@
 
 <!-- Footer -->
 <div id="footer">
-	<small>&copy; Michael O'Neill &amp; Matthew Burkhard 2010</small><br />
-	<img src="./images/php-power-micro2.png" alt="PHP" border="0" />
-	<img src="./images/MySQL.gif" alt="MySQL" border="0" />
-	<img src="./images/Google-Maps.gif" alt="Google Maps" border="0" />
-	<img src="./images/ui-jquery.png" alt="jQuery UI" border="0" />
+	<small>&copy; Michael O'Neill &amp; Matthew Burkhard 2010</small><br/>
+	<img src="./images/php-power-micro2.png" alt="PHP" border="0"/>
+	<img src="./images/MySQL.gif" alt="MySQL" border="0"/>
+	<img src="./images/Google-Maps.gif" alt="Google Maps" border="0"/>
+	<img src="./images/ui-jquery.png" alt="jQuery UI" border="0"/>
 </div>
 </body>
 </html>

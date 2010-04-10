@@ -49,9 +49,14 @@ function check_form(form) {
 }
 </script>
 
-<div id="accordion">
-	<h1><a href="#">Edit Profile</a></h1>
-	<div>
+<div id="tabs">
+	<ul>
+		<li><a href="#edit_tab">Edit Profile</a></li>
+		<li><a href="#delete_tab">Delete Account</a></li>
+	</ul>
+
+	<!-- Edit Tab -->
+	<div id="edit_tab">
 		<form name="user_edit" id="user_edit" method="POST" action="?page=user-profile" onSubmit="return check_form(this)">
 			<label for="edit_fname">First Name</label>
 			<input id="edit_fname" name="edit_fname" type="text" value="<?php echo stripslashes($row["firstName"]); ?>"/><br/>
@@ -85,8 +90,8 @@ function check_form(form) {
 		</form>
 	</div>
 
-	<h1><a href="#">Delete Account</a></h1>
-	<div>
+	<!-- Delete Tab -->
+	<div id="delete_tab">
 		<form name="user_delete" id="user_edit" method="POST" action="?page=user-profile">
 			<label for="delete_password">Password</label>
 			<input type="password" name="delete_password" id="delete_password" value=""/>

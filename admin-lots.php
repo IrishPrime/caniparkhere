@@ -16,9 +16,14 @@ switch($_POST["action"]) {
 }
 
 $lots = GetLots("name");
+$schemes = GetSchemes(null);
 ?>
 
+<script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
 <script type="text/javascript">
+	$(document).ready(function() {
+		$("#create_form").validate();
+	});
 // map options
 var myOptions = {
 	zoom: <?php echo $globalSettings["mapZoom"]; ?>,
@@ -66,9 +71,9 @@ function initialize() {
 
 	<!-- Create/Edit Tab -->
 	<div id="create_edit_tab">
-		<form id="create" name="create" method="GET">
+		<form id="create_form" name="create" method="POST" action="">
 			<label for="lot_name">Lot Name</label>
-			<input id="lot_name" name="lot_name" type="text"/>
+			<input id="lot_name" name="lot_name" type="text" class="required" minlength="1"/>
 			<select id="lot_list" name="lot_list">
 				<optgroup label="New Lot">
 					<option value="">Create New Lot</a>
@@ -116,5 +121,5 @@ function initialize() {
 </div>
 
 <script type="text/javascript">
-	$(document).ready(initialize());
+	initialize();
 </script>

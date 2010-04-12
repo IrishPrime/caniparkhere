@@ -30,8 +30,11 @@ $passes = GetPassTypes("name");
 $lots = GetLots("name");
 ?>
 
+<script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
+	$("#create_form").validate();
+
 	$("#create_start_datepicker").datepicker({
 		dateFormat: "mm-dd-yy",
 		altField: "#create_start_date",
@@ -87,10 +90,10 @@ $(document).ready(function() {
 	</ul>
 
 	<div id="create_tab">
-		<form name="create" id="create" method="POST" action="">
+		<form name="create" id="create_form" method="POST" action="">
 			<!-- Start Date -->
 			<label for="create_start_datepicker" style="width: 120px;"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>Start Date/Time</label>
-			<input type="text" name="create_start_datepicker" id="create_start_datepicker"/>
+			<input type="text" name="create_start_datepicker" id="create_start_datepicker" class="required"/>
 			<input type="hidden" name="create_start_date" id="create_start_date"/>
 			<!-- Start Time -->
 			<select name="create_start_hour" id="create_start_hour">
@@ -112,7 +115,7 @@ $(document).ready(function() {
 
 			<!-- End Date -->
 			<label for="create_end_datepicker" style="width: 120px;"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>End Date/Time</label>
-			<input type="text" name="create_end_datepicker" id="create_end_datepicker"/>
+			<input type="text" name="create_end_datepicker" id="create_end_datepicker" class="required"/>
 			<input type="hidden" name="create_end_date" id="create_end_date"/>
 			<!-- End Time -->
 			<select name="create_end_hour" id="create_end_hour">
@@ -133,7 +136,7 @@ $(document).ready(function() {
 			<br/>
 
 			<!-- Pass Types -->
-			<select name="create_passes[]" id="create_passes" multiple="multiple" size="15">
+			<select name="create_passes[]" id="create_passes" multiple="multiple" size="15" class="required">
 				<optgroup label="Passes">
 				<?php
 					if(is_array($passes))
@@ -144,7 +147,7 @@ $(document).ready(function() {
 			</select>
 
 			<!-- Parking Lots -->
-			<select name="create_lots[]" id="create_lots" multiple="multiple" size="15">
+			<select name="create_lots[]" id="create_lots" multiple="multiple" size="15" class="required">
 				<optgroup label="Parking Lots" id="test">
 				<?php
 					if(is_array($lots))

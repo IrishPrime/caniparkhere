@@ -113,7 +113,14 @@ label {
 	display: inline-block;
 	margin-bottom: 5px;
 	vertical-align: top;
-	min-width: 110px;
+	min-width: 10em;
+}
+
+label.error {
+	float: none;
+	color: #FF0000;
+	padding-left: .5em;
+	vertical-align: top;
 }
 
 legend {

@@ -27,11 +27,10 @@ switch($_POST["action"]) {
 		$sql = "DELETE from users WHERE email = '".$_POST["delete_user"]."'";
 		echo "<div class=\"ui-widget\">\n";
 		if(mysql_query($sql)) {
-			printf("%sDemoted User: <strong>%s</strong>\n\t</div>\n</div>\n", $ui_info, $_POST["demote_user"]);
+			printf("%sDeleted User: <strong>%s</strong>\n\t</div>\n</div>\n", $ui_info, $_POST["demote_user"]);
 		} else {
-			printf("%sFailed to Demote User: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n</div>\n", $ui_alert, $_POST["demote_user"]);
+			printf("%sFailed to Delete User: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n</div>\n", $ui_alert, $_POST["demote_user"]);
 		}
-		echo $_POST["delete_user"]." deleted.";
 		break;
 	default:
 		break;

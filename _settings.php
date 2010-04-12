@@ -31,6 +31,7 @@ $title = array(
 	"admin-lots" => "Administration Tools | Parking Lots",
 	"admin-passes" => "Administration Tools | Permit Types",
 	"admin-rules" => "Administration Tools | Rules &amp; Regulations",
+	"admin-schemes" => "Administration Tools | Color Schemes",
 	"admin-users" => "Administration Tools | User Permissions",
 	"ciph" => "Home",
 	"news" => "News &amp; Updates",

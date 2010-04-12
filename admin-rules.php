@@ -34,8 +34,14 @@ $lots = GetLots("name");
 $lot_rules = GetRulesByLot(null);
 ?>
 
+<script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
+	$("#create_form").validate({
+		rules: {
+		},
+	});
+
 	$("#create_start_datepicker").datepicker({
 		dateFormat: "mm-dd-yy",
 		altField: "#create_start_date",
@@ -62,10 +68,10 @@ $(document).ready(function() {
 	});
 	$("#create_help_opener").hover(function() {
 		$(this).toggleClass("ui-state-hover");
+		return false;
 	});
 	$("#create_help_opener").click(function() {
 		$("#create_help_dialog").dialog("open");
-		return false;
 	});
 
 	$("#delete_help_dialog").dialog({
@@ -76,10 +82,10 @@ $(document).ready(function() {
 	});
 	$("#delete_help_opener").hover(function() {
 		$(this).toggleClass("ui-state-hover");
+		return false;
 	});
 	$("#delete_help_opener").click(function() {
 		$("#delete_help_dialog").dialog("open");
-		return false;
 	});
 });
 </script>
@@ -92,15 +98,15 @@ $(document).ready(function() {
 
 	<!-- Create Tab -->
 	<div id="create_tab">
-		<form id="create" method="POST" action="">
+		<form id="create_form" name="create" method="POST" action="">
 			<!-- Start Date -->
 			<label for="create_start_datepicker"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>Start Date</label>
-			<input type="text" name="create_start_datepicker" id="create_start_datepicker"/>
+			<input type="text" name="create_start_datepicker" id="create_start_datepicker" class="required date"/>
 			<input type="hidden" name="create_start_date" id="create_start_date"/>
 			<br/>
 			<!-- End Date -->
 			<label for="create_end_datepicker"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>End Date</label>
-			<input type="text" name="create_end_datepicker" id="create_end_datepicker"/>
+			<input type="text" name="create_end_datepicker" id="create_end_datepicker" class="required date"/>
 			<input type="hidden" name="create_end_date" id="create_end_date"/>
 			<br/>
 
@@ -182,7 +188,7 @@ $(document).ready(function() {
 			</div>
 
 			<!-- Pass Types -->
-			<select name="create_passes[]" id="create_passes" multiple="multiple" size="15">
+			<select name="create_passes[]" id="create_passes" multiple="multiple" size="15" class="required">
 				<optgroup label="Passes">
 				<?php
 					if(is_array($passes))
@@ -193,7 +199,7 @@ $(document).ready(function() {
 			</select>
 
 			<!-- Parking Lots -->
-			<select name="create_lots[]" id="create_lots" multiple="multiple" size="15">
+			<select name="create_lots[]" id="create_lots" multiple="multiple" size="15" class="required">
 				<optgroup label="Parking Lots" id="test">
 				<?php
 					if(is_array($lots))

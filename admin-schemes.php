@@ -1,15 +1,7 @@
 <?php
 # Create/Delete color schemes used by parking lots.
 
-mysql_connect($mysql_server, $mysql_user, $mysql_password);
-mysql_select_db($mysql_db_name);
-
-$sql = "SELECT id, name FROM schemes";
-$result = mysql_query($sql);
-
-while($row = mysql_fetch_assoc($result)) {
-	$schemes[$row["id"]] = $row;
-}
+$schemes = GetSchemes(null);
 ?>
 <style type="text/css">
 	#red, #green, #blue {
@@ -33,8 +25,34 @@ while($row = mysql_fetch_assoc($result)) {
 	#blue .ui-slider-handle { border-color: #729fcf; }
 </style>
 
+<script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
+		$("#create_form").validate({
+			rules: {
+				create_name: {
+					required: true,
+					minlength: 1,
+				},
+				create_line_width: {
+					required: true,
+					range: [1, 30],
+				},
+				create_line_opacity: {
+					required: true,
+					range: [0, 1],
+				},
+				create_fill_opacity: {
+					required: true,
+					range: [0, 1],
+				},
+			}
+		});
+		$("#delete_form").validate({
+			rules: {
+			}
+		});
+
 		$("#create_help_dialog").dialog({
 			autoOpen: false,
 			width: 600,
@@ -111,18 +129,18 @@ while($row = mysql_fetch_assoc($result)) {
 
 	<!-- Create Tab -->
 	<div id="create_tab">
-		<form id="create_scheme" name="create_scheme">
+		<form id="create_form" name="create" method="POST" action="">
 			<label for="create_name">Scheme Name</label>
-			<input type="text" name="create_name"/><br/>
+			<input type="text" name="create_name" class="required" minlength="1"/><br/>
 
 			<label for="create_line_width">Line Width</label>
-			<input type="text" name="create_line_width" value="10"/><br/>
+			<input type="text" name="create_line_width" value="10" class="required"/><br/>
 
 			<label for="create_line_opacity">Line Opacity</label>
-			<input type="text" name="create_line_opacity" value="0.8"/><br/>
+			<input type="text" name="create_line_opacity" value="0.8" class="required"/><br/>
 
 			<label for="create_fill_opacity">Fill Opacity</label>
-			<input type="text" name="create_fill_opacity" value="0.3"/><br/>
+			<input type="text" name="create_fill_opacity" value="0.3" class="required"/><br/>
 
 			<p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
 			<span class="ui-icon ui-icon-gear" style="float:left; margin:0 5px 0 0;"></span>
@@ -146,7 +164,7 @@ while($row = mysql_fetch_assoc($result)) {
 
 	<!-- Delete Tab -->
 	<div id="delete_tab">
-		<form id="delete_schemes">
+		<form id="delete_form" name="delete">
 			<select id="delete_scheme" name="delete_scheme" multiple="multiple">
 				<optgroup label="Color Schemes">
 				<?php

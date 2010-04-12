@@ -110,7 +110,7 @@ class data {
 
 				// change data
 				$coords = new cdl($row["coords"], ";"); // parse coords from string
-				$scheme = $this->get_scheme($scheme);
+				$scheme = $this->get_schemes($scheme);
 				$currentPasses = $this->whatPassTypesCanParkHere($id);
 				$middle = $this->findLatLngAverage($row["coords"]);
 
@@ -277,20 +277,22 @@ class data {
 		}
 		return $settings;
 	}
-	private function create_scheme($result) {
-		$scheme = null;
+	private function create_schemes($result) {
+		$schemes = null;
 		if (mysql_num_rows($result) != 0) {
-			$row = mysql_fetch_assoc($result);
-			$scheme = array(
-				"id" => $row["id"],
-				"name" => $row["name"],
-				"lineColor" => $row["lineColor"],
-				"lineWidth" => $row["lineWidth"],
-				"lineOpacity" => $row["lineOpacity"],
-				"fillColor" => $row["fillColor"],
-				"fillOpacity" => $row["fillOpacity"]);
+			$schemes = array();
+			while($row = mysql_fetch_assoc($result)) {
+				$schemes[$row["id"]] = array(
+					"id" => $row["id"],
+					"name" => $row["name"],
+					"lineColor" => $row["lineColor"],
+					"lineWidth" => $row["lineWidth"],
+					"lineOpacity" => $row["lineOpacity"],
+					"fillColor" => $row["fillColor"],
+					"fillOpacity" => $row["fillOpacity"]);
+			}
 		}
-		return $scheme;
+		return $schemes;
 	}
 
 	public function get_lots($ids, $sortColumn) {
@@ -304,10 +306,10 @@ class data {
 		else return $this->create_lots($result);
 	}
 	public function get_passTypes($ids, $sortColumn) {
-		$sql = "select * from passTypes";
-		if ($ids != null) $sql .= " where id in (" . $ids . ")";
+		$sql = "SELECT * FROM passTypes";
+		if ($ids != null) $sql .= " WHERE id IN (" . $ids . ")";
 		if ($sortColumn == null) $sortColumn = "name"; // was id
-		$sql .= " order by " . $sortColumn . " asc";
+		$sql .= " ORDER BY " . $sortColumn . " ASC";
 
 		$result = mysql_query($sql);
 		if (!$result) die("MySQL error: get_passTypes($ids)");
@@ -387,13 +389,14 @@ class data {
 		if (!$result) die("MySQL error: get_settingsByUser($ids)");
 		else return $this->create_settings($result);
 	}
-	public function get_scheme($id) {
+	public function get_schemes($id) {
 		$sql = "SELECT * FROM schemes";
 		if ($id != null) $sql .= " where id in (" . $id . ")";
 		$sql .= " ORDER BY id";
+
 		$result = mysql_query($sql);
 		if (!$result) die ("MySQL error: get_schemes($id)");
-		else return $this->create_scheme($result);
+		else return $this->create_schemes($result);
 	}
 
 	private function addSingleQuotes($string) {
@@ -687,7 +690,7 @@ function GetSettingsForUser($id) {
 }
 function GetSchemes($id) {
 	global $data;
-	return $data->get_scheme($id);
+	return $data->get_schemes($id);
 }
 function GetRulesByLot($id) {
 	global $data;

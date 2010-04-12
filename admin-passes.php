@@ -42,6 +42,15 @@ switch($_POST["action"]) {
 $passes = GetPassTypes("name");
 ?>
 
+<script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#create_form").validate();
+		$("#edit_form").validate();
+		$("#delete_form").validate();
+	});
+</script>
+
 <div id="tabs">
 	<ul>
 		<li><a href="#create_tab">Create Pass Type</a></li>
@@ -50,9 +59,9 @@ $passes = GetPassTypes("name");
 	</ul>
 
 	<div id="create_tab">
-		<form id="create" name="create" method="POST" action="">
+		<form id="create_form" name="create" method="POST" action="">
 			<label for="create_pass">Pass Type</label>
-			<input id="create_pass" name="create_pass" type="text"/>
+			<input id="create_pass" name="create_pass" type="text" class="required"/>
 			<input type="hidden" name="action" value="create"/>
 			<br/>
 			<input type="submit" value="Create Pass"/>
@@ -60,7 +69,7 @@ $passes = GetPassTypes("name");
 	</div>
 
 	<div id="edit_tab">
-		<form id="edit" name="edit" method="POST" action="">
+		<form id="edit_form" name="edit" method="POST" action="">
 			<label for="edit_select">Select Pass</label>
 			<select id="edit_select" name="edit_select">
 				<optgroup label="Passes">
@@ -74,14 +83,14 @@ $passes = GetPassTypes("name");
 			</select>
 			<br/>
 			<label for="edit_pass">New Name</label>
-			<input id="edit_pass" name="edit_pass" type="text"/>
+			<input id="edit_pass" name="edit_pass" type="text" class="required" minlength="1"/>
 			<input type="hidden" name="action" value="edit"/>
 			<p><input type="submit" value="Edit Pass"/></p>
 		</form>
 	</div>
 
 	<div id="delete_tab">
-		<form id="delete" name="delete" method="POST" action="">
+		<form id="delete_form" name="delete" method="POST" action="">
 			<select id="delete_passes" name="delete_passes[]" multiple="multiple" size="15">
 				<optgroup label="Passes">
 				<?php

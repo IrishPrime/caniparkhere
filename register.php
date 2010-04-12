@@ -10,14 +10,13 @@ if(!empty($_POST)) {
 		}
 		else {
 			$status = 2;
-			break 2;
+			break;
 		}
 	}
 
 	// Password mismatch?
 	if(strcmp($_POST["pass1"], $_POST["pass2"]) != 0) {
 		$status = 3;
-		break;
 	}
 
 	// Create connection
@@ -47,7 +46,7 @@ if(!empty($_POST)) {
 }
 
 // Feedback
-echo "<div class=\"ui-widget\">\n";
+echo "<div class=\"ui-widget\">\n\t";
 switch($status) {
 	case 1:
 		// Created user
@@ -78,55 +77,36 @@ switch($status) {
 		echo "All fields required.";
 		break;
 	}
-echo "\n\t</div>\n<div>\n";
+echo "\n\t\t</div>\n\t</div>\n";
 ?>
 
+<script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
 <script type="text/javascript">
-function check_form(form) {
-	if(form.fname.value == '') {
-		alert('First name cannot be blank.');
-		return false;
-	}
-	else if(form.lname.value == '') {
-		alert('Last name cannot be blank.');
-		return false;
-	}
-	else if(form.email.value == '') {
-		alert('E-mail cannot be blank.');
-		return false;
-	}
-	else if(form.pass1.value == '') {
-		alert('Password cannot be blank.');
-		return false;
-	}
-	else if(form.pass2.value != form.pass1.value) {
-		alert('Passwords do not match.');
-		return false;
-	}
-	return true;
-}
+	$(document).ready(function(){
+		$("#register").validate();
+	});
 </script>
 
 <div id="tabs">
 	<ul>
-		<li><a href="#new_tab">New User</a></li>
+		<li><a href="#register_tab">New User</a></li>
 	</ul>
-	<div id="new_tab">
-		<form name="register" id="register" method="POST" action="" onSubmit="return check_form(this)">
+	<div id="register_tab">
+		<form name="register" id="register" method="POST" action="" onsubmit="return $('#register').validate().form()">
 			<label for="fname">First Name</label>
-			<input id="fname" name="fname" type="text"/><br/>
+			<input id="fname" name="fname" type="text" class="required" minlength="2"/><br/>
 
 			<label for="lname">Last Name</label>
-			<input id="lname" name="lname" type="text"/><br/>
+			<input id="lname" name="lname" type="text" class="required" minlength="2"/><br/>
 
 			<label for="email">E-Mail</label>
-			<input id="email" name="email" type="text"/><br/>
+			<input id="email" name="email" type="text" class="required email"/><br/>
 
 			<label for="pass1">Password</label>
-			<input id="pass1" name="pass1" type="password"/><br/>
+			<input id="pass1" name="pass1" type="password" class="required" minlength="8"/><br/>
 
 			<label for="pass2">Confirm</label>
-			<input id="pass2" name="pass2" type="password"/><br/>
+			<input id="pass2" name="pass2" type="password" class="required" minlength="8"/><br/>
 
 			<label for="passtype">Pass Type</label>
 			<select id="passtype" name="passtype">
@@ -140,7 +120,6 @@ function check_form(form) {
 				</optgroup>
 			</select>
 			<p><input type="submit" value="Register"/></p>
-			<small></small>
 		</form>
 	</div>
 </div>

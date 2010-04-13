@@ -173,7 +173,7 @@ $(document).ready(function() {
 			<p>Exceptions need only be defined when normal rules must be temporarily overwritten.</p>
 			<p>The <strong>Start Date/Time</strong> determines when the exception becomes active.</p>
 			<p>The <strong>End Date/Time</strong> determines when the exception is no longer needed and normal parking rules will resume.</p>
-			<p>Select <strong>Allow</strong> or <strong>Disallow</strong> to set the type of exception to be applied.</p>
+			<p>Select <strong style="color: #00FF00;">Allow</strong> or <strong style="color: #FF0000;">Disallow</strong> to set the type of exception to be applied.</p>
 		</div>
 	</div>
 
@@ -214,8 +214,8 @@ $(document).ready(function() {
 			</form>
 			<a href="#" id="delete_help_opener" class="ui-state-default ui-corner-all" style="padding: .4em 1em .4em 20px;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;"></span>Help</a>
 			<div id="delete_help_dialog" title="Delete Exceptions Help">
-				<p>Select a <strong>Parking Lot</strong> to expand it, displaying its exceptions. Exceptions are sorted by <strong>End Date</strong> then <strong>Days</strong>.</p>
-				<p>Select <strong>Passes</strong> to be removed from the rule set. Clicking the <strong>Rule Header</strong> will toggle all pass types within that rule.</p>
+				<p>Select a <strong>Parking Lot</strong> to expand it, displaying its exceptions. Exceptions are sorted by <strong>End Date</strong>.</p>
+				<p>Select <strong>Passes</strong> to be removed from the exception set.</p>
 				<p>Collapsing a <strong>Parking Lot</strong> will not clear your selections.</p>
 			</div>
 		</div>

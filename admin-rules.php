@@ -271,7 +271,7 @@ $(document).ready(function() {
 			<a href="#" id="delete_help_opener" class="ui-state-default ui-corner-all" style="padding: .4em 1em .4em 20px;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;"></span>Help</a>
 			<div id="delete_help_dialog" title="Delete Rule Help">
 				<p>Select a <strong>Parking Lot</strong> to expand it, displaying its rules. They are sorted by <strong>End Date</strong> then <strong>Days</strong>.</p>
-				<p>Select <strong>Passes</strong> to be removed from the rule set. Clicking the <strong>Rule Header</strong> will toggle all pass types within that rule.</p>
+				<p>Select <strong>Passes</strong> to be removed from the rule set.</p>
 				<p>Collapsing a <strong>Parking Lot</strong> will not clear your selections.</p>
 			</div>
 		</div>

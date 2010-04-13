@@ -834,7 +834,7 @@ function CanIParkHereNow($lotId, $passTypeId) {
 
 	global $data;
 	// grab all rules for this lot
-	$rules = $data->get_rulesForLots($lotIds);
+	$rules = $data->get_rulesByLot($lotIds);
 	// set requested timestamp
 	$requestedTime = new DateTime("now");
 
@@ -845,7 +845,7 @@ function CanIParkHereNow($lotId, $passTypeId) {
 	// search for rules that apply to this passType
 	if ($rules != null) {
 		foreach ($rules as $rule) {
-			if ($rule("passTypeId") == $passTypeId) {
+			if ($rule["passTypeId"] == $passTypeId) {
 				if ($data->doesRuleApply($rule, $requestedTime)) {
 					$results["ciph"] = true;
 					break;

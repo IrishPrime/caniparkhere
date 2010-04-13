@@ -1,6 +1,17 @@
 <?php
 # Create/Delete color schemes used by parking lots.
 
+switch($_POST["action"]) {
+	case "create":
+		CreateScheme($_POST["create_name"], $_POST["lineColor"], $_POST["lineWidth"], $_POST["lineOpacity"], $_POST["fillColor"], $_POST["fillOpacity"]);
+		break;
+	case "delete":
+		DeleteSchemes();
+		break;
+	default:
+		break;
+}
+
 $schemes = GetSchemes(null);
 ?>
 <style type="text/css">

@@ -101,12 +101,12 @@ $(document).ready(function() {
 		<form id="create_form" name="create" method="POST" action="">
 			<!-- Start Date -->
 			<label for="create_start_datepicker"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>Start Date</label>
-			<input type="text" name="create_start_datepicker" id="create_start_datepicker" class="required date"/>
+			<input type="text" name="create_start_datepicker" id="create_start_datepicker" class="required"/>
 			<input type="hidden" name="create_start_date" id="create_start_date"/>
 			<br/>
 			<!-- End Date -->
 			<label for="create_end_datepicker"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>End Date</label>
-			<input type="text" name="create_end_datepicker" id="create_end_datepicker" class="required date"/>
+			<input type="text" name="create_end_datepicker" id="create_end_datepicker" class="required"/>
 			<input type="hidden" name="create_end_date" id="create_end_date"/>
 			<br/>
 

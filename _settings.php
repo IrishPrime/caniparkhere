@@ -26,6 +26,7 @@ $dotw = array(
 $title = array(
 	"404" => "Page Not Found",
 	"FAQ" => "Frequently Asked Questions",
+	"_api" => "Web Services",
 	"admin" => "Administration Tools",
 	"admin-exceptions" => "Administration Tools | Exceptions &amp; Events",
 	"admin-lots" => "Administration Tools | Parking Lots",

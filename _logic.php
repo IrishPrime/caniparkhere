@@ -105,12 +105,11 @@ class data {
 				$id = $row["id"];
 				$name = $row["name"];
 				$desc = $row["descrip"];
-				$pic = $row["pic"];
 				$scheme = $row["scheme"];
 
 				// change data
 				$coords = new cdl($row["coords"], ";"); // parse coords from string
-				$scheme = $this->get_schemes($scheme);
+				$scheme = $this->get_scheme($scheme);
 				$currentPasses = $this->whatPassTypesCanParkHere($id);
 				$middle = $this->findLatLngAverage($row["coords"]);
 
@@ -118,7 +117,6 @@ class data {
 					"id" => $id,
 					"name" => $name,
 					"description" => $desc,
-					"picture" => $pic,
 					"middle" => $middle,
 					"coords" => $coords->cdlArray(), // array
 					"scheme" => $scheme, // array
@@ -261,6 +259,7 @@ class data {
 					"id" => $row["id"],
 					"lot" => $row["lot"],
 					"passType" => $row["passType"],
+					"allowed" => $row["allowed"],
 					"start" => $row["start"],
 					"end" => $row["end"]);
 			}
@@ -276,6 +275,23 @@ class data {
 			}
 		}
 		return $settings;
+	}
+	private function create_scheme($result) {
+		$scheme = null;
+		if (mysql_num_rows($result) != 0) {
+			$scheme = array();
+			$row = mysql_fetch_assoc($result);
+			
+			$scheme = array(
+				"id" => $row["id"],
+				"name" => $row["name"],
+				"lineColor" => $row["lineColor"],
+				"lineWidth" => $row["lineWidth"],
+				"lineOpacity" => $row["lineOpacity"],
+				"fillColor" => $row["fillColor"],
+				"fillOpacity" => $row["fillOpacity"]);
+		}
+		return $scheme;
 	}
 	private function create_schemes($result) {
 		$schemes = null;
@@ -373,9 +389,9 @@ class data {
 		else return $this->create_rulesByLots($lots, $times, $result); 
 	}
 	public function get_exceptionsByLots($ids) {
-		$sql = "SELECT * FROM exceptions";
-		if ($ids != null) $sql .= " WHERE lot IN (" . $ids . ")";
-		$sql .= " ORDER BY end DESC";
+		$sql = "select * from exceptions";
+		if ($ids != null) $sql .= " where lot in (" . $ids . ")";
+		$sql .= " order by end desc";
 
 		$result = mysql_query($sql);
 		if (!$result) die("MySQL error: get_exceptionsByLots($ids)");
@@ -388,6 +404,15 @@ class data {
 		$result = mysql_query($sql);
 		if (!$result) die("MySQL error: get_settingsByUser($ids)");
 		else return $this->create_settings($result);
+	}
+	public function get_scheme($id) {
+		$sql = "SELECT * FROM schemes";
+		if ($id != null) $sql .= " where id in (" . $id . ")";
+		$sql .= " ORDER BY id";
+
+		$result = mysql_query($sql);
+		if (!$result) die ("MySQL error: get_scheme($id)");
+		else return $this->create_scheme($result);
 	}
 	public function get_schemes($id) {
 		$sql = "SELECT * FROM schemes";
@@ -456,7 +481,21 @@ class data {
 		if ($result) return mysql_insert_id();
 		else return false;
 	}
-
+	public function insert_scheme($name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $fillOpacity) {
+		$sql = "insert into schemes (name, lineColor, lineWidth, lineOpacity, fillColor, fillOpacity) values ("
+			. $this->addSingleQuotes($name) . ", "
+			. $this->addSingleQuotes($lineColor) . ", "
+			. $this->addSingleQuotes($lineWidth) . ", "
+			. $this->addSingleQuotes($lineOpacity) . ", "
+			. $this->addSingleQuotes($fillColor) . ", "
+			. $this->addSingleQuotes($fillOpacity) . ")";
+			
+			$result = mysql_query($sql);
+			
+			if ($result) return mysql_insert_id();
+			else return false;
+	}
+	
 	public function update_passType($id, $name) {
 		$sql = "UPDATE passTypes SET name = "
 			. $this->addSingleQuotes($name)
@@ -473,12 +512,15 @@ class data {
 		return mysql_query($sql);
 	}
 	public function delete_rule($ids) {
-		$sql = "delete from rules where id in (" . $ids . ")";
-		//echo $sql + "<br>";
+		$sql = "DELETE FROM rules WHERE id IN (" . $ids . ")";
 		return mysql_query($sql);
 	}
 	public function delete_exception($ids) {
-		$sql = "delete from exceptions where id in (" . $ids . ")";
+		$sql = "DELETE FROM exceptions WHERE id IN (" . $ids . ")";
+		return mysql_query($sql);
+	}
+	public function delete_schemes($ids) {
+		$sql = "DELETE FROM schemes WHERE id IN (" . $ids . ")";
 		return mysql_query($sql);
 	}
 
@@ -696,6 +738,10 @@ function GetRulesByLot($id) {
 	global $data;
 	return $data->get_rulesByLot($id);
 }
+function GetExceptionsByLot($id) {
+	global $data;
+	return $data->get_exceptionsByLots($id);
+}
 
 // Creation methods.
 // The only unique is CreateRules, where $lots
@@ -736,6 +782,10 @@ function CreateExceptions($lots, $passTypes, $start, $end, $allow) {
 	if (count($exceptionIds > 0)) return $exceptionIds;
 	else return false; // no ids to return
 }
+function CreateScheme($name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $fillOpacity) {
+	global $data;
+	return $data->insert_scheme($name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $fillOpacity);
+}
 
 // Update methods.
 function RenamePassType($id, $newName) {
@@ -764,6 +814,10 @@ function DeleteRules($ids) {
 function DeleteExceptions($ids) {
 	global $data;
 	return $data->delete_exception(implode(',', $ids));
+}
+function DeleteSchemes($ids) {
+	global $data;
+	return $data->delete_schemes(implode(',', $ids));
 }
 
 // Deprecated method, you can find a list

@@ -6,7 +6,6 @@ require_once("./_logic.php");
 
 switch($_POST["action"]) {
 	case "create":
-		debug($_POST);
 		$start = $_POST["create_start_date"]." ".$_POST["create_start_hour"].":".$_POST["create_start_minute"].":00";
 		$end = $_POST["create_end_date"]." ".$_POST["create_end_hour"].":".$_POST["create_end_minute"].":00";
 		$newExceptions = @CreateExceptions($_POST["create_lots"], $_POST["create_passes"], $start, $end, $_POST["allowance"]);
@@ -16,7 +15,7 @@ switch($_POST["action"]) {
 		echo "\t\tExceptions Created: <strong>".count($newExceptions)."</strong>\n\t</div>\n</div>\n";
 		break;
 	case "delete":
-		$results = @DeleteExceptions($_POST["delete_exceptions"]);
+		$results = DeleteExceptions($_POST["delete_exceptions"]);
 
 		echo "<div class=\"ui-widget\">\n";
 		echo $results ? $ui_info : $ui_alert;
@@ -182,41 +181,32 @@ $(document).ready(function() {
 		<div id="nested_accordion">
 			<form name="delete" id="delete" method="POST" action="">
 				<?php
-				if(is_array($lot_exceptions)) {
-					// If we have exceptions
-					foreach($lot_exceptions as $lot_exception) {
-						if(!empty($lot_exception["exceptions"])) {
-							// If the lot has exceptions
-							echo "\t<h2><a href=\"#\">".$lot_exception["name"]."</a></h2>";
+					foreach($lots as $lot) {
+						$lot["exceptions"] = GetExceptionsByLot($lot["id"]);
+
+						if(!empty($lot["exceptions"])) {
+							// If the lot has exceptions construct a header
+							echo "\t<h2><a href=\"#\">".$lot["name"]."</a></h2>";
 							echo "\t<div>";
-							echo "\t\t<div class=\"ui-widget\">\n";
-							echo "\t\t\t<div class=\"ui-state-highlight ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n";
-							echo "\t\t\t\t<p><span class=\"ui-icon ui-icon-info\" style=\"float: left; margin-right: .3em;\"></span>\n";
-							echo "\t\t\t\t<strong>".$lot_exception["description"]."&nbsp;</strong></p>\n";
+							echo "\t\t<div class=\"ui-widget\">\n$ui_info";
+							echo "\t\t\t\t<strong>".$lot["description"]."&nbsp;</strong>\n";
 							echo "\t\t\t</div>\n";
 							echo "\t\t</div>\n";
 
-							foreach($lot_exception["exceptions"] as $exception) {
+							foreach($lot["exceptions"] as $exception) {
+								// Print each exception
 								echo "<p class=\"ui-state-default ui-corner-all ui-helper-clearfix\" style=\"padding:0px;\">";
 								echo "<span class=\"ui-icon ui-icon-calendar\" style=\"float:left; margin:1.3em 1em;\"></span>";
 								echo date("F d, Y", strtotime($exception["startDate"]))." - ".date("F d, Y", strtotime($exception["endDate"]))."<br/>\n";
 								echo date("H:i A", strtotime($exception["startTime"]))." - ".date("H:i A", strtotime($exception["endTime"]))."<br/>\n";
+								echo ($exception["allowed"] == 0) ? "<span style=\"color: #FF0000;\">Disallow</span>" : "<span style=\"color: #00FF00;\">Allow</span>";
 								echo "</p>";
-								if(is_array($exception["passTypes"])) {
-									foreach($exception["passTypes"] as $pass) {
-										echo "<input type=\"checkbox\" id=\"delete_pass_".$pass["id"]."_exception_".$pass["exceptionId"]."\" name=\"delete_exceptions[]\" value=\"".$pass["exceptionId"]."\"/>\n";
-										echo "<label for=\"delete_pass_".$pass["id"]."_exception_".$pass["exceptionId"]."\">".$pass["name"]."</label><br/>\n";
-									}
-								}
+								echo "<input type=\"checkbox\" id=\"delete_exception_".$exception["id"]."\" name=\"delete_exceptions[]\" value=\"".$exception["id"]."\"/>\n";
+								echo "<label for=\"delete_exception_".$exception["id"]."\">".$passes[$exception["passType"]]["name"]."</label><br/>\n";
 							}
-							echo "\t</div>";
+							echo "\t</div>\n";
 						}
 					}
-				}
-				else {
-					echo "<h2><a href=\"#\">No Exceptions</a></h2>\n";
-					echo "<div>No exceptions defined. Normal parking rules apply.</div>\n";
-				}
 				?>
 				<input type="hidden" name="action" value="delete"/>
 				<br/>

@@ -59,34 +59,6 @@ $(document).ready(function() {
   	});
 
 	$("#create_days_checks").buttonset();
-
-	$("#create_help_dialog").dialog({
-		autoOpen: false,
-		width: 600,
-		show: "drop",
-		hide: "drop",
-	});
-	$("#create_help_opener").hover(function() {
-		$(this).toggleClass("ui-state-hover");
-		return false;
-	});
-	$("#create_help_opener").click(function() {
-		$("#create_help_dialog").dialog("open");
-	});
-
-	$("#delete_help_dialog").dialog({
-		autoOpen: false,
-		width: 600,
-		show: "drop",
-		hide: "drop",
-	});
-	$("#delete_help_opener").hover(function() {
-		$(this).toggleClass("ui-state-hover");
-		return false;
-	});
-	$("#delete_help_opener").click(function() {
-		$("#delete_help_dialog").dialog("open");
-	});
 });
 </script>
 
@@ -211,7 +183,7 @@ $(document).ready(function() {
 			<input type="hidden" name="action" value="create"/>
 			<p><input type="submit" value="Create Rule"/></p>
 		</form>
-		<a href="#" id="create_help_opener" class="ui-state-default ui-corner-all" style="padding: .4em 1em .4em 20px;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;"></span>Help</a>
+		<?php echo $ui_help_create; ?>
 		<div id="create_help_dialog" title="Create Rule Help">
 			<p>Rules need only be defined for when people <em>are</em> allowed to park.</p>
 			<p>The <strong>Start Date</strong> and <strong>End Date</strong> determine the range for when the rule is active. Leave the <strong>End Date</strong> blank if you do not wish to set a limit on the rule.</p>
@@ -268,7 +240,7 @@ $(document).ready(function() {
 				<br/>
 				<input type="submit" value="Delete Rules"/>
 			</form>
-			<a href="#" id="delete_help_opener" class="ui-state-default ui-corner-all" style="padding: .4em 1em .4em 20px;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;"></span>Help</a>
+			<?php echo $ui_help_delete; ?>
 			<div id="delete_help_dialog" title="Delete Rule Help">
 				<p>Select a <strong>Parking Lot</strong> to expand it, displaying its rules. They are sorted by <strong>End Date</strong> then <strong>Days</strong>.</p>
 				<p>Select <strong>Passes</strong> to be removed from the rule set.</p>

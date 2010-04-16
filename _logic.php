@@ -750,9 +750,9 @@ function GetExceptionsByLot($id) {
 //  false on an unsuccessful database insertion.
 // CreateRules will give an array of IDs of the created rules,
 //  any entry that didn't go through will be false.
-function CreateLot($name, $desc, $pic, $coords, $scheme) {
+function CreateLot($name, $desc, $coords, $scheme) {
 	global $data;
-	return $data->insert_lot($name, $desc, $pic, $coords, $scheme);
+	return $data->insert_lot($name, $desc, $coords, $scheme);
 }
 function CreatePassType($name) {
 	global $data;
@@ -791,6 +791,8 @@ function CreateScheme($name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $
 function RenamePassType($id, $newName) {
 	global $data;
 	return $data->update_passType($id, $newName);
+}
+function ModifyLot($id, $name, $desc, $coords, $scheme) {
 }
 
 // Deletion methods.
@@ -855,6 +857,9 @@ function CanIParkHereNow($lotId, $passTypeId) {
 	}
 
 	return $results;
+}
+
+function WhereDidIPark($id) {
 }
 
 function debug($a) {

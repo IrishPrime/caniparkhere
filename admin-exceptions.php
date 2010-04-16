@@ -51,34 +51,6 @@ $(document).ready(function() {
   	});
 
 	$("#allowance").buttonset();
-
-	$("#create_help_dialog").dialog({
-		autoOpen: false,
-		width: 600,
-		show: "drop",
-		hide: "drop",
-	});
-	$("#create_help_opener").hover(function() {
-		$(this).toggleClass("ui-state-hover");
-	});
-	$("#create_help_opener").click(function() {
-		$("#create_help_dialog").dialog("open");
-		return false;
-	});
-
-	$("#delete_help_dialog").dialog({
-		autoOpen: false,
-		width: 600,
-		show: "drop",
-		hide: "drop",
-	});
-	$("#delete_help_opener").hover(function() {
-		$(this).toggleClass("ui-state-hover");
-	});
-	$("#delete_help_opener").click(function() {
-		$("#delete_help_dialog").dialog("open");
-		return false;
-	});
 });
 </script>
 
@@ -168,7 +140,7 @@ $(document).ready(function() {
 			<input type="hidden" name="action" value="create"/>
 			<p><input type="submit" value="Create Exception"/></p>
 		</form>
-		<a href="#" id="create_help_opener" class="ui-state-default ui-corner-all" style="padding: .4em 1em .4em 20px;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;"></span>Help</a>
+		<?php echo $ui_help_create; ?>
 		<div id="create_help_dialog" title="Create Exception Help">
 			<p>Exceptions need only be defined when normal rules must be temporarily overwritten.</p>
 			<p>The <strong>Start Date/Time</strong> determines when the exception becomes active.</p>
@@ -197,8 +169,8 @@ $(document).ready(function() {
 								// Print each exception
 								echo "<p class=\"ui-state-default ui-corner-all ui-helper-clearfix\" style=\"padding:0px;\">";
 								echo "<span class=\"ui-icon ui-icon-calendar\" style=\"float:left; margin:1.3em 1em;\"></span>";
-								echo date("F d, Y", strtotime($exception["startDate"]))." - ".date("F d, Y", strtotime($exception["endDate"]))."<br/>\n";
-								echo date("H:i A", strtotime($exception["startTime"]))." - ".date("H:i A", strtotime($exception["endTime"]))."<br/>\n";
+								echo date("F d, Y H:i", strtotime($exception["start"]))."<br/>\n";
+								echo date("F d, Y H:i", strtotime($exception["end"]))."<br/>\n";
 								echo ($exception["allowed"] == 0) ? "<span style=\"color: #FF0000;\">Disallow</span>" : "<span style=\"color: #00FF00;\">Allow</span>";
 								echo "</p>";
 								echo "<input type=\"checkbox\" id=\"delete_exception_".$exception["id"]."\" name=\"delete_exceptions[]\" value=\"".$exception["id"]."\"/>\n";
@@ -212,7 +184,7 @@ $(document).ready(function() {
 				<br/>
 				<input type="submit" value="Delete Exceptions"/>
 			</form>
-			<a href="#" id="delete_help_opener" class="ui-state-default ui-corner-all" style="padding: .4em 1em .4em 20px;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;"></span>Help</a>
+			<?php echo $ui_help_delete; ?>
 			<div id="delete_help_dialog" title="Delete Exceptions Help">
 				<p>Select a <strong>Parking Lot</strong> to expand it, displaying its exceptions. Exceptions are sorted by <strong>End Date</strong>.</p>
 				<p>Select <strong>Passes</strong> to be removed from the exception set.</p>

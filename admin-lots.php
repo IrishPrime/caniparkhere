@@ -6,10 +6,12 @@ require_once("./_logic.php");
 
 switch($_POST["action"]) {
 	case "create":
+		$result = @CreateLot($_POST["lot_name"], $_POST["lot_description"], $_POST["lot_coords"], $_POST["lot_scheme"]);
 		break;
 	case "edit":
 		break;
 	case "delete":
+		$result = @DeleteLots($_POST["delete_lot"]);
 		break;
 	default:
 		break;
@@ -21,9 +23,23 @@ $schemes = GetSchemes(null);
 
 <script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
 <script type="text/javascript">
+	var json_lots = jQuery.parseJSON('<?php echo json_encode($lots); ?>');
 	$(document).ready(function() {
 		$("#create_form").validate();
+
+		$("#lot_list").bind("change keypress", function() {
+			if($("#lot_list option:selected").val() != 0) {
+				$("#lot_name").val($("#lot_list option:selected").html());
+				$("#lot_description").val(json_lots[$("#lot_list option:selected").val()].description);
+				$("#lot_scheme").val(json_lots[$("#lot_list option:selected").val()].scheme.id);
+			} else {
+				$("#lot_name").val("");
+				$("#lot_description").val("");
+				$("#lot_scheme").val($("#lot_scheme option").val());
+			}
+		});
 	});
+
 // map options
 var myOptions = {
 	zoom: <?php echo $globalSettings["mapZoom"]; ?>,
@@ -76,7 +92,7 @@ function initialize() {
 			<input id="lot_name" name="lot_name" type="text" class="required" minlength="1"/>
 			<select id="lot_list" name="lot_list">
 				<optgroup label="New Lot">
-					<option value="">Create New Lot</a>
+					<option value="0">Create New Lot</option>
 				</optgroup>
 				<optgroup label="Existing Lots">
 				<?php
@@ -103,20 +119,34 @@ function initialize() {
 			<input type="hidden" name="action" value="create"/>
 			<p><input type="submit" value="Create Parking Lot"/></p>
 		</form>
+		<?php echo $ui_help_create; ?>
+		<div id="create_help_dialog" title="Create Rule Help">
+			<p></p>
+		</div>
 	</div>
 
 	<!-- Delete Tab -->
 	<div id="delete_tab">
 		<form id="delete" name="delete" method="GET">
-			<?php
-			if(is_array($lots))
-				foreach($lots as $lot) {
-					echo "<p><label style=\"width: auto;\" for=\"".$lot["id"]."\">".$lot["name"]."</label><input type=\"checkbox\" id=\"".$lot["id"]."\" name=\"".$lot["id"]."\"><br/>".$lot["description"]."</p>\n";
-				}
-			?>
+			<select id="delete_lots" name="delete_lots[]" multiple="multiple">
+				<optgroup label="Parking Lots">
+					<?php
+					if(is_array($lots))
+						foreach($lots as $lot) {
+							echo "<option value=\"".$lot["id"]."\" title=\"".$lot["description"]."\">".$lot["name"]."</option>\n";
+						}
+					?>
+				</optgroup>
+			</select>
 			<input type="hidden" name="action" value="create"/>
 			<p><input type="submit" value="Delete Lots"/></p>
 		</form>
+		<?php echo $ui_help_delete; ?>
+		<div id="delete_help_dialog" title="Delete Lot Help">
+			<p><strong>Parking Lots</strong> are sorted by <em>name</em>.</p>
+			<p>Hover over a <strong>Parking Lot</strong> to view its <em>description</em>.</p>
+			<p>Select a <strong>Parking Lot</strong> to remove.</p>
+		</div>
 	</div>
 </div>
 

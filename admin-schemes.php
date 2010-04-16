@@ -3,10 +3,18 @@
 
 switch($_POST["action"]) {
 	case "create":
-		CreateScheme($_POST["create_name"], $_POST["lineColor"], $_POST["lineWidth"], $_POST["lineOpacity"], $_POST["fillColor"], $_POST["fillOpacity"]);
+		$result = @CreateScheme($_POST["create_name"], $_POST["create_line_color"], $_POST["create_line_width"], $_POST["create_line_opacity"], $_POST["create_fill_color"], $_POST["create_fill_opacity"]);
+
+		echo "<div class=\"ui-widget\">\n";
+		echo ($result != null) ? $ui_info : $ui_alert;
+		echo "\t\tCreating Color Scheme: <strong>".$_POST["create_name"]."</strong>\n\t</div>\n</div>\n";
 		break;
 	case "delete":
-		DeleteSchemes();
+		$result = @DeleteSchemes($_POST["delete_scheme"]);
+
+		echo "<div class=\"ui-widget\">\n";
+		echo $results ? $ui_info : $ui_alert;
+		echo "\t\tRules Deleted: <strong>".count($_POST["delete_rules"])."</strong>\n\t</div>\n</div>\n";
 		break;
 	default:
 		break;
@@ -63,34 +71,6 @@ $schemes = GetSchemes(null);
 			rules: {
 			}
 		});
-
-		$("#create_help_dialog").dialog({
-			autoOpen: false,
-			width: 600,
-			show: "drop",
-			hide: "drop",
-		});
-		$("#create_help_opener").hover(function() {
-			$(this).toggleClass("ui-state-hover");
-		});
-		$("#create_help_opener").click(function() {
-			$("#create_help_dialog").dialog("open");
-			return false;
-		});
-
-		$("#delete_help_dialog").dialog({
-			autoOpen: false,
-			width: 600,
-			show: "drop",
-			hide: "drop",
-		});
-		$("#delete_help_opener").hover(function() {
-			$(this).toggleClass("ui-state-hover");
-		});
-		$("#delete_help_opener").click(function() {
-			$("#delete_help_dialog").dialog("open");
-			return false;
-		});
 	});
 
 	function hexFromRGB (r, g, b) {
@@ -112,9 +92,11 @@ $schemes = GetSchemes(null);
 			green = $("#green").slider("value"),
 			blue = $("#blue").slider("value"),
 			hex = hexFromRGB(red, green, blue);
+			hex2 = hexFromRGB(Math.floor(red * 0.9), Math.floor(green * 0.9), Math.floor(blue * 0.9));
 
 		$("#swatch").css("background-color", "#" + hex);
 		$("#create_line_color").val("#" + hex);
+		$("#create_fill_color").val("#" + hex2);
 	}
 
 	$(function() {
@@ -155,7 +137,7 @@ $schemes = GetSchemes(null);
 
 			<p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
 			<span class="ui-icon ui-icon-gear" style="float:left; margin:0 5px 0 0;"></span>
-			Colorpicker</p>
+			Line &amp; Fill Color</p>
 
 			<div id="red"></div>
 			<div id="green"></div>
@@ -163,11 +145,12 @@ $schemes = GetSchemes(null);
 
 			<div id="swatch" class="ui-widget-content ui-corner-all"></div>
 			<input type="hidden" name="create_line_color" id="create_line_color"/>
+			<input type="hidden" name="create_fill_color" id="create_fill_color"/>
 
 			<input type="hidden" name="action" value="create"/><br/>
 			<p><input type="submit" value="Create Color Scheme"/></p>
 		</form>
-		<a href="#" id="create_help_opener" class="ui-state-default ui-corner-all" style="padding: .4em 1em .4em 1.4em; text-decoration: none; position: relative;"><span class="ui-icon ui-icon-help" style="margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;"></span>Help</a>
+		<?php echo $ui_help_create; ?>
 		<div id="create_help_dialog" title="Create Color Scheme Help">
 			<p>Create <strong>Color Schemes</strong> to make lots more easily identifiable.</p>
 		</div>
@@ -175,8 +158,8 @@ $schemes = GetSchemes(null);
 
 	<!-- Delete Tab -->
 	<div id="delete_tab">
-		<form id="delete_form" name="delete">
-			<select id="delete_scheme" name="delete_scheme" multiple="multiple">
+		<form id="delete_form" name="delete" method="POST" action="">
+			<select id="delete_scheme" name="delete_scheme[]" multiple="multiple">
 				<optgroup label="Color Schemes">
 				<?php
 					foreach($schemes as $scheme) {
@@ -188,7 +171,7 @@ $schemes = GetSchemes(null);
 			<input type="hidden" name="action" value="delete"/>
 			<p><input type="submit" value="Delete Color Scheme"/></p>
 		</form>
-		<a href="#" id="delete_help_opener" class="ui-state-default ui-corner-all" style="padding: .4em 1em .4em 1.4em; text-decoration: none; position: relative;"><span class="ui-icon ui-icon-help" style="margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;"></span>Help</a>
+		<?php echo $ui_help_delete; ?>
 		<div id="delete_help_dialog" title="Delete Color Scheme Help">
 			<p>Select a <strong>Color Scheme</strong> to delete.</p>
 		</div>

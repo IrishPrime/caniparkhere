@@ -1,1 +1,11 @@
-<a href="http://maps.google.com/maps/ms?msa=0&msid=103646679501682881134.00000111c752e6670d82a&hl=en&ved=0CBwQkAUwAA&sa=X&ei=gKGVS8ujAansygTr4YyTDw&sig2=yYaQEcDeB0VuEb7WFmOfgw">Google Maps - Clemson University</a>
+<h1>Can I Park Here?</h1>
+A map displaying all the parking lots and the pass types that can park there.
+
+<h1>Where Can I Park?</h1>
+A map displaying only the parking lots your pass type can park in.
+
+<h1>Where Did I Park?</h1>
+A map displaying where you last parked. Your location is updated every time you run the Can I Park Here? Android application.
+
+<h1>Rules</h1>
+A complete listing of all rules, sorted by lot, date, and time.

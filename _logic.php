@@ -175,55 +175,66 @@ class data {
 		}
 		return $passTypes;
 	}
-	private function create_rulesByLots($lots, $times, $result) {
+	private function create_rulesByLots($result) {
 		$rules = null;
-		if (mysql_num_rows($lots) != 0) {
+		
+		// if there are rules to sort
+		if (mysql_num_rows($result) != 0) {
 			$rules = array();
-			// create lot array to hold rules
-			while ($row = mysql_fetch_assoc($lots)) {
-				$rules[$row["id"]] = array(
-					"name" => $row["name"],
-					"description" => $row["description"],
-					"rules" => array());
-			}
-			// create unique rule combination entries
-			if (mysql_num_rows($times) != 0) {
-				while ($row = mysql_fetch_assoc($times)) {
-					$lot = $row["lot"];
-					$key = $this->key($row);
-					$rules[$lot]["rules"][$key] = array(
-						"startDate" => $row["startDate"],
-						"startTime" => $row["startTime"],
-						"endDate" => $row["endDate"],
-						"endTime" => $row["endTime"],
-						"days" => $row["days"],
-						"passTypes" => array());
+			
+			// loop through and create lot arrays
+			while ($row = mysql_fetch_assoc($result)) {
+				// keys
+				$lot = $row["lot"];
+				$dateRange = "[" . $row["startDate"] . "][" . $row["endDate"] . "]";
+				$timeRange = "[" . $row["startTime"] . "][" . $row["endTime"] . "]";
+				$dow = "[" . $row["days"] . "]";
+				$passType = $row["passType"];
+				
+				// check for and create lot data
+				if (!array_key_exists($lot, $rules)) {
+					$rules[$lot] = array(
+						"name" => $row["lotName"],
+						"description" => $row["lotDescription"],
+						"dateRange" => array());
 				}
-
-				// create modified passType object for each rule
-				if (mysql_num_rows($result) != 0) {
-					while ($row = mysql_fetch_assoc($result)) {
-						$lot = $row["lot"];
-						$key = $this->key($row);
-						$passTypeId = $row["passTypeId"];
-						$rules[$lot]["rules"][$key]["passTypes"][$passTypeId] = array(
-							"ruleId" => $row["ruleId"],
-							"id" => $row["passTypeId"],
-							"name" => $row["name"]);
+				else {
+					// check for and create dateRange data
+					if (!array_key_exists($dateRange), $rules[$lot]["dateRange"]) {
+						$rules[$lot]["dateRange"][$dateRange] = array(
+							"startDate" => $row["startDate"],
+							"endDate" => $row["endDate"],
+							"timeRange" => array());
+					}
+					else {
+						// check for and create timeRange data
+						if(!array_key_exists($timeRange), $rules[$lot]["dateRange"][$dateRange]["timeRange"]) {
+							$rules[$lot]["dateRange"][$dateRange]["timeRange"][$timeRange] = array(
+								"startTime" => $row["startTime"],
+								"endTime" => $row["endTime"],
+								"dow" => array());
+						}
+						else {
+							// check for and create dow data
+							if (!array_key_exists($dow, $) {
+								$rules[$lot]["dateRange"][$dateRange]["timeRange"][$timeRange]["dow"][$dow] = array(
+									"days" => $row["days"]
+									"passTypes" => array());
+							}
+							else {
+								$rules[$lot]["dateRange"][$dateRange]["timeRange"][$timeRange]["dow"][$dow]["passTypes"][$passType] = array(
+									"ruleId" => $row["rule"],
+									"id" => $passType,
+									"name" => $row["passTypeName"]);
+							}
+						}
 					}
 				}
 			}
 		}
+		//mysql_data_seek($result, 0); // rewind result set
 		//debug($rules);
 		return $rules;
-	}
-	private function key($row) {
-		$startDate = $row["startDate"];
-		$startTime = $row["startTime"];
-		$endDate = $row["endDate"];
-		$endTime = $row["endTime"];
-		$days = $row["days"];
-		return ("[" . $startDate . "][" . $startTime . "][". $endDate . "][" . $endTime . "][" . $days . "]");
 	}
 	private function create_exceptions($result) {
 		$exceptions = null;
@@ -337,43 +348,19 @@ class data {
 		}
 	}
 	public function get_rulesByLot($id) {
-		/*$sql = "select"
-			. " lots.id as lotId, lots.name as lotName, lots.descrip,"
-			. " rules.id as ruleId, startDate, startTime, endDate, endTime, days,"
-			. " passTypes.id as passTypeId, passTypes.name as passTypeName"
+		$sql = "select lot, lots.name as lotName, lots.description as lotDescription,"
+			. " passType, passTypes.name as passTypeName,"
+			. " rules.id as rule, startDate, startTime, endDate, endTime, days,"
 			. " from rules"
 			. " inner join lots on lots.id = rules.lot"
-			. " inner join passTypes on passTypes.id = rules.passType"
-			. " order by lots.name asc, endDate desc, endTime desc, days asc, passTypes.name asc";
-		//echo $sql . "<br>";
-		$result = mysql_query($sql);
-		if (!$result) die("MySQL error: get_rulesByLots($ids)");
-		else return $this->create_rulesByLots($result);*/
-
-
-		$sql = "select id, name, description from lots";
-		if ($id != null) $sql .= " where id in (" . $id . ")";
-		$sql .= " order by name asc";
-		$lots = mysql_query($sql);
-		//echo $sql . "<br>";
-
-		$sql = "select lot, startDate, startTime, endDate, endTime, days from rules"
-			. " group by lot, startDate, startTime, endDate, endTime, days";
-		if ($id != null) $sql .= " having lot in (" . $id . ")";
-		$sql .= " order by endDate desc, endTime desc, days asc";
-		$times = mysql_query($sql);
-		//echo $sql . "<br>";
-
-		$sql = "select lot, startDate, startTime, endDate, endTime, days,"
-			. " rules.id as ruleId, passTypes.id as passTypeId, name"
-			. " from rules inner join passTypes on passTypes.id = rules.passType";
+			. " inner join passTypes on passTypes.id = rules.passType";
 		if ($id != null) $sql .= " where lot in (" . $id . ")";
-		$sql .= " order by name asc";
+		$sql .= " order by lotName, endDate desc, endTime desc, days asc, passTypeName";
 		$result = mysql_query($sql);
-		//echo $sql . "<br>";
+		echo $sql . "<br>";
 
-		if (!lots || !times || !$result) die("MySQL error: get_rulesByLots($ids)");
-		else return $this->create_rulesByLots($lots, $times, $result); 
+		if (!$result) die("MySQL error: get_rulesByLots($id)");
+		else return $this->create_rulesByLots($result); 
 	}
 	public function get_exceptionsByLots($ids) {
 		$sql = "select * from exceptions";
@@ -709,27 +696,27 @@ function GetAdmins($sortColumn = "lastName") {
 	global $data;
 	return $data->get_admins($sortColumn);
 }
-function GetLots($sortColumn) {
+function GetLots($sortColumn = null) {
 	global $data;
 	return $data->get_lots(null, $sortColumn);
 }
-function GetPassTypes($sortColumn) {
+function GetPassTypes($sortColumn = null) {
 	global $data;
 	return $data->get_passTypes(null, $sortColumn);
 }
-function GetSettingsForUser($id) {
+function GetSettingsForUser($id = null) {
 	global $data;
 	return $data->get_settingsByUser($id);
 }
-function GetSchemes($id) {
+function GetSchemes($id = null) {
 	global $data;
 	return $data->get_schemes($id);
 }
-function GetRulesByLot($id) {
+function GetRulesByLot($id = null) {
 	global $data;
 	return $data->get_rulesByLot($id);
 }
-function GetExceptionsByLot($id) {
+function GetExceptionsByLot($id = null) {
 	global $data;
 	return $data->get_exceptionsByLots($id);
 }

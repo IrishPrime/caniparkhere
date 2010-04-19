@@ -5,9 +5,11 @@ require_once("./_logic.php");
 $passes = GetPassTypes("name");
 
 // Successful connection, setup queries
+@array_map(addslashes, $_POST);
+
 switch($_POST["action"]) {
 	case "user_edit":
-		$sql = "UPDATE users SET firstName='".addslashes($_POST["edit_fname"])."', lastName='".addslashes($_POST["edit_lname"])."', email='".addslashes($_POST["edit_email"])."', password='".md5($_POST["edit_pass1"].$password_salt)."', passType='".addslashes($_POST["edit_passtype"])."' WHERE id='".addslashes($_COOKIE["auth"])."'";
+		$sql = "UPDATE users SET firstName='".$_POST["edit_fname"]."', lastName='".$_POST["edit_lname"]."', email='".$_POST["edit_email"]."', password='".md5($_POST["edit_pass1"].$password_salt)."', passType='".$_POST["edit_passtype"]."' WHERE id='".addslashes($_COOKIE["auth"])."'";
 		mysql_query($sql);
 		break;
 	case "user_delete":

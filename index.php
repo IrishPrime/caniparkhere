@@ -5,8 +5,6 @@
 	if(!is_file("$page.php")) $page="404";
 	
 	require_once("./_logic.php");
-	$passes = GetPassTypes("name");
-	$lots = GetLots("name");
 	$globalSettings = GetSettingsForUser(0);
 ?>
 

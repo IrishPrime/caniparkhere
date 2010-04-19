@@ -15,14 +15,14 @@ switch($_POST["action"]) {
 			printf("%sFailed to create pass: <strong>%s</strong>\n\t</div>\n</div>\n", $ui_alert, $_POST["create_pass"]);
 		}
 		break;
-	case "edit":
-		$result = @RenamePassType($_POST["edit_select"], $_POST["edit_pass"]);
+	case "modify":
+		$result = @RenamePassType($_POST["modify_select"], $_POST["modify_pass"]);
 
 		echo "<div class=\"ui-widget\">\n";
 		if($result) {
-			printf("%sRenamed Pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n</div>\n", $ui_info, $_POST["edit_select"], $_POST["edit_pass"]);
+			printf("%sRenamed Pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n</div>\n", $ui_info, $_POST["modify_select"], $_POST["modify_pass"]);
 		} else {
-			printf("%sFailed to rename pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n</div>\n", $ui_alert, $_POST["edit_select"], $_POST["edit_pass"]);
+			printf("%sFailed to rename pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n</div>\n", $ui_alert, $_POST["modify_select"], $_POST["modify_pass"]);
 		}
 		break;
 	case "delete":
@@ -46,7 +46,7 @@ $passes = GetPassTypes("name");
 <script type="text/javascript">
 	$(document).ready(function() {
 		$("#create_form").validate();
-		$("#edit_form").validate();
+		$("#modify_form").validate();
 		$("#delete_form").validate();
 	});
 </script>
@@ -54,7 +54,7 @@ $passes = GetPassTypes("name");
 <div id="tabs">
 	<ul>
 		<li><a href="#create_tab">Create Pass Type</a></li>
-		<li><a href="#edit_tab">Edit Pass Type</a></li>
+		<li><a href="#modify_tab">Modify Pass Type</a></li>
 		<li><a href="#delete_tab">Delete Pass Type</a></li>
 	</ul>
 
@@ -66,12 +66,16 @@ $passes = GetPassTypes("name");
 			<br/>
 			<input type="submit" value="Create Pass"/>
 		</form>
+		<?php echo $ui_help_create; ?>
+		<div id="create_help_dialog" title="Create Pass Help">
+			<p>Enter the name of the <strong>Pass Type</strong> to create.</p>
+		</div>
 	</div>
 
-	<div id="edit_tab">
-		<form id="edit_form" name="edit" method="POST" action="">
-			<label for="edit_select">Select Pass</label>
-			<select id="edit_select" name="edit_select">
+	<div id="modify_tab">
+		<form id="modify_form" name="modify" method="POST" action="">
+			<label for="modify_select">Current Pass</label>
+			<select id="modify_select" name="modify_select">
 				<optgroup label="Passes">
 				<?php
 				if(is_array($passes))
@@ -82,11 +86,15 @@ $passes = GetPassTypes("name");
 				</optgroup>
 			</select>
 			<br/>
-			<label for="edit_pass">New Name</label>
-			<input id="edit_pass" name="edit_pass" type="text" class="required" minlength="1"/>
-			<input type="hidden" name="action" value="edit"/>
-			<p><input type="submit" value="Edit Pass"/></p>
+			<label for="modify_pass">New Name</label>
+			<input id="modify_pass" name="modify_pass" type="text" class="required" minlength="1"/>
+			<input type="hidden" name="action" value="modify"/>
+			<p><input type="submit" value="Modify Pass"/></p>
 		</form>
+		<?php echo $ui_help_modify; ?>
+		<div id="modify_help_dialog" title="Modify Pass Help">
+			<p>Select the <strong>Current Pass</strong> and enter a <strong>New Name</strong>.</p>
+		</div>
 	</div>
 
 	<div id="delete_tab">
@@ -104,5 +112,9 @@ $passes = GetPassTypes("name");
 			<input type="hidden" name="action" value="delete"/>
 			<p><input type="submit" value="Delete Passes"/></p>
 		</form>
+		<?php echo $ui_help_delete; ?>
+		<div id="delete_help_dialog" title="Delete Pass Help">
+			<p>Select all <strong>Passes</strong> to delete.</p>
+		</div>
 	</div>
 </div>

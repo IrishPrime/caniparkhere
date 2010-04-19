@@ -9,4 +9,5 @@ require("./auth.php");
 	<li><a href="?page=admin-passes" title="<?php echo $title["admin-passes"]; ?>">Pass Types</a></li>
 	<li><a href="?page=admin-schemes" title="<?php echo $title["admin-schemes"]; ?>">Color Schemes</a></li>
 	<li><a href="?page=admin-users" title="<?php echo $title["admin-users"]; ?>">Users</a></li>
+	<li><a href="?page=api" title="<?php echo $title["api"]; ?>">Web Services</a></li>
 </ul>

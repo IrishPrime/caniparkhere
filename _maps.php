@@ -1,4 +1,52 @@
 <script type="text/javascript">
+var apiURL = "./api.php";
+var lots = false;
+
+// get lots from webservice
+function loadLots() {
+	$.getJSON(apiURL + "?function=GetLots",
+		function(data) {
+			lots = data;
+			createLots();
+		});
+}
+
+// returns converted DB coords into array of google LatLng
+function convertCoords(coords) {
+	var output  = new Array();
+	$.each(coords, function(i) {
+		var latLng = (coords[i].split(","));
+		var lat = latLng[0];
+		var lng = latLng[1];
+		output[output.length] = new google.maps.LatLng(lat, lng);
+	});
+	return output;
+}
+
+// creates polygons from lot data
+function createLots() {
+	$.each(lots, function(i) {
+		var lot = lots[i];
+		
+		var scheme = lot.scheme;
+		var coords = convertCoords(lot.coords);
+		var middle = lot.middle.split(",");
+		
+		createPolygon(coords, 
+			scheme.lineColor,
+			scheme.lineWidth,
+			scheme.lineOpacity,
+			scheme.fillColor,
+			scheme.fillOpacity);
+			
+		alert("middle (" + middle[0] + "," + middle[1] + ")");
+		
+		createMarker(
+			new google.maps.LatLng(middle[0], middle[1]),
+			lot.name,
+			"<b>" + lot.name + "</b>");
+	});
+}
 	
 // map options
 var myOptions = {
@@ -31,15 +79,15 @@ var shape = {
 }
 
 var map;
-var lotPolygons = new Array(<?php echo count($lots) ?>);
-var lotMarkers = new Array(<?php echo count($lots) ?>);
-var lotInfoWindow = new Array(<?php echo count($lots) ?>);
+var lotPolygons = new Array();
+var lotMarkers = new Array();
+var lotInfoWindow = new Array();
 
 function initialize() {
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 }
 
-function createPolygon(index, paths, strokeColor, strokeOpacity, strokeWeight, fillColor, fillOpacity) {
+function createPolygon(paths, strokeColor, strokeOpacity, strokeWeight, fillColor, fillOpacity) {
 	var lot = new google.maps.Polygon({
 		paths: paths,
 		strokeColor: strokeColor,
@@ -48,21 +96,21 @@ function createPolygon(index, paths, strokeColor, strokeOpacity, strokeWeight, f
 		fillColor: fillColor,
 		fillOpacity: fillOpacity});
 	lot.setMap(map);
-	lotPolygons[index] = lot;
+	lotPolygons[lotPolygons.length] = lot;
 	return lot;
 }
 
-function createMarker(index, position, name, html) {
+function createMarker(position, name, html) {
 	var marker = new google.maps.Marker({
 		position: position,
 		map: map,
 		shadow: shadow,
 		icon: image,
 		shape: shape,
-		title: name,
-		zIndex: index
+		title: name
 	});
-
+	// zIndex: index
+	
 	var infoWindow = new google.maps.InfoWindow({
 		content: html
 	});
@@ -76,91 +124,12 @@ function createMarker(index, position, name, html) {
 		function() { infoWindow.close(); } );
 
 	marker.setMap(map);
-	lotInfoWindow[index] = infoWindow;
-	lotMarkers[index] = marker;
+	lotInfoWindow[lotInfoWindow.length] = infoWindow;
+	lotMarkers[lotMarkers.length] = marker;
 	return marker;
 }
 
 function displayAllLots() {
-<?php
-
-	function populateHTML($html, $tagValues) {
-		$output = $html;
-		foreach ($tagValues as $tagValue) {
-			$output = str_replace($tagValue["tag"], $tagValue["value"], $output);
-		}
-		// make HTML more readable
-		//$output = str_replace("<br>", "<br>\n ", $output);
-		return $output;
-	};
-	function implodeObjectProperty($objects, $property, $glue, $default) {
-		$output = "";
-		if ($objects == null) $output = $default;
-		else {
-			if (count($objects) != 0) {
-				foreach ($objects as $object)
-					$output .= $object[$property] . $glue;
-				$output = rtrim($output, $glue);
-			}
-		}
-		return $output;
-	}
-	function implodeArray($array, $glue) {
-		$output = '';
-		for ($x = 0; $x < count($array); $x++)
-			$output .= $array[$x] . $glue;
-		$output = rtrim($output, $glue);
-		return $output;
-	}
-	function wrapText($array, $head, $tail) {
-		for ($x = 0; $x < count($array); $x++) {
-			$array[$x] = $head . $array[$x] . $tail;
-		}
-		return $array;
-	}
-	function addQuotes($string) {
-		return '"' . $string . '"';
-	}
-	
-	$i = 0;
-	foreach ($lots as $lot) {
-		//print_r($lot);
-		$coords = wrapText($lot["coords"], " new google.maps.LatLng(", ")");
-		$currentPasses = $lot["currentPassTypes"];
-		$colorScheme = $lot["scheme"];
-		
-		// populate HTML tag values then fill in HTML
-		$tagValues = array(
-			array("tag" => "{lotPicture}",
-				"value" => $lot["picture"]),
-			array("tag" => "{lotName}",
-				"value" => $lot["name"]),
-			array("tag" => "{lotDescription}",
-				"value" => $lot["description"]),
-			array("tag" => "{currentPassTypes}", 
-				"value" => implodeObjectProperty($currentPasses, "name", "<br>", "Lot closed to all pass types.")));
-		$html = populateHTML($globalSettings["lotHTML"], $tagValues);
-		
-		// write comment
-		echo "\n// Loading lot " . $lot["name"] . " [ID = " . $lot["id"] . "]\n";
-		
-		// create polygon
-		echo "createPolygon("
-			. $i . ", "
-			. "[\n" . implodeArray($coords, ",\n") . "],\n "
-			. addQuotes($colorScheme["lineColor"]) . ", " 
-			. $colorScheme["lineWidth"] . ", "
-			. $colorScheme["lineOpacity"] . ", "
-			. addQuotes($colorScheme["fillColor"]) . ", "
-			. $colorScheme["fillOpacity"] . ");\n";
-		
-		// create marker
-		echo "createMarker("
-			. $i++ . ",\n "
-			. "new google.maps.LatLng(" . $lot["middle"] . ")" . ",\n "
-			. addQuotes($lot["name"]) . ",\n "
-			. addQuotes(addslashes($html)) . ");\n";
-	}
-?>
+	loadLots();
 }
 </script>

@@ -37,10 +37,7 @@ $lot_rules = GetRulesByLot(null);
 <script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-	$("#create_form").validate({
-		rules: {
-		},
-	});
+	$("#create_form").validate();
 
 	$("#create_start_datepicker").datepicker({
 		dateFormat: "mm-dd-yy",

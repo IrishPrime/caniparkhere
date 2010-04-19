@@ -1,5 +1,4 @@
 <?php
-
 require_once("./_settings.php");
 
 class cdl {
@@ -97,6 +96,26 @@ class data {
 		mysql_select_db($this->db_name, $conn) or die("Can't open database: " . mysql_error());
 	}
 
+	private function create_admins($result) {
+		$admins = null;
+		if(mysql_num_rows($result) != 0) {
+			while($row = mysql_fetch_assoc($result)) {
+				$admins[$row["id"]] = array(
+					"id" => $row["id"],
+					"lastName" => $row["lastName"],
+					"firstName" => $row["firstName"],
+					"email" => $row["email"]);
+			}
+		}
+		return $admins;
+	}
+	private function create_lastLoc($result) {
+		$lastLoc = null;
+		if(mysql_num_rows($result) != 0) {
+			$lastLoc = mysql_fetch_assoc($result);
+		}
+		return $lastLoc;
+	}
 	private function create_lots($result) {
 		$lots = null;
 		if (mysql_num_rows($result) != 0) {
@@ -104,7 +123,7 @@ class data {
 			while ($row = mysql_fetch_assoc($result)) {
 				$id = $row["id"];
 				$name = $row["name"];
-				$desc = $row["descrip"];
+				$desc = $row["description"];
 				$scheme = $row["scheme"];
 
 				// change data
@@ -123,7 +142,6 @@ class data {
 					"currentPassTypes" => $currentPasses); // array
 			}
 		}
-		//debug($lots);
 		return $lots;
 	}
 	private function findLatLngAverage($coords) {
@@ -158,49 +176,6 @@ class data {
 		return $passTypes;
 	}
 	private function create_rulesByLots($lots, $times, $result) {
-		/*$rules = null;
-
-		$lots = null;
-		$rules = null;
-		$passTypes = null;
-
-		if (mysql_num_rows($result) != 0) {
-			while ($row = mysql_fetch_assoc($lots)) {
-				if ($lots[$row["lotId"]] == null)
-					$lots[$row["lotId"] = array(
-					"name" => $row["lotName"],
-					"description" => $row["descrip"],
-					"rules" => array());
-
-				if ($lots[$row["lotId"]]["rules"][datekey] == null) {
-				}
-					"startDate" => $row["startDate"],
-					"endDate" => $row["endDate"],
-					"timeRange" = array()
-
-				)
-
-				if ($lots[$row["lotId"]]["rules"][datekey]["timeRange"][timeKey] == null) {
-				}
-					"startTime" => $row["startTime"],
-					"endTime" => $row["endTime"],
-					"days" = array()
-
-				)
-
-				if ($lots[$row["lotId"]]["rules"][datekey]["timeRange"][timeKey]["days"][dayKey] == null) {
-					"days" => $row["days"],
-					"passTypes" = array()
-				}
-
-				if ($lots[$row["lotId"]]["rules"][datekey]["timeRange"][timeKey]["days"][dayKey]["passTypes"][$row["passTypeId"]] == null) {
-					"ruleId" => $row["ruleId"],
-					"id" => $row["passTypeId"],
-					"name" => $row["name"]);
-			}
-		} */
-
-
 		$rules = null;
 		if (mysql_num_rows($lots) != 0) {
 			$rules = array();
@@ -208,7 +183,7 @@ class data {
 			while ($row = mysql_fetch_assoc($lots)) {
 				$rules[$row["id"]] = array(
 					"name" => $row["name"],
-					"description" => $row["descrip"],
+					"description" => $row["description"],
 					"rules" => array());
 			}
 			// create unique rule combination entries
@@ -311,6 +286,12 @@ class data {
 		return $schemes;
 	}
 
+	public function get_admins($sortColumn) {
+		$sql = "SELECT * FROM users WHERE admin = 1 ORDER BY $sortColumn";
+		$result = mysql_query($sql);
+		if(!$result) die("MySQL error: get_admins($sortColumn)");
+		else return $this->create_admins($result);
+	}
 	public function get_lots($ids, $sortColumn) {
 		$sql = "SELECT * FROM lots";
 		if ($ids != null) $sql .= " WHERE id in (" . $ids . ")";
@@ -320,6 +301,12 @@ class data {
 		$result = mysql_query($sql);
 		if (!$result) die("MySQL error: get_lots($ids)");
 		else return $this->create_lots($result);
+	}
+	public function get_lastLoc($id) {
+		$sql = "SELECT lastLoc FROM users WHERE id = $id";
+		$result = mysql_query($sql);
+		if(!$result) die("MySQL error: get_lastLoc($id)");
+		else return $this->create_lastLoc($result);
 	}
 	public function get_passTypes($ids, $sortColumn) {
 		$sql = "SELECT * FROM passTypes";
@@ -364,7 +351,7 @@ class data {
 		else return $this->create_rulesByLots($result);*/
 
 
-		$sql = "select id, name, descrip from lots";
+		$sql = "select id, name, description from lots";
 		if ($id != null) $sql .= " where id in (" . $id . ")";
 		$sql .= " order by name asc";
 		$lots = mysql_query($sql);
@@ -718,6 +705,10 @@ $data = new data();
 //  $id = user id, 0 = global, null = all
 // Schemes
 //	$ids = single scheme id, null = all schemes
+function GetAdmins($sortColumn = "lastName") {
+	global $data;
+	return $data->get_admins($sortColumn);
+}
 function GetLots($sortColumn) {
 	global $data;
 	return $data->get_lots(null, $sortColumn);
@@ -792,7 +783,7 @@ function RenamePassType($id, $newName) {
 	global $data;
 	return $data->update_passType($id, $newName);
 }
-function ModifyLot($id, $name, $desc, $coords, $scheme) {
+function UpdateLot($id, $name, $desc, $coords, $scheme) {
 }
 
 // Deletion methods.
@@ -860,6 +851,8 @@ function CanIParkHereNow($lotId, $passTypeId) {
 }
 
 function WhereDidIPark($id) {
+	global $data;
+	return $data->get_lastLoc($id);
 }
 
 function debug($a) {
@@ -867,5 +860,4 @@ function debug($a) {
 	print_r($a);
 	echo "</pre>";
 }
-
 ?>

@@ -47,6 +47,20 @@ $(document).ready(function() {
 	$("#delete_help_opener").click(function() {
 		$("#delete_help_dialog").dialog("open");
 	});
+
+	$("#modify_help_dialog").dialog({
+		autoOpen: false,
+		width: 600,
+		show: "drop",
+		hide: "drop",
+	});
+	$("#modify_help_opener").hover(function() {
+		$(this).toggleClass("ui-state-hover");
+		return false;
+	});
+	$("#modify_help_opener").click(function() {
+		$("#modify_help_dialog").dialog("open");
+	});
 });
 
 function clear_text(field) {

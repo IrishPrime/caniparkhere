@@ -116,12 +116,25 @@ function initialize() {
 				?>
 				</optgroup>
 			</select>
+			<input type="hidden" id="create_coords" name="create_coords"/>
 			<input type="hidden" name="action" value="create"/>
 			<p><input type="submit" value="Create Parking Lot"/></p>
 		</form>
 		<?php echo $ui_help_create; ?>
-		<div id="create_help_dialog" title="Create Rule Help">
-			<p></p>
+		<div id="create_help_dialog" title="Create Lot Help">
+			<p>Enter a <strong>Lot Name</strong> or select an <strong>Existing Lot</strong> to edit.</p>
+			<h3>Create New Lot</h3>
+			<ol>
+				<li>Left click on the map to place the <strong>Starting Marker</strong> for a lot.</li>
+				<li>Left click to continue placing vertices to enclose the parking area.</li>
+				<li>Left click the <strong>Starting Marker</strong> to close the lot.</li>
+				<li>Right click on the map at any time to undo the last action.</li>
+				<li>Vertices may be dragged to reshape the lot.</li>
+			</ol>
+			<h3>Edit Existing Lot</h3>
+			<ol>
+				<li>Vertices may be dragged to reshape the lot.</li>
+			</ol>
 		</div>
 	</div>
 
@@ -145,7 +158,7 @@ function initialize() {
 		<div id="delete_help_dialog" title="Delete Lot Help">
 			<p><strong>Parking Lots</strong> are sorted by <em>name</em>.</p>
 			<p>Hover over a <strong>Parking Lot</strong> to view its <em>description</em>.</p>
-			<p>Select a <strong>Parking Lot</strong> to remove.</p>
+			<p>Select <strong>Parking Lots</strong> to remove.</p>
 		</div>
 	</div>
 </div>

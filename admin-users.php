@@ -37,18 +37,8 @@ switch($_POST["action"]) {
 }
 echo "</div>\n";
 
-$admin_query = "SELECT id, email, firstName, lastName FROM users WHERE admin = '1'";
-$admin_results = mysql_query($admin_query);
-while($row = mysql_fetch_assoc($admin_results))
-	$admins[$row["id"]] = stripslashes($row["email"]);
+$admins = GetAdmins();
 ?>
-
-<script type="text/javascript">
-	$(document).ready(function() {
-		var admins = ["<?php echo implode("\", \"", $admins); ?>"];
-		$("#demote_user").autocomplete({source: admins});
-	});
-</script>
 
 <div id="tabs">
 	<ul>
@@ -72,7 +62,15 @@ while($row = mysql_fetch_assoc($admin_results))
 	<div id="demote_tab">
 		<form id="demote" name="demote" method="POST" action="?page=admin-users">
 			<label for="demote_user">E-Mail</label>
-			<input type="text" id="demote_user" name="demote_user"/>
+			<select id="demote_user" name="demote_user" multiple="multiple"/>
+				<optgroup label="Administrators">
+				<?php
+				foreach($admins as $admin) {
+					printf("<option value=\"%d\">%s, %s (%s)</option>\n", $admin["id"], $admin["lastName"], $admin["firstName"], $admin["email"]);
+				}
+				?>
+				</optgroup>
+			</select>
 			<input type="hidden" name="action" value="demote">
 			<br/>
 			<input type="submit" value="Demote"/>

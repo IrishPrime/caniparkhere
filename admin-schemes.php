@@ -153,6 +153,11 @@ $schemes = GetSchemes(null);
 		<?php echo $ui_help_create; ?>
 		<div id="create_help_dialog" title="Create Color Scheme Help">
 			<p>Create <strong>Color Schemes</strong> to make lots more easily identifiable.</p>
+			<p>The <strong>Scheme Name</strong> should be unique.</strong>
+			<p><strong>Line Width</strong> specifies the width of the border around a parking lot in any map view.</p>
+			<p><strong>Line Opacity</strong> specifies the opacity of the border around a parking lot in any map view. A value of 1 creates an opaque border.</p>
+			<p><strong>Fill Opacity</strong> specifies the opacity of the area within the polygon which defines a parking lot. A value of 1 creates an opaque fill (not recommended).</p>
+			<p>Use the <span style="color: #EF2929;">Red</span>, <span style="color: #8AE234;">Green</span>, and <span style="color: #729FCF;">Blue</span>, sliders to choose a color for the scheme. The line color will be equal to the color selected while the fill color will be set to 90% of the color selected.</p>
 		</div>
 	</div>
 
@@ -173,7 +178,7 @@ $schemes = GetSchemes(null);
 		</form>
 		<?php echo $ui_help_delete; ?>
 		<div id="delete_help_dialog" title="Delete Color Scheme Help">
-			<p>Select a <strong>Color Scheme</strong> to delete.</p>
+			<p>Select <strong>Color Schemes</strong> to delete.</p>
 		</div>
 	</div>
 </div>

@@ -9,11 +9,11 @@ $passes = GetPassTypes("name");
 
 switch($_POST["action"]) {
 	case "user_edit":
-		$sql = "UPDATE users SET firstName='".$_POST["edit_fname"]."', lastName='".$_POST["edit_lname"]."', email='".$_POST["edit_email"]."', password='".md5($_POST["edit_pass1"].$password_salt)."', passType='".$_POST["edit_passtype"]."' WHERE id='".addslashes($_COOKIE["auth"])."'";
+		$sql = "UPDATE users SET firstName='".$_POST["edit_fname"]."', lastName='".$_POST["edit_lname"]."', email='".$_POST["edit_email"]."', password='".sha1($_POST["edit_pass1"].$password_salt)."', passType='".$_POST["edit_passtype"]."' WHERE id='".addslashes($_COOKIE["id"])."' AND password='".$_COOKIE["auth"]."'";
 		mysql_query($sql);
 		break;
 	case "user_delete":
-		$sql = "DELETE FROM users WHERE id='".addslashes($_COOKIE["id"])."'";
+		$sql = "DELETE FROM users WHERE id='".addslashes($_COOKIE["id"])."' AND password='".sha1($_POST["delete_password"].$password_salt)."'";
 		mysql_query($sql);
 		break;
 	default:
@@ -22,33 +22,15 @@ switch($_POST["action"]) {
 }
 
 $result = mysql_query($sql);
-$row = mysql_fetch_assoc($result);
+$row = @mysql_fetch_assoc($result);
 ?>
 
-<script>
-function check_form(form) {
-	if(form.edit_fname.value == '') {
-		alert('First name cannot be blank.');
-		return false;
-	}
-	else if(form.edit_lname.value == '') {
-		alert('Last name cannot be blank.');
-		return false;
-	}
-	else if(form.edit_email.value == '') {
-		alert('E-mail cannot be blank.');
-		return false;
-	}
-	else if(form.edit_pass1.value == '') {
-		alert('Password cannot be blank.');
-		return false;
-	}
-	else if(form.edit_pass2.value != form.edit_pass1.value) {
-		alert('Passwords do not match.');
-		return false;
-	}
-	return true;
-}
+<script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#user_edit").validate();
+	$("#user_delete").validate();
+});
 </script>
 
 <div id="tabs">
@@ -59,21 +41,21 @@ function check_form(form) {
 
 	<!-- Edit Tab -->
 	<div id="edit_tab">
-		<form name="user_edit" id="user_edit" method="POST" action="?page=user-profile" onSubmit="return check_form(this)">
+		<form name="user_edit" id="user_edit" method="POST" action="?page=user-profile">
 			<label for="edit_fname">First Name</label>
-			<input id="edit_fname" name="edit_fname" type="text" value="<?php echo stripslashes($row["firstName"]); ?>"/><br/>
+			<input id="edit_fname" name="edit_fname" type="text" value="<?php echo stripslashes($row["firstName"]); ?>" class="required" minlength="2"/><br/>
 
 			<label for="edit_lname">Last Name</label>
-			<input id="edit_lname" name="edit_lname" type="text" value="<?php echo stripslashes($row["lastName"]); ?>"/><br/>
+			<input id="edit_lname" name="edit_lname" type="text" value="<?php echo stripslashes($row["lastName"]); ?>" class="required" minlength="2"/><br/>
 
 			<label for="edit_email">E-Mail</label>
-			<input id="edit_email" name="edit_email" type="text" value="<?php echo stripslashes($row["email"]); ?>"/><br/>
+			<input id="edit_email" name="edit_email" type="text" value="<?php echo stripslashes($row["email"]); ?>" class="required email" minlength="2"/><br/>
 
 			<label for="edit_pass1">Password</label>
-			<input id="edit_pass1" name="edit_pass1" type="password" value=""/><br/>
+			<input id="edit_pass1" name="edit_pass1" type="password" value="" class="required" minlength="8"/><br/>
 
 			<label for="edit_pass2">Confirm</label>
-			<input id="edit_pass2" name="edit_pass2" type="password" value=""/><br/>
+			<input id="edit_pass2" name="edit_pass2" type="password" value="" class="required" minlength="8"/><br/>
 
 			<label for="edit_passtype">Pass</label>
 			<select id="edit_passtype" name="edit_passtype">
@@ -94,9 +76,9 @@ function check_form(form) {
 
 	<!-- Delete Tab -->
 	<div id="delete_tab">
-		<form name="user_delete" id="user_edit" method="POST" action="?page=user-profile">
+		<form name="user_delete" id="user_delete" method="POST" action="?page=user-profile">
 			<label for="delete_password">Password</label>
-			<input type="password" name="delete_password" id="delete_password" value=""/>
+			<input type="password" name="delete_password" id="delete_password" value="" class="required"/>
 			<input type="hidden" name="action" value="user_delete"/>
 			<p><input type="submit" value="Delete Account"/></p>
 		</form>

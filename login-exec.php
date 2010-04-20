@@ -7,7 +7,7 @@ mysql_connect($mysql_server, $mysql_user, $mysql_password) or die("Could not con
 mysql_select_db($mysql_db_name) or die(mysql_error());
 
 // Successful connection, setup queries
-$sql = "SELECT id, password, admin FROM users where email='".stripslashes($_POST["email"])."' AND password='".md5(stripslashes($_POST["password"].$password_salt))."'";
+$sql = "SELECT id, password, admin FROM users where email='".stripslashes($_POST["email"])."' AND password='".sha1(stripslashes($_POST["password"].$password_salt))."'";
 $result = mysql_query($sql);
 
 ob_start();

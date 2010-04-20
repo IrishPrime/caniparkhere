@@ -34,7 +34,7 @@ if(!empty($_POST)) {
 		$sql .= $_POST["fname"] . "', '";
 		$sql .= $_POST["lname"] . "', '";
 		$sql .= $_POST["email"] . "', '";
-		$sql .= md5($_POST["pass1"].$password_salt) . "', '";
+		$sql .= sha1($_POST["pass1"].$password_salt) . "', '";
 		$sql .= $_POST["passtype"] . "')";
 		(mysql_query($sql) and $status = 1) or $status = 4;
 	}

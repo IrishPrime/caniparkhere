@@ -198,41 +198,38 @@ class data {
 						"description" => $row["lotDescription"],
 						"dateRange" => array());
 				}
-				else {
-					// check for and create dateRange data
-					if (!array_key_exists($dateRange), $rules[$lot]["dateRange"]) {
-						$rules[$lot]["dateRange"][$dateRange] = array(
-							"startDate" => $row["startDate"],
-							"endDate" => $row["endDate"],
-							"timeRange" => array());
-					}
-					else {
-						// check for and create timeRange data
-						if(!array_key_exists($timeRange), $rules[$lot]["dateRange"][$dateRange]["timeRange"]) {
-							$rules[$lot]["dateRange"][$dateRange]["timeRange"][$timeRange] = array(
-								"startTime" => $row["startTime"],
-								"endTime" => $row["endTime"],
-								"dow" => array());
-						}
-						else {
-							// check for and create dow data
-							if (!array_key_exists($dow, $) {
-								$rules[$lot]["dateRange"][$dateRange]["timeRange"][$timeRange]["dow"][$dow] = array(
-									"days" => $row["days"]
-									"passTypes" => array());
-							}
-							else {
-								$rules[$lot]["dateRange"][$dateRange]["timeRange"][$timeRange]["dow"][$dow]["passTypes"][$passType] = array(
-									"ruleId" => $row["rule"],
-									"id" => $passType,
-									"name" => $row["passTypeName"]);
-							}
-						}
-					}
+				
+				// check for and create dateRange data
+				if (!array_key_exists($dateRange, $rules[$lot]["dateRange"])) {
+					$rules[$lot]["dateRange"][$dateRange] = array(
+						"startDate" => $row["startDate"],
+						"endDate" => $row["endDate"],
+						"timeRange" => array());
 				}
+				
+				// check for and create timeRange data
+				if(!array_key_exists($timeRange, $rules[$lot]["dateRange"][$dateRange]["timeRange"])) {
+					$rules[$lot]["dateRange"][$dateRange]["timeRange"][$timeRange] = array(
+						"startTime" => $row["startTime"],
+						"endTime" => $row["endTime"],
+						"dow" => array());
+				}
+				
+				// check for and create dow data
+				if (!array_key_exists($dow, $rules[$lot]["dateRange"][$dateRange]["timeRange"][$timeRange]["dow"])) {
+					$rules[$lot]["dateRange"][$dateRange]["timeRange"][$timeRange]["dow"][$dow] = array(
+						"days" => $row["days"],
+						"passTypes" => array());
+				}
+				
+				// special passType object
+				// the array path will have been created by this point
+				$rules[$lot]["dateRange"][$dateRange]["timeRange"][$timeRange]["dow"][$dow]["passTypes"][$passType] = array(
+					"ruleId" => $row["rule"],
+					"id" => $passType,
+					"name" => $row["passTypeName"]);
 			}
 		}
-		//mysql_data_seek($result, 0); // rewind result set
 		//debug($rules);
 		return $rules;
 	}
@@ -350,14 +347,14 @@ class data {
 	public function get_rulesByLot($id) {
 		$sql = "select lot, lots.name as lotName, lots.description as lotDescription,"
 			. " passType, passTypes.name as passTypeName,"
-			. " rules.id as rule, startDate, startTime, endDate, endTime, days,"
+			. " rules.id as rule, startDate, startTime, endDate, endTime, days"
 			. " from rules"
 			. " inner join lots on lots.id = rules.lot"
 			. " inner join passTypes on passTypes.id = rules.passType";
 		if ($id != null) $sql .= " where lot in (" . $id . ")";
 		$sql .= " order by lotName, endDate desc, endTime desc, days asc, passTypeName";
 		$result = mysql_query($sql);
-		echo $sql . "<br>";
+		//echo $sql . "<br>";
 
 		if (!$result) die("MySQL error: get_rulesByLots($id)");
 		else return $this->create_rulesByLots($result); 

@@ -12,24 +12,24 @@ switch($_POST["action"]) {
 		if(mysql_query($sql)) {
 			printf("%sPromoted User: <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["promote_user"]);
 		} else {
-			printf("%sFailed to Promote User: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["promote_user"]);
+			printf("%sFailed to Promote User: <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["promote_user"]);
 		}
 		break;
 	case "demote":
-		$sql = "UPDATE users SET admin=0 WHERE email = '".$_POST["demote_user"]."'";
+		$sql = "UPDATE users SET admin=0 WHERE id IN (".implode(", ", $_POST["demote_user"]).")";
 		echo "<div class=\"ui-widget\">\n";
 		if(mysql_query($sql)) {
-			printf("%sDemoted User: <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["demote_user"]);
+			printf("%sDemoted User: <strong>%s</strong>\n\t</div>\n", $ui_info, count($_POST["demote_user"]));
 		} else {
-			printf("%sFailed to Demote User: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["demote_user"]);
+			printf("%sFailed to Demote User: <strong>%s</strong>\n\t</div>\n", $ui_alert, count($_POST["demote_user"]));
 		}
 		break;
 	case "delete":
-		$sql = "DELETE from users WHERE email = '".$_POST["delete_user"]."'";
+		$sql = "DELETE from users WHERE email='".$_POST["delete_user"]."'";
 		if(mysql_query($sql)) {
-			printf("%sDeleted User: <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["demote_user"]);
+			printf("%sDeleted User: <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["delete_user"]);
 		} else {
-			printf("%sFailed to Delete User: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["demote_user"]);
+			printf("%sFailed to Delete User: <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["delete_user"]);
 		}
 		break;
 	default:
@@ -61,8 +61,7 @@ $admins = GetAdmins();
 	<!-- Demote Tab -->
 	<div id="demote_tab">
 		<form id="demote" name="demote" method="POST" action="?page=admin-users">
-			<label for="demote_user">E-Mail</label>
-			<select id="demote_user" name="demote_user" multiple="multiple"/>
+			<select id="demote_user" name="demote_user[]" multiple="multiple"/>
 				<optgroup label="Administrators">
 				<?php
 				foreach($admins as $admin) {

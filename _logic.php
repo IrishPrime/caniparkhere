@@ -275,7 +275,6 @@ class data {
 					"name" => $row["passTypeName"]);
 			}
 		}
-		//print_r($exceptions);
 		return $exceptions;
 	}
 	private function create_settings($result, $user) {

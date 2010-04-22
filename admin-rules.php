@@ -197,13 +197,8 @@ $(document).ready(function() {
 				<?php
 				if(is_array($lots)) {
 					foreach($lots as $lot) {
-						echo "\t<h2><a href=\"#\">".$lot["name"]."</a></h2>";
-						echo "\t<div>";
-						echo "\t\t<div class=\"ui-widget\">\n";
-						echo "\t\t\t$ui_info";
-						echo "\t\t\t\t<strong>".$lot["description"]."</strong>\n";
-						echo "\t\t\t</div>\n";
-						echo "\t\t</div>\n";
+						echo "\t<h2><a href=\"#\">".$lot["name"]."</a></h2>\n";
+						echo "\t<div>\t\t\t$ui_info<strong>".$lot["description"]."</strong></div>\n";
 
 						foreach($lot["dateRange"] as $date_range) {
 							echo "<p class=\"ui-state-default ui-corner-all ui-helper-clearfix\" style=\"padding:0px;\">";
@@ -226,8 +221,7 @@ $(document).ready(function() {
 						}
 						echo "\t</div>";
 					}
-				}
-				else {
+				} else {
 					echo "<h2><a href=\"#\">Chaos</a></h2>\n";
 					echo "<div>No rules defined. Expect riots and looting any moment now.</div>\n";
 				}

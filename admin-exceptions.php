@@ -153,20 +153,15 @@ $(document).ready(function() {
 		<div id="nested_accordion">
 			<form name="delete" id="delete" method="POST" action="">
 				<?php
-					foreach($lots as $lot) {
-						$lot["exceptions"] = GetExceptionsByLot($lot["id"]);
-						debug($lot);
+					$exceptions = GetExceptionsByLot();
 
-						if(!empty($lot["exceptions"])) {
+					if(!empty($exceptions)) {
+						foreach($exceptions as $exception_group) {
 							// If the lot has exceptions construct a header
-							echo "\t<h2><a href=\"#\">".$lot["name"]."</a></h2>";
-							echo "\t<div>";
-							echo "\t\t<div class=\"ui-widget\">\n$ui_info";
-							echo "\t\t\t\t<strong>".$lot["description"]."&nbsp;</strong>\n";
-							echo "\t\t\t</div>\n";
-							echo "\t\t</div>\n";
+							echo "\t<h2><a href=\"#\">".$exception_group["name"]."</a></h2>\n";
+							echo "\t<div>\n$ui_info\t\t\t<strong>".$exception_group["description"]."</strong>\n</div>\n";
 
-							foreach($lot["exceptions"] as $exception) {
+							foreach($exception_group["exceptions"] as $exception) {
 								// Print each exception
 								echo "<p class=\"ui-state-default ui-corner-all ui-helper-clearfix\" style=\"padding:0px;\">";
 								echo "<span class=\"ui-icon ui-icon-calendar\" style=\"position:relative; float:left; margin:1.3em 1em;\"></span>";
@@ -174,8 +169,10 @@ $(document).ready(function() {
 								echo date("F d, Y H:i", strtotime($exception["end"]))."<br/>\n";
 								echo ($exception["allowed"] == 0) ? "<span style=\"color: #FF0000;\">Disallow</span>" : "<span style=\"color: #00FF00;\">Allow</span>";
 								echo "</p>";
-								echo "<input type=\"checkbox\" id=\"delete_exception_".$exception["id"]."\" name=\"delete_exceptions[]\" value=\"".$exception["id"]."\"/>\n";
-								echo "<label for=\"delete_exception_".$exception["id"]."\">".$passes[$exception["passType"]]["name"]."</label><br/>\n";
+								foreach($exception["passTypes"] as $pass) {
+									echo "<input type=\"checkbox\" id=\"delete_exception_".$pass["exceptionId"]."\" name=\"delete_exceptions[]\" value=\"".$pass["exceptionId"]."\"/>\n";
+									echo "<label for=\"delete_exception_".$pass["exceptionId"]."\">".$pass["name"]."</label><br/>\n";
+								}
 							}
 							echo "\t</div>\n";
 						}

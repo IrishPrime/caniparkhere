@@ -1,6 +1,5 @@
 <?php
 # Edit the current user's profile.
-require_once("./_settings.php");
 require_once("./_logic.php");
 $passes = GetPassTypes("name");
 
@@ -9,19 +8,24 @@ $passes = GetPassTypes("name");
 
 switch($_POST["action"]) {
 	case "user_edit":
-		$sql = "UPDATE users SET firstName='".$_POST["edit_fname"]."', lastName='".$_POST["edit_lname"]."', email='".$_POST["edit_email"]."', password='".sha1($_POST["edit_pass1"].$password_salt)."', passType='".$_POST["edit_passtype"]."' WHERE id='".addslashes($_COOKIE["id"])."' AND password='".$_COOKIE["auth"]."'";
-		mysql_query($sql);
+		$sql = "SELECT id, password, CONCAT_WS(' ', firstName, lastName) AS fullName FROM users WHERE email='".stripslashes($_POST["edit_email"])."'";
+		$result = mysql_query($sql);
+		$row = mysql_fetch_assoc($result);
+		if(mysql_num_rows($result) == 0 || ((mysql_num_rows($result) == 1) && ($_COOKIE["auth"] == $row["password"] && $_COOKIE["id"] == $row["id"]))) {
+			$sql = "UPDATE users SET firstName='".$_POST["edit_fname"]."', lastName='".$_POST["edit_lname"]."', email='".$_POST["edit_email"]."', password='".sha1($_POST["edit_pass1"].$password_salt)."', passType='".$_POST["edit_passtype"]."' WHERE id='".addslashes($_COOKIE["id"])."' AND password='".$_COOKIE["auth"]."'";
+		} else {
+			$sql = "";
+		}
 		break;
 	case "user_delete":
 		$sql = "DELETE FROM users WHERE id='".addslashes($_COOKIE["id"])."' AND password='".sha1($_POST["delete_password"].$password_salt)."'";
-		mysql_query($sql);
 		break;
 	default:
 		$sql = "SELECT * FROM users WHERE id='".addslashes($_COOKIE["id"])."'";
 		break;
 }
 
-$result = mysql_query($sql);
+$result = @mysql_query($sql);
 $row = @mysql_fetch_assoc($result);
 ?>
 

@@ -180,6 +180,7 @@ $(document).ready(function() {
 			<input type="hidden" name="action" value="create"/>
 			<p><input type="submit" value="Create Rule"/></p>
 		</form>
+		<!-- Help -->
 		<?php echo $ui_help_create; ?>
 		<div id="create_help_dialog" title="Create Rule Help">
 			<p>Rules need only be defined for when people <em>are</em> allowed to park.</p>
@@ -230,6 +231,7 @@ $(document).ready(function() {
 				<br/>
 				<input type="submit" value="Delete Rules"/>
 			</form>
+			<!-- Help -->
 			<?php echo $ui_help_delete; ?>
 			<div id="delete_help_dialog" title="Delete Rule Help">
 				<p>Select a <strong>Parking Lot</strong> to expand it, displaying its rules. They are sorted by <strong>End Date</strong> then <strong>Days</strong>.</p>

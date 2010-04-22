@@ -7,8 +7,7 @@ if(!empty($_POST)) {
 	foreach($_POST as $k => $v) {
 		if(!empty($_POST[$k])) {
 			$_POST[$k] = addslashes($v);
-		}
-		else {
+		} else {
 			$status = 2;
 			break;
 		}
@@ -37,8 +36,7 @@ if(!empty($_POST)) {
 		$sql .= sha1($_POST["pass1"].$password_salt) . "', '";
 		$sql .= $_POST["passtype"] . "')";
 		(mysql_query($sql) and $status = 1) or $status = 4;
-	}
-	else {
+	} else {
 		// Don't create user
 		$row = mysql_fetch_assoc($result);
 		$status = 5;

@@ -37,15 +37,32 @@ switch($_GET["function"]) {
 		break;
 	default:
 		@header("Content-Type: text/html");
-		echo "<a href=\"./api.php?function=CanIParkHereNow&arg1=1\">CanIParkHereNow</a><br/>\n";
-		echo "<a href=\"./api.php?function=GetExceptionsByLot&lot=1\">GetExceptionsByLot</a><br/>\n";
-		echo "<a href=\"./api.php?function=GetCurrentLot\">GetCurrentLot</a><br/>\n";
-		echo "<a href=\"./api.php?function=GetLots\">GetLots</a><br/>\n";
-		echo "<a href=\"./api.php?function=GetPassTypes\">GetPassTypes</a><br/>\n";
-		echo "<a href=\"./api.php?function=GetRulesByLot&lot=1\">GetRulesByLot</a><br/>\n";
-		echo "<a href=\"./api.php?function=GetSchemes\">GetSchemes</a><br/>\n";
-		echo "<a href=\"./api.php?function=GetSettingsForUser&id=0\">GetSettingsForUser</a><br/>\n";
-		echo "<a href=\"./api.php?function=WhereDidIPark&id=1\">WhereDidIPark</a><br/>\n";
+		echo "<p><a href=\"./api.php?function=CanIParkHereNow&arg1=1\">CanIParkHereNow</a>(lot, pass)<br/>\n";
+		echo "</p>\n";
+
+		echo "<p><a href=\"./api.php?function=GetExceptionsByLot&lot=1\">GetExceptionsByLot</a>(lot)<br/>\n";
+		echo "</p>\n";
+
+		echo "<p><a href=\"./api.php?function=GetCurrentLot\">GetCurrentLot</a>(lat, lng)<br/>\n";
+		echo "</p>\n";
+
+		echo "<p><a href=\"./api.php?function=GetLots\">GetLots</a>(sort)<br/>\n";
+		echo "</p>\n";
+
+		echo "<p><a href=\"./api.php?function=GetPassTypes\">GetPassTypes</a>(sort)<br/>\n";
+		echo "</p>\n";
+
+		echo "<p><a href=\"./api.php?function=GetRulesByLot&lot=1\">GetRulesByLot</a>(lot)<br/>\n";
+		echo "</p>\n";
+
+		echo "<p><a href=\"./api.php?function=GetSchemes\">GetSchemes</a>(id)<br/>\n";
+		echo "</p>\n";
+
+		echo "<p><a href=\"./api.php?function=GetSettingsForUser&id=0\">GetSettingsForUser</a>(id)<br/>\n";
+		echo "</p>\n";
+
+		echo "<p><a href=\"./api.php?function=WhereDidIPark&id=1\">WhereDidIPark</a>(id)<br/>\n";
+		echo "</p>\n";
 		$result = array();
 		break;
 }

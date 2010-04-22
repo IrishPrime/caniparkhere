@@ -10,13 +10,13 @@ switch($_POST["action"]) {
 		$endDate = $_POST["create_end_date"];
 		$startTime = $_POST["create_start_hour"] . ":" . $_POST["create_start_minute"] . ":00";
 		$endTime = $_POST["create_end_hour"] . ":" . $_POST["create_end_minute"] . ":00";
-		$newRuleIds = @CreateRules($_POST["create_lots"], $_POST["create_passes"],
+		$newRuleIDs = @CreateRules($_POST["create_lots"], $_POST["create_passes"],
 			(string)$startDate, (string)$endDate, (string)$startTime, (string)$endTime,
 			implode($_POST["create_days"], ","));
 
 		echo "<div class=\"ui-widget\">\n";
-		echo ($newRuleIds != null) ? $ui_info : $ui_alert;
-		echo "\t\tRules Created: <strong>".count($newRuleIds)."</strong>\n\t</div>\n</div>\n";
+		echo ($newRuleIDs != null) ? $ui_info : $ui_alert;
+		echo "\t\tRules Created: <strong>".count($newRuleIDs)."</strong>\n\t</div>\n</div>\n";
 		break;
 	case "delete":
 		$results = @DeleteRules($_POST["delete_rules"]);
@@ -30,8 +30,8 @@ switch($_POST["action"]) {
 }
 
 $passes = GetPassTypes("name");
-$lots = GetLots("name");
-$lot_rules = GetRulesByLot(null);
+$all_lots = GetLots();
+$lots = GetRulesByLot();
 ?>
 
 <script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
@@ -69,12 +69,12 @@ $(document).ready(function() {
 	<div id="create_tab">
 		<form id="create_form" name="create" method="POST" action="">
 			<!-- Start Date -->
-			<label for="create_start_datepicker"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>Start Date</label>
+			<label for="create_start_datepicker"><span class="ui-icon ui-icon-calendar" style="position:relative; float: right; margin-right: .3em;"></span>Start Date</label>
 			<input type="text" name="create_start_datepicker" id="create_start_datepicker" class="required"/>
 			<input type="hidden" name="create_start_date" id="create_start_date"/>
 			<br/>
 			<!-- End Date -->
-			<label for="create_end_datepicker"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>End Date</label>
+			<label for="create_end_datepicker"><span class="ui-icon ui-icon-calendar" style="position:relative; float: right; margin-right: .3em;"></span>End Date</label>
 			<input type="text" name="create_end_datepicker" id="create_end_datepicker" class="required"/>
 			<input type="hidden" name="create_end_date" id="create_end_date"/>
 			<br/>
@@ -171,8 +171,8 @@ $(document).ready(function() {
 			<select name="create_lots[]" id="create_lots" multiple="multiple" size="15" class="required">
 				<optgroup label="Parking Lots" id="test">
 				<?php
-					if(is_array($lots))
-						foreach($lots as $lot)
+					if(is_array($all_lots))
+						foreach($all_lots as $lot)
 							echo "<option value=\"".$lot["id"]."\">".$lot["name"]."</option>\n";
 				?>
 				</optgroup>
@@ -183,8 +183,9 @@ $(document).ready(function() {
 		<?php echo $ui_help_create; ?>
 		<div id="create_help_dialog" title="Create Rule Help">
 			<p>Rules need only be defined for when people <em>are</em> allowed to park.</p>
-			<p>The <strong>Start Date</strong> and <strong>End Date</strong> determine the range for when the rule is active. Leave the <strong>End Date</strong> blank if you do not wish to set a limit on the rule.</p>
+			<p>The <strong>Start Date</strong> and <strong>End Date</strong> determine the range for when the rule is active.</p>
 			<p>The <strong>Start Time</strong> and <strong>End Time</strong> determine the range of times people with the selected <strong>Passes</strong> will be allowed to park in the selected <strong>Parking Lots</strong>.</p>
+			<p><strong>Dates</strong> can be typed in MM-DD-YYYY format. Especially useful for setting dates far in the future.</p>
 			<p>Check all <strong>Days</strong> the rule should apply to.</p>
 		</div>
 	</div>
@@ -194,38 +195,36 @@ $(document).ready(function() {
 		<div id="nested_accordion">
 			<form name="delete" id="delete" method="POST" action="">
 				<?php
-				if(is_array($lot_rules)) {
-					// If we have rules
-					foreach($lot_rules as $lot_rule) {
-						if(!empty($lot_rule["rules"])) {
-							// If the lot has rules
-							echo "\t<h2><a href=\"#\">".$lot_rule["name"]."</a></h2>";
-							echo "\t<div>";
-							echo "\t\t<div class=\"ui-widget\">\n";
-							echo "\t\t\t$ui_info";
-							echo "\t\t\t\t<strong>".$lot_rule["description"]."&nbsp;</strong>\n";
-							echo "\t\t\t</div>\n";
-							echo "\t\t</div>\n";
+				if(is_array($lots)) {
+					foreach($lots as $lot) {
+						echo "\t<h2><a href=\"#\">".$lot["name"]."</a></h2>";
+						echo "\t<div>";
+						echo "\t\t<div class=\"ui-widget\">\n";
+						echo "\t\t\t$ui_info";
+						echo "\t\t\t\t<strong>".$lot["description"]."</strong>\n";
+						echo "\t\t\t</div>\n";
+						echo "\t\t</div>\n";
 
-							foreach($lot_rule["rules"] as $rule) {
-								echo "<p class=\"ui-state-default ui-corner-all ui-helper-clearfix\" style=\"padding:0px;\">";
-								echo "<span class=\"ui-icon ui-icon-calendar\" style=\"float:left; margin:1.3em 1em;\"></span>";
-								echo date("F d, Y", strtotime($rule["startDate"]))." - ".date("F d, Y", strtotime($rule["endDate"]))."<br/>\n";
-								echo date("H:i A", strtotime($rule["startTime"]))." - ".date("H:i A", strtotime($rule["endTime"]))."<br/>\n";
-								$days = explode(",", $rule["days"]);
-								if(is_array($days))
-									foreach($days as $day)
-										echo $dotw[$day]." ";
-								echo "</p>";
-								if(is_array($rule["passTypes"])) {
-									foreach($rule["passTypes"] as $pass) {
-										echo "<input type=\"checkbox\" id=\"delete_pass_".$pass["id"]."_rule_".$pass["ruleId"]."\" name=\"delete_rules[]\" value=\"".$pass["ruleId"]."\"/>\n";
-										echo "<label for=\"delete_pass_".$pass["id"]."_rule_".$pass["ruleId"]."\">".$pass["name"]."</label><br/>\n";
+						foreach($lot["dateRange"] as $date_range) {
+							echo "<p class=\"ui-state-default ui-corner-all ui-helper-clearfix\" style=\"padding:0px;\">";
+							echo "<span class=\"ui-icon ui-icon-calendar\" style=\"position:relative; float:left; margin:.1em .5em;\"></span>";
+							echo date("F d, Y", strtotime($date_range["startDate"]))." - ".date("F d, Y", strtotime($date_range["endDate"]))."</p>\n";
+							foreach($date_range["timeRange"] as $time_range) {
+								echo "<p>".date("H:i", strtotime($time_range["startTime"]))." - ".date("H:i", strtotime($time_range["endTime"]))."<br/>\n";
+								foreach($time_range["dow"] as $dow) {
+									$days = explode(",", $dow["days"]);
+									if(is_array($days)) foreach($days as $day) echo $dotw[$day]." ";
+									echo "</p>";
+									if(is_array($dow["passTypes"])) {
+										foreach($dow["passTypes"] as $pass) {
+											echo "<input type=\"checkbox\" id=\"delete_pass_".$pass["id"]."_rule_".$pass["ruleId"]."\" name=\"delete_rules[]\" value=\"".$pass["ruleId"]."\"/>\n";
+											echo "<label for=\"delete_pass_".$pass["id"]."_rule_".$pass["ruleId"]."\">".$pass["name"]."</label><br/>\n";
+										}
 									}
 								}
 							}
-							echo "\t</div>";
 						}
+						echo "\t</div>";
 					}
 				}
 				else {

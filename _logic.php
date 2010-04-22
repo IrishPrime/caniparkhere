@@ -142,6 +142,7 @@ class data {
 					"currentPassTypes" => $currentPasses); // array
 			}
 		}
+		//debug($lots);
 		return $lots;
 	}
 	private function findLatLngAverage($coords) {
@@ -230,31 +231,64 @@ class data {
 					"name" => $row["passTypeName"]);
 			}
 		}
-		//debug($rules);
 		return $rules;
 	}
-	private function create_exceptions($result) {
+	private function create_exceptionsByLot($result) {
 		$exceptions = null;
+		
+		// if there are rules to sort
 		if (mysql_num_rows($result) != 0) {
 			$exceptions = array();
+			
+			// loop through and create lot arrays
 			while ($row = mysql_fetch_assoc($result)) {
-				$exceptions[$row["id"]] = array(
-					"id" => $row["id"],
-					"lot" => $row["lot"],
-					"passType" => $row["passType"],
-					"allowed" => $row["allowed"],
-					"start" => $row["start"],
-					"end" => $row["end"]);
+				// keys
+				$lot = $row["lot"];
+				$exceptionKey = 
+					"[" . $row["start"] . "]" .
+					"[" . $row["end"] . "]" .
+					"[" . $row["allowed"] . "]";
+				$passType = $row["passType"];
+				
+				// check for and create lot data
+				if (!array_key_exists($lot, $exceptions)) {
+					$exceptions[$lot] = array(
+						"name" => $row["lotName"],
+						"description" => $row["lotDescription"],
+						"exceptions" => array());
+				}
+				
+				// check for and create dateRange data
+				if (!array_key_exists($exceptionKey, $exceptions[$lot]["exceptions"])) {
+					$exceptions[$lot]["exceptions"][$exceptionKey] = array(
+						"start" => $row["start"],
+						"end" => $row["end"],
+						"allowed" => $row["allowed"],
+						"passTypes" => array());
+				}
+				
+				// special passType object
+				// the array path will have been created by this point
+				$exceptions[$lot]["exceptions"][$exceptionKey]["passTypes"][$passType] = array(
+					"exceptionId" => $row["exception"],
+					"id" => $passType,
+					"name" => $row["passTypeName"]);
 			}
 		}
+		//print_r($exceptions);
 		return $exceptions;
 	}
-	private function create_settings($result) {
+	private function create_settings($result, $user) {
 		$settings = null;
 		if (mysql_num_rows($result) != 0) {
 			$settings = array();
 			while ($row = mysql_fetch_assoc($result)) {
 				$settings[$row["name"]] = $row["value"];
+			}
+			if ($user != null) {
+				$row = mysql_fetch_assoc($user);
+				$settings["passType"] = $row["passType"];
+				$settings["lastLoc"] = $row["lastLoc"];
 			}
 		}
 		return $settings;
@@ -353,28 +387,42 @@ class data {
 			. " inner join passTypes on passTypes.id = rules.passType";
 		if ($id != null) $sql .= " where lot in (" . $id . ")";
 		$sql .= " order by lotName, endDate desc, endTime desc, days asc, passTypeName";
+		
 		$result = mysql_query($sql);
-		//echo $sql . "<br>";
-
 		if (!$result) die("MySQL error: get_rulesByLots($id)");
 		else return $this->create_rulesByLots($result); 
 	}
 	public function get_exceptionsByLots($ids) {
-		$sql = "select * from exceptions";
+		$sql = "select lot, lots.name as lotName, lots.description as lotDescription,"
+			. " passType, passTypes.name as passTypeName,"
+			. " exceptions.id as exception, start, end, allowed"
+			. " from exceptions"
+			. " inner join lots on lots.id = exceptions.lot"
+			. " inner join passTypes on passTypes.id = exceptions.passType";
 		if ($ids != null) $sql .= " where lot in (" . $ids . ")";
-		$sql .= " order by end desc";
+		$sql .= " order by lotName, end desc, passTypeName";
 
 		$result = mysql_query($sql);
 		if (!$result) die("MySQL error: get_exceptionsByLots($ids)");
-		else return $this->create_exceptions($result);
+		else return $this->create_exceptionsByLot($result);
 	}
-	public function get_settingsByUser($ids) {
+	public function get_settingsByUser($id) {
 		$sql = "select * from settings";
-		if ($ids != null) $sql .= " where user in (" . $ids . ")";
+		if ($id != null) $sql .= " where user in (" . $id . ")";
 		$sql .= " order by id";
 		$result = mysql_query($sql);
-		if (!$result) die("MySQL error: get_settingsByUser($ids)");
-		else return $this->create_settings($result);
+		$user = null;
+		
+		if ($id != null) {
+			$sql = "select passType, lastLoc from users";
+			$sql .= " where id in (" . $id . ")";
+			$user = mysql_query($sql);
+			if(!$user) die("MySQL error: get_settingByUser($id)");
+			if ($id == 0) $user = null; // no global
+		}
+		
+		if (!$result) die("MySQL error: get_settingsByUser($id)");
+		else return $this->create_settings($result, $user);
 	}
 	public function get_scheme($id) {
 		$sql = "SELECT * FROM schemes";
@@ -398,13 +446,12 @@ class data {
 	private function addSingleQuotes($string) {
 		return "'" . $string . "'";
 	}
-	public function insert_lot($name, $desc, $pic, $coords, $scheme) {
+	public function insert_lot($name, $desc, $coords, $scheme) {
 		$sql = "insert into lots "
-			. "(name, desc, pic, coords, scheme) "
+			. "(name, description, coords, scheme) "
 			. "values (" 
 			. $this->addSingleQuotes($name) . ", "
 			. $this->addSingleQuotes($desc) . ", "
-			. $this->addSingleQuotes($pic) . ", "
 			. $this->addSingleQuotes($coords) . ", "
 			. $scheme . ")";
 		$result = mysql_query($sql);
@@ -475,10 +522,18 @@ class data {
 	}
 
 	public function delete_lot($ids) {
-		$sql = "delete from lots where id in (" . $ids . ")";
+		$sql = "DELETE FROM rules WHERE lot IN (" . $ids . ")";
+		mysql_query($sql);
+		$sql = "DELETE FROM exceptions WHERE lot IN (" . $ids . ")";
+		mysql_query($sql);
+		$sql = "DELETE FROM lots WHERE id IN (" . $ids . ")";
 		return mysql_query($sql);
 	}
 	public function delete_passType($ids) {
+		$sql = "DELETE FROM rules WHERE passType IN (" . $ids . ")";
+		mysql_query($sql);
+		$sql = "DELETE FROM exceptions WHERE passType IN (" . $ids . ")";
+		mysql_query($sql);
 		$sql = "DELETE FROM passTypes WHERE id IN (" . $ids . ")";
 		return mysql_query($sql);
 	}
@@ -491,8 +546,11 @@ class data {
 		return mysql_query($sql);
 	}
 	public function delete_schemes($ids) {
+		$sql = "UPDATE lots SET scheme=0 WHERE scheme IN (". $ids . ")";
+		mysql_query($sql);
 		$sql = "DELETE FROM schemes WHERE id IN (" . $ids . ")";
-		return mysql_query($sql);
+		if (mysql_query($sql)) return mysql_affected_rows();
+		else return false;
 	}
 
 	private function whatPassTypesCanParkHere($id) {
@@ -501,24 +559,89 @@ class data {
 		// set requested timestamp
 		$requestedTime = new DateTime("now");
 
-		// get rules
-		$rules = $this->get_rulesByLot($id);
-		$rules = $rules[$id]["rules"];
-
-		$passTypes = null;
-
-		// search for rules that apply to this passType
+		// get rules & exceptions
+		$lots = $this->get_rulesByLot($id);
+		$rules = $lots[$id]["dateRange"];
+		$lots = $this->get_exceptionsByLots($id);
+		$exceptions = $lots[$id]["exceptions"];
+	
+		// copy passTypes allowed by current rules
+		$rulePassTypes = array();
+		// copy passTypes allowed/disallowed by current exceptions
+		$exceptionPassTypes = array();
+		
+		// copy passTypes that are affected by current rules
 		if ($rules != null) {
-			foreach ($rules as $rule) {
-				if ($this->doesRuleApply($rule, $requestedTime)) {
-					if ($passTypes == null) $passTypes = array();
-					foreach ($rule["passTypes"] as $pass)
-						$passTypes[$pass["id"]] = $pass;
+			foreach ($rules as $dateRange) {
+				foreach ($dateRange["timeRange"] as $timeRange) {
+					foreach ($timeRange["dow"] as $dow) {							
+						$passTypes = $dow["passTypes"];
+						// rule converted into one deep array for doesRuleApply()
+						$oldRule = array(
+							"startDate" => $dateRange["startDate"],
+							"endDate" => $dateRange["endDate"],
+							"startTime" => $timeRange["startTime"],
+							"endTime" => $timeRange["endTime"],
+							"days" => $dow["days"]);
+
+						if ($this->doesRuleApply($oldRule, $requestedTime)) {
+							if ($passTypes != null) {
+								foreach ($passTypes as $passType) {
+									$rulePassTypes[$passType["id"]] = $passType;
+								}
+							}
+						}
+					}
 				}
 			}
 		}
-
-		return $passTypes;
+		
+		// copy passTypes that are affected by current exceptions
+		if ($exceptions != null) {
+			foreach ($exceptions as $exception) {
+				$passTypes = $exception["passTypes"];
+				
+				if ($this->doesExceptionApply($exception, $requestedTime)) {
+					if ($passTypes != null) {
+						foreach ($passTypes as $passType) {
+							$exceptionPassTypes[$passType["id"]] = $passType;
+						}
+					}
+				}
+			}
+		}
+		
+		//echo("BY RULES");
+		//debug($rulePassTypes);
+		//echo("BY EXCEPTIONS");
+		//debug($exceptionPassTypes);
+		
+		$allowedPassTypes = $rulePassTypes;
+		
+		// add any passType ids that are NOT in rules, but are allowed by exceptions
+		foreach ($exceptionPassTypes as $ept) {
+			$inRules = false;
+			foreach ($rulePassTypes as $rpt) {
+				if ($ept["id"] == $rpt["id"]) {
+					$inRules = true;
+					break;
+				}
+			}
+			if (!$inRules && $ept["allowed"] == true) {
+				$allowedPassTypes[$ept["id"]] = $ept;
+			}
+		}
+		
+		// remove any passType ids that ARE in rules, but are not allowed by exceptions
+		foreach ($rulePassTypes as $rpt) {
+			foreach ($exceptionPassTypes as $ept) {
+				if ($ept["id"] == $rpt["id"] && $ept["allowed"] == false) {
+					unset($allowedPassTypes[$ept["id"]]);
+				}
+			}
+		}
+		
+		return (count($allowedPassTypes) == 0 ? null : $allowedPassTypes);
 	}
 	private function doesRuleApply($rule, $parkTimestamp) {
 
@@ -666,7 +789,10 @@ class data {
 		if ($inDateRange && $inTimeRange && $inDayOfWeek) return true;
 		else return false;
 	}
-
+	private function doesExceptionApply($exception, $parkTimestamp) {
+		return ($exception["start"] <= $parkTimestamp && $exception["end"] >= $parkTimestamp ? true : false);
+	}
+	
 	public function close_me() {
 		// disconnect mysql connection
 		mysql_close();

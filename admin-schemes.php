@@ -1,26 +1,26 @@
 <?php
 # Create/Delete color schemes used by parking lots.
 
+echo "<div class=\"ui-widget\">\n";
 switch($_POST["action"]) {
 	case "create":
 		$result = @CreateScheme($_POST["create_name"], $_POST["create_line_color"], $_POST["create_line_width"], $_POST["create_line_opacity"], $_POST["create_fill_color"], $_POST["create_fill_opacity"]);
 
-		echo "<div class=\"ui-widget\">\n";
 		echo ($result != null) ? $ui_info : $ui_alert;
-		echo "\t\tCreating Color Scheme: <strong>".$_POST["create_name"]."</strong>\n\t</div>\n</div>\n";
+		echo "\t\tCreating Color Scheme: <strong>".$_POST["create_name"]."</strong>\n\t</div>\n";
 		break;
 	case "delete":
 		$result = @DeleteSchemes($_POST["delete_scheme"]);
 
-		echo "<div class=\"ui-widget\">\n";
-		echo $results ? $ui_info : $ui_alert;
-		echo "\t\tRules Deleted: <strong>".count($_POST["delete_rules"])."</strong>\n\t</div>\n</div>\n";
+		echo $results > 0 ? $ui_info : $ui_alert;
+		echo "\t\tRules Deleted: <strong>".$results or "0"."</strong>\n\t</div>\n";
 		break;
 	default:
 		break;
 }
+echo "</div>\n";
 
-$schemes = GetSchemes(null);
+$schemes = GetSchemes();
 ?>
 <style type="text/css">
 	#red, #green, #blue {
@@ -136,7 +136,7 @@ $schemes = GetSchemes(null);
 			<input type="text" name="create_fill_opacity" value="0.3" class="required"/><br/>
 
 			<p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
-			<span class="ui-icon ui-icon-gear" style="float:left; margin:0 5px 0 0;"></span>
+			<span class="ui-icon ui-icon-gear" style="position:relative; float:left; margin:0 5px 0 0;"></span>
 			Line &amp; Fill Color</p>
 
 			<div id="red"></div>

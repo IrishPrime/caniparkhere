@@ -10,7 +10,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>Can I Park Here? - <?php echo $title[$page]; ?></title>
+	<link rel="SHORTCUT ICON" href="./favicon.ico"/>
 	<meta http-equiv="X-UA-Compatible" content="IE=8"/>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 	<style type="text/css">@import url("./css/ciph.css");</style>
@@ -20,6 +20,7 @@
 	<script type="text/javascript" src="./js/jquery-1.4.2.min.js"></script>
 	<script type="text/javascript" src="./js/jquery-ui-1.8.custom.min.js"></script>
 	<script type="text/javascript" src="./js/ciph.js"></script>
+	<title>Can I Park Here? - <?php echo $title[$page]; ?></title>
 </head>
 
 <body>
@@ -33,7 +34,7 @@
 		<li><a href="?page=wcip" title="<?php echo $title["wcip"]; ?>">Where Can I Park?</a></li>
 		<li><a href="?page=wdip" title="<?php echo $title["wdip"]; ?>">Where Did I Park?</a></li>
 		<li><a href="?page=rules" title="<?php echo $title["rules"]; ?>">Rules</a></li>
-		<li><a href="?page=news" title="<?php echo $title["news"]; ?>">News</a></li>
+		<li><a href="?page=exceptions" title="<?php echo $title["exceptions"]; ?>">Exceptions</a></li>
 		<li><a href="?page=FAQ" title="<?php echo $title["FAQ"]; ?>"><acronym title="Frequently Asked Questions">FAQ</acronym></a></li>
 		<?php include("./login.php"); ?>
 	</ul>

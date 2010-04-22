@@ -4,40 +4,39 @@
 require("./auth.php");
 require_once("./_logic.php");
 
+echo "<div class=\"ui-widget\">\n";
 switch($_POST["action"]) {
 	case "create":
 		$passID = @CreatePassType($_POST["create_pass"]);
 
-		echo "<div class=\"ui-widget\">\n";
 		if($passID > 0) {
-			printf("%sCreated Pass: <strong>%s</strong>\n\t</div>\n</div>\n", $ui_info, $_POST["create_pass"]);
+			printf("%sCreated Pass: <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["create_pass"]);
 		} else {
-			printf("%sFailed to create pass: <strong>%s</strong>\n\t</div>\n</div>\n", $ui_alert, $_POST["create_pass"]);
+			printf("%sFailed to create pass: <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["create_pass"]);
 		}
 		break;
 	case "modify":
 		$result = @RenamePassType($_POST["modify_select"], $_POST["modify_pass"]);
 
-		echo "<div class=\"ui-widget\">\n";
 		if($result) {
-			printf("%sRenamed Pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n</div>\n", $ui_info, $_POST["modify_select"], $_POST["modify_pass"]);
+			printf("%sRenamed Pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["modify_select"], $_POST["modify_pass"]);
 		} else {
-			printf("%sFailed to rename pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n</div>\n", $ui_alert, $_POST["modify_select"], $_POST["modify_pass"]);
+			printf("%sFailed to rename pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["modify_select"], $_POST["modify_pass"]);
 		}
 		break;
 	case "delete":
 		$result = @DeletePassTypes($_POST["delete_passes"]);
 
-		echo "<div class=\"ui-widget\">\n";
 		if($result) {
-			printf("%sDeleted Passes: <strong>%d</strong>\n\t</div>\n</div>\n", $ui_info, count($_POST["delete_passes"]));
+			printf("%sDeleted Passes: <strong>%d</strong>\n\t</div>\n", $ui_info, count($_POST["delete_passes"]));
 		} else {
-			printf("%sFailed to delete passes: <strong>%d</strong>\n\t</div>\n</div>\n", $ui_alert, count($_POST["delete_passes"]));
+			printf("%sFailed to delete passes: <strong>%d</strong>\n\t</div>\n", $ui_alert, count($_POST["delete_passes"]));
 		}
 		break;
 	default:
 		break;
 }
+echo "</div>\n";
 
 $passes = GetPassTypes("name");
 ?>

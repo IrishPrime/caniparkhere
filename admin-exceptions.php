@@ -63,7 +63,7 @@ $(document).ready(function() {
 	<div id="create_tab">
 		<form name="create" id="create_form" method="POST" action="">
 			<!-- Start Date -->
-			<label for="create_start_datepicker" style="width: 120px;"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>Start Date/Time</label>
+			<label for="create_start_datepicker" style="width: 120px;"><span class="ui-icon ui-icon-calendar" style="position:relative; float: right; margin-right: .3em;"></span>Start Date/Time</label>
 			<input type="text" name="create_start_datepicker" id="create_start_datepicker" class="required"/>
 			<input type="hidden" name="create_start_date" id="create_start_date"/>
 			<!-- Start Time -->
@@ -85,7 +85,7 @@ $(document).ready(function() {
 			<br/>
 
 			<!-- End Date -->
-			<label for="create_end_datepicker" style="width: 120px;"><span class="ui-icon ui-icon-calendar" style="float: right; margin-right: .3em;"></span>End Date/Time</label>
+			<label for="create_end_datepicker" style="width: 120px;"><span class="ui-icon ui-icon-calendar" style="position:relative; float: right; margin-right: .3em;"></span>End Date/Time</label>
 			<input type="text" name="create_end_datepicker" id="create_end_datepicker" class="required"/>
 			<input type="hidden" name="create_end_date" id="create_end_date"/>
 			<!-- End Time -->
@@ -155,6 +155,7 @@ $(document).ready(function() {
 				<?php
 					foreach($lots as $lot) {
 						$lot["exceptions"] = GetExceptionsByLot($lot["id"]);
+						debug($lot);
 
 						if(!empty($lot["exceptions"])) {
 							// If the lot has exceptions construct a header
@@ -168,7 +169,7 @@ $(document).ready(function() {
 							foreach($lot["exceptions"] as $exception) {
 								// Print each exception
 								echo "<p class=\"ui-state-default ui-corner-all ui-helper-clearfix\" style=\"padding:0px;\">";
-								echo "<span class=\"ui-icon ui-icon-calendar\" style=\"float:left; margin:1.3em 1em;\"></span>";
+								echo "<span class=\"ui-icon ui-icon-calendar\" style=\"position:relative; float:left; margin:1.3em 1em;\"></span>";
 								echo date("F d, Y H:i", strtotime($exception["start"]))."<br/>\n";
 								echo date("F d, Y H:i", strtotime($exception["end"]))."<br/>\n";
 								echo ($exception["allowed"] == 0) ? "<span style=\"color: #FF0000;\">Disallow</span>" : "<span style=\"color: #00FF00;\">Allow</span>";

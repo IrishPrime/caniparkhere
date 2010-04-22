@@ -20,43 +20,21 @@ $(document).ready(function() {
 	$("input:submit, input:button, input:checkbox, button").button();
 
 	// Help Dialogs
-	$("#create_help_dialog").dialog({
+	$("#create_help_dialog, #delete_help_dialog, #modify_help_dialog").dialog({
 		autoOpen: false,
 		width: 600,
 		show: "drop",
 		hide: "drop",
 	});
-	$("#create_help_opener").hover(function() {
+	$("#create_help_opener, #delete_help_opener, #modify_help_opener").hover(function() {
 		$(this).toggleClass("ui-state-hover");
 		return true;
 	});
 	$("#create_help_opener").click(function() {
 		$("#create_help_dialog").dialog("open");
 	});
-
-	$("#delete_help_dialog").dialog({
-		autoOpen: false,
-		width: 600,
-		show: "drop",
-		hide: "drop",
-	});
-	$("#delete_help_opener").hover(function() {
-		$(this).toggleClass("ui-state-hover");
-		return false;
-	});
 	$("#delete_help_opener").click(function() {
 		$("#delete_help_dialog").dialog("open");
-	});
-
-	$("#modify_help_dialog").dialog({
-		autoOpen: false,
-		width: 600,
-		show: "drop",
-		hide: "drop",
-	});
-	$("#modify_help_opener").hover(function() {
-		$(this).toggleClass("ui-state-hover");
-		return false;
 	});
 	$("#modify_help_opener").click(function() {
 		$("#modify_help_dialog").dialog("open");

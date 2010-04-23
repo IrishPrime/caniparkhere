@@ -6,6 +6,8 @@ $mysql_password = "cpsc123";
 $mysql_db_name = "ciph";
 
 // WARNING: Changing the password salt on a live system will cause all accounts to quit working.
+// If the password salt is changed it will also need to be changed in the Android application.
+// This prevents the need to send unencrypted passwords while maintaining the password salt.
 $password_salt = "C!p|-|4Mg501337";
 $session_duration = 60*60*24*365;
 $maintainer_email = "";

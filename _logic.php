@@ -275,6 +275,7 @@ class data {
 					"name" => $row["passTypeName"]);
 			}
 		}
+		//print_r($exceptions);
 		return $exceptions;
 	}
 	private function create_settings($result, $user) {
@@ -333,11 +334,12 @@ class data {
 		if(!$result) die("MySQL error: get_admins($sortColumn)");
 		else return $this->create_admins($result);
 	}
-	public function get_lots($ids, $sortColumn) {
+	public function get_lots($ids = null, $sortColumn = "name") {
 		$sql = "SELECT * FROM lots";
 		if ($ids != null) $sql .= " WHERE id in (" . $ids . ")";
 		if ($sortColumn == null) $sortColumn = "name";
 		$sql .= " ORDER BY " . $sortColumn . " ASC";
+		//debug($sql);
 
 		$result = mysql_query($sql);
 		if (!$result) die("MySQL error: get_lots($ids)");
@@ -792,6 +794,109 @@ class data {
 		return ($exception["start"] <= $parkTimestamp && $exception["end"] >= $parkTimestamp ? true : false);
 	}
 	
+	public function whereAmI($point) {
+		$lots = $this->get_lots();
+		foreach($lots as $lot) {
+			if ($this->pointInPolygon($point, $lot["coords"])) {
+			//if ($this->pnPoly($point, $lot["coords"])) {
+				return $lot["id"];
+			}
+		}
+	}
+	private function pointInPolygon($point, $polygon, $pointOnVertex = true) {
+        // Transform string coordinates into arrays with x and y values
+        $point = $this->pointStringToCoordinates($point);
+		//echo("You are at...");
+		//debug($point);
+        $vertices = array(); 
+        foreach ($polygon as $vertex) {
+            $vertices[] = $this->pointStringToCoordinates($vertex); 
+        }
+		
+		// if the last vertice doesn't connect, connect it
+		if ($vertices[count($vertices)] != $verticies[0]) {
+			$vertices[] = $verticies[0];
+		}
+		//echo("The vertices of the lot are...");
+		//debug($vertices);
+        
+        // Check if the point sits exactly on a vertex
+        if ($pointOnVertex == true and $this->pointOnVertex($point, $vertices) == true) {
+            //return "vertex";
+			return true;
+        }
+        
+        // Check if the point is inside the polygon or on the boundary
+        $intersections = 0; 
+        $vertices_count = count($vertices);
+    
+        for ($i=1; $i < $vertices_count; $i++) {
+            $vertex1 = $vertices[$i-1]; 
+            $vertex2 = $vertices[$i];
+            if ($vertex1['y'] == $vertex2['y'] and $vertex1['y'] == $point['y'] and $point['x'] > min($vertex1['x'], $vertex2['x']) and $point['x'] < max($vertex1['x'], $vertex2['x'])) { // Check if point is on an horizontal polygon boundary
+                return true;
+				//return "boundary";
+            }
+            if ($point['y'] > min($vertex1['y'], $vertex2['y']) and $point['y'] <= max($vertex1['y'], $vertex2['y']) and $point['x'] <= max($vertex1['x'], $vertex2['x']) and $vertex1['y'] != $vertex2['y']) { 
+                $xinters = floatval(floatval($point['y'] - $vertex1['y']) * floatval($vertex2['x'] - $vertex1['x']) / floatval($vertex2['y'] - $vertex1['y']) + floatval($vertex1['x'])); 
+                if ($xinters == $point['x']) { // Check if point is on the polygon boundary (other than horizontal)
+                    return true;
+					//return "boundary";
+                }
+                if ($vertex1['x'] == $vertex2['x'] || $point['x'] <= $xinters) {
+                    $intersections++; 
+                }
+            } 
+        } 
+        // If the number of edges we passed through is even, then it's in the polygon. 
+        if ($intersections % 2 != 0) {
+            return true;
+			//return "inside";
+        } else {
+			return false;
+            //return "outside";
+        }
+    }
+	private function pnPoly($point, $polygon) {
+		$point = $this->pointStringToCoordinates($point);
+		$vertices = array(); 
+        foreach ($polygon as $vertex) {
+            $vertices[] = $this->pointStringToCoordinates($vertex); 
+        }
+		$numVertices = count($polygon);
+		
+		$inPoly = false;
+		for ($i = 0, $j = ($numVertices - 1); $i < $numVertices; $j = $i++) {
+			if (
+				(
+					(
+						$vertices[i]["y"] > $point["y"])
+						!= ($vertices[j]["y"] > $point["y"])
+					)
+				&&
+					(
+						$point["x"] < floatval(
+							floatval($vertices[j]["x"] - $vertices[i]["x"])
+							* floatval($point["y"] - $vertices[i]["y"])
+							/ floatval($vertices[j]["y"] - $vertices[i]["y"] + $vertices[i]["x"])
+						)
+					)
+			) $inPoly = !$inPoly;
+		}
+		return inPoly;
+	}
+	private function pointOnVertex($point, $vertices) {
+        foreach($vertices as $vertex) {
+            if ($point == $vertex) {
+                return true;
+            }
+        }
+	}
+	private function pointStringToCoordinates($pointString) {
+        $coordinates = explode(",", $pointString);
+        return array("x" => $coordinates[0], "y" => $coordinates[1]);
+    }
+	
 	public function close_me() {
 		// disconnect mysql connection
 		mysql_close();
@@ -841,6 +946,10 @@ function GetRulesByLot($id = null) {
 function GetExceptionsByLot($id = null) {
 	global $data;
 	return $data->get_exceptionsByLots($id);
+}
+function GetCurrentLot($point) {
+	global $data;
+	return $data->whereAmI($point);
 }
 
 // Creation methods.

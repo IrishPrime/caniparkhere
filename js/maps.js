@@ -60,6 +60,25 @@ function createPolygon(paths, strokeColor, strokeOpacity, strokeWeight, fillColo
 		strokeWeight: strokeWeight,
 		fillColor: fillColor,
 		fillOpacity: fillOpacity});
+		
+		google.maps.event.addListener(lot, 'click', function(point) {
+				latLng = point.latLng;
+				lat = latLng.lat().toFixed(6);
+				lng = latLng.lng().toFixed(6);
+				$.getJSON(apiURL + "?function=GetCurrentLot&point=" + lat + "," + lng, function(data) {
+					var lotId = data;
+					if (lotId != null) {
+						$.each(lots, function(i) {
+							var lot = lots[i];
+							if (lot.id == lotId) {
+								alert("You're in lot " + lot.name + "!");
+								return false;
+							}
+						});
+					}
+				});
+			});
+		
 	lotPolygons.push(lot);
 }
 // creates marker on map with an info window (HTML)
@@ -382,6 +401,25 @@ function LoadMap_CIPH() {
 		function(data) {
 			settings = data; // store settings, now create lots
 			initialize();
+			
+			/*// for GetCurrentLot test
+			google.maps.event.addListener(map, 'click', function(point) {
+				latLng = point.latLng;
+				lat = latLng.lat().toFixed(6);
+				lng = latLng.lng().toFixed(6);
+				$.getJSON(apiURL + "?function=GetCurrentLot&point=" + lat + "," + lng, function(data) {
+					var lotId = data;
+					if (lotId != null) {
+						$.each(lots, function(i) {
+							var lot = lots[i];
+							if (lot.id == lotId) {
+								alert("You're in lot " + lot.name + "!");
+								return false;
+							}
+						});
+					}
+				});
+			}); */
 			
 			// get lot data
 			$.getJSON(apiURL + "?function=GetLots",

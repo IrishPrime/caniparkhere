@@ -9,14 +9,14 @@ require_once("./_logic.php");
 
 switch($_GET["function"]) {
 	case "Authenticate":
-		$sql = "SELECT id, password, passType, admin FROM users WHERE email='".stripslashes($_GET["email"])."' AND password='".sha1(stripslashes($_GET["password"].$password_salt))."'";
+		$sql = "SELECT id, password, passType, admin FROM users WHERE email='".addslashes($_GET["email"])."' AND password='".addslashes($_GET["passwordhash"])."'";
 		$result = mysql_fetch_assoc(mysql_query($sql));
 		break;
 	case "CanIParkHereNow":
 		$result = CanIParkHereNow($_GET["lot"], $_GET["pass"]);
 		break;
 	case "GetCurrentLot":
-		$result = GetCurrentLot($_GET["lat"], $_GET["lng"]);
+		$result = GetCurrentLot($_GET["point"]);
 		break;
 	case "GetExceptionsByLot":
 		$result = GetExceptionsByLot($_GET["lot"]);
@@ -41,7 +41,7 @@ switch($_GET["function"]) {
 		break;
 	default:
 		@header("Content-Type: text/html");
-		echo "<p><a href=\"./api.php?function=Authenticate&email=test@example.com&password=secrets\">Authenticate</a>(user, password)<br/>\n";
+		echo "<p><a href=\"./api.php?function=Authenticate&email=test@example.com&password=secrets\">Authenticate</a>(user, passwordhash)<br/>\n";
 		echo "</p>\n";
 
 		echo "<p><a href=\"./api.php?function=CanIParkHereNow&lot=1&pass=1\">CanIParkHereNow</a>(lot, pass)<br/>\n";
@@ -50,7 +50,7 @@ switch($_GET["function"]) {
 		echo "<p><a href=\"./api.php?function=GetExceptionsByLot&lot=1\">GetExceptionsByLot</a>(lot)<br/>\n";
 		echo "</p>\n";
 
-		echo "<p><a href=\"./api.php?function=GetCurrentLot\">GetCurrentLot</a>(lat, lng)<br/>\n";
+		echo "<p><a href=\"./api.php?function=GetCurrentLot\">GetCurrentLot</a>(point)<br/>\n";
 		echo "</p>\n";
 
 		echo "<p><a href=\"./api.php?function=GetLots\">GetLots</a>(sort)<br/>\n";

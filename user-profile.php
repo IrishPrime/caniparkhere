@@ -14,17 +14,19 @@ switch($_POST["action"]) {
 		if(mysql_num_rows($result) == 0 || ((mysql_num_rows($result) == 1) && ($_COOKIE["auth"] == $row["password"] && $_COOKIE["id"] == $row["id"]))) {
 			$sql = "UPDATE users SET firstName='".$_POST["edit_fname"]."', lastName='".$_POST["edit_lname"]."', email='".$_POST["edit_email"]."', password='".sha1($_POST["edit_pass1"].$password_salt)."', passType='".$_POST["edit_passtype"]."' WHERE id='".addslashes($_COOKIE["id"])."' AND password='".$_COOKIE["auth"]."'";
 		} else {
-			$sql = "";
+			unset($sql);
 		}
 		break;
 	case "user_delete":
 		$sql = "DELETE FROM users WHERE id='".addslashes($_COOKIE["id"])."' AND password='".sha1($_POST["delete_password"].$password_salt)."'";
 		break;
 	default:
-		$sql = "SELECT * FROM users WHERE id='".addslashes($_COOKIE["id"])."'";
+		unset($sql);
 		break;
 }
 
+if(isset($sql)) $result = @mysql_query($sql);
+$sql = "SELECT * FROM users WHERE id='".addslashes($_COOKIE["id"])."'";
 $result = @mysql_query($sql);
 $row = @mysql_fetch_assoc($result);
 ?>

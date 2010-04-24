@@ -12,8 +12,8 @@ switch($_GET["function"]) {
 		$sql = "SELECT id, password, passType, admin FROM users WHERE email='".addslashes($_GET["email"])."' AND password='".addslashes($_GET["passwordhash"])."'";
 		$result = mysql_fetch_assoc(mysql_query($sql));
 		break;
-	case "CanIParkHereNow":
-		$result = CanIParkHereNow($_GET["lot"], $_GET["pass"]);
+	case "CanIParkHere":
+		$result = CanIParkHere($_GET["latLng"], $_GET["pass"]);
 		break;
 	case "GetCurrentLot":
 		$result = GetCurrentLot($_GET["point"]);
@@ -44,7 +44,7 @@ switch($_GET["function"]) {
 		echo "<p><a href=\"./api.php?function=Authenticate&email=test@example.com&password=secrets\">Authenticate</a>(user, passwordhash)<br/>\n";
 		echo "</p>\n";
 
-		echo "<p><a href=\"./api.php?function=CanIParkHereNow&lot=1&pass=1\">CanIParkHereNow</a>(lot, pass)<br/>\n";
+		echo "<p><a href=\"./api.php?function=CanIParkHere&latLng=&pass=1\">CanIParkHere</a>(latLng, pass)<br/>\n";
 		echo "</p>\n";
 
 		echo "<p><a href=\"./api.php?function=GetExceptionsByLot&lot=1\">GetExceptionsByLot</a>(lot)<br/>\n";

@@ -7,15 +7,13 @@ require_once("./_logic.php");
 echo "<div class=\"ui-widget\">\n";
 switch($_POST["action"]) {
 	case "create":
-		$result = @CreateLot($_POST["lot_name"], $_POST["lot_description"], $_POST["lot_coords"], $_POST["lot_scheme"]);
+		$result = @UpdateLot($_POST["lot_list"], $_POST["lot_name"], $_POST["lot_description"], $_POST["lot_coords"], $_POST["lot_scheme"]);
 
 		if($result > 0) {
-			printf("%sCreated Lot: <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["lot_name"]);
+			printf("%sUpdated Lot: <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["lot_name"]);
 		} else {
 			printf("%sFailed to Create Lot: <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["lot_name"]);
 		}
-		break;
-	case "edit":
 		break;
 	case "delete":
 		$result = @DeleteLots($_POST["delete_lots"]);
@@ -54,7 +52,7 @@ $schemes = GetSchemes();
 				$("#lot_description").val("");
 				$("#lot_scheme").val($("#lot_scheme option").val());
 			}
-			editLot($("#lot_list option:selected").val());
+			SelectLot($("#lot_list option:selected").val());
 		});
 	});
 </script>

@@ -1,4 +1,7 @@
 <?php
+# Data manipulation and function library.
+# TODO: Reduce duplicate/redundant data returned.
+
 require_once("./_settings.php");
 
 class cdl {
@@ -82,18 +85,17 @@ class cdl {
 class data {
 
 	private $conn;
-	private $db_name = "ciph";
 	private $sql;
 
 	function __construct() {
 		require("./_settings.php");
-		// constructor (connects to mysql server and changes to ciph db)
+		// constructor (connects to mysql server and changes to CIPH database)
 
-		// create connection - mysql_connect("banshee:3306", "mysql", "cpsc123")
+		// create connection
 		$conn = mysql_connect($mysql_server, $mysql_user, $mysql_password) or die("Can't connect to MySQL server: " . mysql_error());
 
 		// open database
-		mysql_select_db($this->db_name, $conn) or die("Can't open database: " . mysql_error());
+		mysql_select_db($mysql_db_name, $conn) or die("Can't open database: " . mysql_error());
 	}
 
 	private function create_admins($result) {
@@ -393,7 +395,7 @@ class data {
 		if (!$result) die("MySQL error: get_rulesByLots($id)");
 		else return $this->create_rulesByLots($result); 
 	}
-	public function get_exceptionsByLots($ids) {
+	public function get_exceptionsByLot($ids) {
 		$sql = "select lot, lots.name as lotName, lots.description as lotDescription,"
 			. " passType, passTypes.name as passTypeName,"
 			. " exceptions.id as exception, start, end, allowed"
@@ -521,7 +523,17 @@ class data {
 			. " WHERE id = $id";
 		return mysql_query($sql);
 	}
-
+	public function update_lot($id, $name, $desc, $coords, $scheme) {
+		$sql = "UPDATE lots SET"
+		. " name = " . $this->addSingleQuotes($name) . ","
+		. " description = " . $this->addSingleQuotes($desc) . ","
+		. " coords = " . $this->addSingleQuotes($coords) . ","
+		. " scheme = $scheme"
+		. " WHERE id = $id";
+		//debug($sql);
+		return mysql_query($sql);
+	}
+	
 	public function delete_lot($ids) {
 		$sql = "DELETE FROM rules WHERE lot IN (" . $ids . ")";
 		mysql_query($sql);
@@ -563,8 +575,9 @@ class data {
 		// get rules & exceptions
 		$lots = $this->get_rulesByLot($id);
 		$rules = $lots[$id]["dateRange"];
-		$lots = $this->get_exceptionsByLots($id);
+		$lots = $this->get_exceptionsByLot($id);
 		$exceptions = $lots[$id]["exceptions"];
+		//var_dump($lots, $exceptions);
 	
 		// copy passTypes allowed by current rules
 		$rulePassTypes = array();
@@ -612,12 +625,11 @@ class data {
 			}
 		}
 		
+		//echo("Checking lot $id\n");
 		//echo("BY RULES");
 		//debug($rulePassTypes);
 		//echo("BY EXCEPTIONS");
 		//debug($exceptionPassTypes);
-		
-		$allowedPassTypes = $rulePassTypes;
 		
 		// add any passType ids that are NOT in rules, but are allowed by exceptions
 		foreach ($exceptionPassTypes as $ept) {
@@ -633,6 +645,9 @@ class data {
 			}
 		}
 		
+		//echo("Allowed Pass Types After Allowed Exceptions\n");
+		//debug($allowedPassTypes);
+		
 		// remove any passType ids that ARE in rules, but are not allowed by exceptions
 		foreach ($rulePassTypes as $rpt) {
 			foreach ($exceptionPassTypes as $ept) {
@@ -641,6 +656,9 @@ class data {
 				}
 			}
 		}
+		
+		//echo("Allowed Pass Types After Disallowed Exceptions\n");
+		//debug($allowedPassTypes);
 		
 		return (count($allowedPassTypes) == 0 ? null : $allowedPassTypes);
 	}
@@ -791,15 +809,19 @@ class data {
 		else return false;
 	}
 	private function doesExceptionApply($exception, $parkTimestamp) {
-		return ($exception["start"] <= $parkTimestamp && $exception["end"] >= $parkTimestamp ? true : false);
+		$now = (int)$parkTimestamp->format('U');
+		$start = strtotime($exception["start"]);
+		$end = strtotime($exception["end"]);
+		//var_dump($now, $start, $end);
+		return ($start <= $now && $end >= $now ? true : false);
 	}
 	
 	public function whereAmI($point) {
 		$lots = $this->get_lots();
 		foreach($lots as $lot) {
+			//if ($this->pointInPolygon($point, $lot["coords"])) {
 			if ($this->pointInPolygon($point, $lot["coords"])) {
-			//if ($this->pnPoly($point, $lot["coords"])) {
-				return $lot["id"];
+				return $lot; //["id"];
 			}
 		}
 	}
@@ -864,26 +886,57 @@ class data {
             $vertices[] = $this->pointStringToCoordinates($vertex); 
         }
 		$numVertices = count($polygon);
-		
 		$inPoly = false;
+		
+		echo("\n");
 		for ($i = 0, $j = ($numVertices - 1); $i < $numVertices; $j = $i++) {
-			if (
-				(
-					(
-						$vertices[i]["y"] > $point["y"])
-						!= ($vertices[j]["y"] > $point["y"])
-					)
-				&&
-					(
-						$point["x"] < floatval(
-							floatval($vertices[j]["x"] - $vertices[i]["x"])
-							* floatval($point["y"] - $vertices[i]["y"])
-							/ floatval($vertices[j]["y"] - $vertices[i]["y"] + $vertices[i]["x"])
-						)
-					)
-			) $inPoly = !$inPoly;
+			echo("At point $i of $numVertices\n");
+			
+			$xdiff = floatval($vertices[$j]["x"] - $vertices[$i]["x"]);
+			$ydiff = floatval($point["y"] - $vertices[$i]["y"]);
+			$divisor = floatval($vertices[$j]["y"] - $vertices[$i]["y"] + $vertices[$i]["x"]);
+			$check = floatval($xdiff * $ydiff / $divisor);
+			
+			
+			echo("\n");
+			
+			echo("Is (" . $vertices[$i]["y"] . " > " . $point["y"] . ") != (" . $vertices[$j]["y"] . " > " . $point["y"] . ")?\n");
+			echo(" AND\n");
+			echo("Is (" . $point["x"] . " <\n");
+			echo("  (" . $vertices[$j]["x"] . " - " . $vertices[$i]["x"] . ") = " . $xdiff . "\n");
+			echo("  (" . $point["y"] . " - " . $vertices[$i]["y"] . ") = " . $ydiff . "\n");
+			echo("  (" . $vertices[$j]["y"] . " - " . $vertices[$i]["y"] . " + " . $vertices[$i]["x"] . ") = " . $divisor . "\n");
+			echo("Is (" . $point["x"] . " < " . $check . ")?\n");
+			
+			if ((
+				(($vertices[$i]["y"] > $point["y"]) != ($vertices[$j]["y"] > $point["y"]))
+				&& ($point["x"] < $check))) {
+				echo("TRUE, switching inPoly to $inPoly\n");
+				$inPoly = !$inPoly;
+			}
+			
+			echo("\n");
 		}
 		return inPoly;
+	}
+	private function isInPolygon($point, $polygon) {
+		/*
+		$point = $this->pointStringToCoordinates($point);
+		$vertices = array(); 
+        foreach ($polygon as $vertex) {
+            $vertices[] = $this->pointStringToCoordinates($vertex); 
+        }
+		$numVertices = count($polygon);
+		$inPoly = false;
+		
+		$i = 0;
+		$j = $numVertices
+		for ($i = 0; $i < $numVertices; $i++) {
+			$inPoly = !$inPoly;
+		}
+		
+		return $inPoly;
+		*/
 	}
 	private function pointOnVertex($point, $vertices) {
         foreach($vertices as $vertex) {
@@ -911,7 +964,6 @@ class data {
 $data = new data();
 
 // Data load methods.
-//
 // Lots and PassTypes
 //  Can be sorted by any field,
 //  but default to "name" if $sortColumn is null.
@@ -945,28 +997,46 @@ function GetRulesByLot($id = null) {
 }
 function GetExceptionsByLot($id = null) {
 	global $data;
-	return $data->get_exceptionsByLots($id);
+	return $data->get_exceptionsByLot($id);
 }
 function GetCurrentLot($point) {
 	global $data;
 	return $data->whereAmI($point);
 }
 
+function WhereDidIPark($id) {
+	global $data;
+	return $data->get_lastLoc($id);
+}
+function CanIParkHere($location, $passType) {
+	global $data;
+	$lot = $data->whereAmI($location);
+	$ciph = false;
+	$lotName = "You are not currently in a lot.";
+	if ($lot != null) {
+		$lotName = $lot["name"];
+		if ($lot["currentPassTypes"] != null) {
+			foreach($lot["currentPassTypes"] as $passType) {
+				if ($passType["id"] == $passType) {
+					$ciph = true;
+					break;
+				}
+			}
+		}
+	}
+	
+	$answer = array(
+		"ciph" => $ciph,
+		"lotName" => $lotName
+	);
+	return $answer;
+}
+
 // Creation methods.
-// The only unique is CreateRules, where $lots
-//  and $passTypes need to be arrays where the rule will apply.
-// All functions return the ID of the newly created object,
+// CreateRules, where $lots
+// 	$lots and $passTypes are arrays of affected lots and passTypes.
+// All functions return the ID(s) of the newly created object,
 //  false on an unsuccessful database insertion.
-// CreateRules will give an array of IDs of the created rules,
-//  any entry that didn't go through will be false.
-function CreateLot($name, $desc, $coords, $scheme) {
-	global $data;
-	return $data->insert_lot($name, $desc, $coords, $scheme);
-}
-function CreatePassType($name) {
-	global $data;
-	return $data->insert_passType($name);
-}
 function CreateRules($lots, $passTypes, $startDate, $endDate, $startTime, $endTime, $days) {
 	global $data;
 	$ruleIds = array();
@@ -991,17 +1061,25 @@ function CreateExceptions($lots, $passTypes, $start, $end, $allow) {
 	if (count($exceptionIds > 0)) return $exceptionIds;
 	else return false; // no ids to return
 }
-function CreateScheme($name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $fillOpacity) {
-	global $data;
-	return $data->insert_scheme($name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $fillOpacity);
-}
 
 // Update methods.
-function RenamePassType($id, $newName) {
+// Will create new entry if $id == 0.
+// Returns true on successful update, false on uncessesful.
+// If the object is new, returns the new object's unique id.
+function UpdatePassType($id, $newName) {
 	global $data;
-	return $data->update_passType($id, $newName);
+	if ($id == 0) return $data->insert_passType($name);
+	elseif ($id > 0) return $data->update_passType($id, $newName);
 }
 function UpdateLot($id, $name, $desc, $coords, $scheme) {
+	global $data;
+	if($id == 0) return $data->insert_lot($name, $desc, $coords, $scheme);
+	elseif ($id > 0) return $data->update_lot($id, $name, $desc, $coords, $scheme);
+}
+function UpdateScheme($id, $name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $fillOpacity) {
+	global $data;
+	if ($id == 0) return $data->insert_scheme($name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $fillOpacity);
+	//elseif ($id > 0) return $data->update_scheme($id, $name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $fillOpacity);
 }
 
 // Deletion methods.
@@ -1029,48 +1107,6 @@ function DeleteExceptions($ids) {
 function DeleteSchemes($ids) {
 	global $data;
 	return $data->delete_schemes(implode(',', $ids));
-}
-
-// Deprecated method, you can find a list
-//  of parkable pass types in each lot.
-function CanIParkHereNow($lotId, $passTypeId) {
-/*  function CanIParkHereNow($lotId, $passId)
-	$lotId = single id of requested lot
-	$passId = single id of requested pass type
-	returns results for that lot
- */
-
-	// Returns if you can or can not park in the requested
-	// lot(s) based on current time of day and the passtype sent.		
-
-	global $data;
-	// grab all rules for this lot
-	$rules = $data->get_rulesByLot($lotIds);
-	// set requested timestamp
-	$requestedTime = new DateTime("now");
-
-	// set default results
-	$results = array(
-		"ciph" => false);
-
-	// search for rules that apply to this passType
-	if ($rules != null) {
-		foreach ($rules as $rule) {
-			if ($rule["passTypeId"] == $passTypeId) {
-				if ($data->doesRuleApply($rule, $requestedTime)) {
-					$results["ciph"] = true;
-					break;
-				}
-			}
-		}
-	}
-
-	return $results;
-}
-
-function WhereDidIPark($id) {
-	global $data;
-	return $data->get_lastLoc($id);
 }
 
 function debug($a) {

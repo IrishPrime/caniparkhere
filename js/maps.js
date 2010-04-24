@@ -14,12 +14,11 @@ var settings = false;
 var passTypes = false;
 
 // editable lot objects
-var isNew = false; // if the lot being edited is a new lot
 var isClosed = false;
 var editLot = false; // reference to polyline/polygon object
 var oldEditPoints = new google.maps.MVCArray(); // holds reference to original polygon shape for edited lots
 var editPoints = new google.maps.MVCArray(); // reference to points of polygon
-var editMarkers = new Array(); // holds the edit markers for polygon
+var editMarkers = []; // holds the edit markers for polygon
 
 // GOOGLE MAPS methods
 // starts google map on document element "map_canvas"
@@ -41,17 +40,60 @@ function initialize() {
 		mapTypeControl: true,
 		mapTypeControlOptions: { style: google.maps.MapTypeControlStyle.DROPDOWN_MENU },
 		scaleControl: false,
-		disableDoubleClickZoom: true,
-		scrollwheel: false
+		disableDoubleClickZoom: true
+		//scrollwheel: false
 	}
 	
 	// create map on page
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 	//google.maps.event.addListener(map, 'dblclick', function() { log("!");});
+	
+	
+	google.maps.event.addListener(map, 'click', function(point) {
+		var lotName = null;
+		var inPolygon = false;
+		
+		for (x in lotPolygons) {
+			if (isInPolygon(lotPolygons[x], point.latLng)) {
+				alert("You're in a lot!");
+				inPolygon = true;
+				break;
+			}
+		}
+		if (!inPolygon) alert("You're outside. :-(");
+		
+		
+		// === A method for testing if a point is inside a polygon
+		// === Returns true if poly contains point
+		// === Algorithm shamelessly stolen from http://alienryderflex.com/polygon/ 
+		/*
+		function isInPolygon(polygon, point) {
+			var j = 0;
+			var oddNodes = false;
+			var x = point.lng();
+			var y = point.lat();
+			var path = polygon.getPath();
+			
+			for (var i=0; i < path.getLength(); i++) {
+			  var pathPoint = path.getAt(i);
+			  var lat = pathPoint.lat();
+			  var lng = pathPoint.lng();
+			  j++;
+			  
+			  if (j == path.getLength()) {j = 0;}
+			  if (((lat < y) && (lat >= y)) || ((lat < y) && (lat >= y))) {
+				if (lng + (y - lat) /  (lat - lat) *  (lng - lng) < x ) {
+				  oddNodes = !oddNodes
+				}
+			  }
+			}
+			return oddNodes;
+		} */
+	});
 }
 // creates specified polygon on map
 // reference stored in lotPolygons
-function createPolygon(paths, strokeColor, strokeOpacity, strokeWeight, fillColor, fillOpacity) {
+function createPolygon(id, paths, strokeColor, strokeOpacity, strokeWeight, fillColor, fillOpacity) {
 	var lot = new google.maps.Polygon({
 		map: map,
 		paths: paths,
@@ -61,31 +103,13 @@ function createPolygon(paths, strokeColor, strokeOpacity, strokeWeight, fillColo
 		fillColor: fillColor,
 		fillOpacity: fillOpacity});
 		
-		google.maps.event.addListener(lot, 'click', function(point) {
-				latLng = point.latLng;
-				lat = latLng.lat().toFixed(6);
-				lng = latLng.lng().toFixed(6);
-				$.getJSON(apiURL + "?function=GetCurrentLot&point=" + lat + "," + lng, function(data) {
-					var lotId = data;
-					if (lotId != null) {
-						$.each(lots, function(i) {
-							var lot = lots[i];
-							if (lot.id == lotId) {
-								alert("You're in lot " + lot.name + "!");
-								return false;
-							}
-						});
-					}
-				});
-			});
-		
-	lotPolygons.push(lot);
+	lotPolygons[id] = lot;
 }
 // creates marker on map with an info window (HTML)
 // references stored in lotMarkers, lotInfoWindow
 // mouseover pops up infowindow closing other opens ones
 // left clicking will close current info window
-function createInfoMarker(position, name, html) {
+function createInfoMarker(id, position, name, html) {
 	var marker = new google.maps.Marker({
 		position: position,
 		map: map,
@@ -104,41 +128,26 @@ function createInfoMarker(position, name, html) {
 	google.maps.event.addListener(marker, "click",
 		function() { infoWindow.close(); } );
 
-	lotInfoWindow.push(infoWindow);
-	lotMarkers.push(marker);
+	lotInfoWindow[id] = infoWindow;
+	lotMarkers[id] = marker;
 }
 // creates marker on map with edit options
 // left click turns lot editable
 // right click deletes lot
-function createEditMarker(position, name, id) {
+function createEditMarker(id, position, name) {
 	var marker = new google.maps.Marker({
 		position: position,
 		map: map,
 		title: name
 	});
 	
+	// click first index to close lot
 	google.maps.event.addListener(marker, "click",
 		function() {
-			$.each(lots, function(i) {
-				if (lots[i].id == id) {
-					// check if a lot was being edited,
-					// if so
-					// load up edit lot
-					isNew = false;
-					isClosed = true;
-					editLot = lotPolygons[i];
-					editPoints = editLot.getPath();
-					oldEditPoints = editLot.getPath(); // make copy
-					// create point markers
-					for (var i = 0; i < editPoints.getLength(); i++) {
-						var position = editPoints.getAt(i);
-						createPointMarker(position);
-					}
-				}
-			});
+			if (editLot) closeLot();
 		});
 
-	lotMarkers.push(marker);
+	lotMarkers[id] = marker;
 }
 // creates moveable point marker for editing lots
 // if first point, left click closes lot
@@ -150,13 +159,6 @@ function createPointMarker(position) {
 		title: "Drag me!",
 		draggable: true
 	});
-	
-	// first marker will take left click
-	google.maps.event.addListener(marker, "click",
-		function() {
-			for (var i = 0, I = editMarkers.length; i < I && editMarkers[i] != marker; ++i);
-			if (i == 0) closeLot();
-		});
 
 	google.maps.event.addListener(marker, "dragend",
 		function() {
@@ -245,18 +247,26 @@ function writeCoords(clearAll) {
 
 // undoes all other lot changes and turns lot editable
 // 0 will just clear all other lot data
-function editLot(id){
-	// find index
-	if (id == 0) {
-		isClosed = false;
-		editLot = false;
-		editPoints = [];
-		for (var i = 0; i < editMarkers.getLength(); i++) {
+function SelectLot(id){
+	// first, clear all edit lot data
+	isClosed = false;
+	editLot = false;
+	for (var i = 0; i < editMarkers.length; i++) {
 			editMarkers[i].setMap(null);
-		}
 	}
-	else {
+	editPoints = [];
+	editMarkers = [];
 
+	if (id > 0) {
+		isClosed = true;
+		editLot = lotPolygons[id];
+		editPoints = editLot.getPath();
+		oldEditPoints = editLot.getPath(); // make copy
+		// create point markers
+		for (var i = 0; i < editPoints.getLength(); i++) {
+			var position = editPoints.getAt(i);
+			createPointMarker(position);
+		}
 	}
 }
 // returns if a current lot is being edited, and if it has more than 2 points
@@ -270,6 +280,7 @@ function lotPolyClosed() {
 function createLotPolygons() {
 	$.each(lots, function(i) {
 		var lot = lots[i];
+		var id = lot.id;
 		var scheme = lot.scheme;
 		var coords = new Array();
 		// convert coords into google LatLng
@@ -280,7 +291,7 @@ function createLotPolygons() {
 			coords.push(new google.maps.LatLng(lat, lng));
 		});
 		
-		createPolygon(coords, 
+		createPolygon(id, coords, 
 			scheme.lineColor, scheme.lineWidth, scheme.lineOpacity,
 			scheme.fillColor, scheme.fillOpacity);
 	});
@@ -288,6 +299,7 @@ function createLotPolygons() {
 function createLotPolygonsByPassType(passType) {
 	$.each(lots, function(i) {
 		var lot = lots[i];
+		var id = lot.id;
 		var scheme = lot.scheme;
 		var coords = new Array();
 		// convert coords into google LatLng
@@ -303,7 +315,7 @@ function createLotPolygonsByPassType(passType) {
 		if (currentPassTypes != null) {
 			$.each(currentPassTypes, function(i) {
 				if (currentPassTypes[i].id == passType) {
-					createPolygon(coords, 
+					createPolygon(id, coords, 
 						scheme.lineColor, scheme.lineWidth, scheme.lineOpacity,
 						scheme.fillColor, scheme.fillOpacity);
 				}
@@ -314,14 +326,13 @@ function createLotPolygonsByPassType(passType) {
 function createLotInfoMarkers() {
 	$.each(lots, function(i) {
 		var lot = lots[i];
+		var id = lot.id;
 		var middle = lot.middle.split(",");
 		var lat = parseFloat(middle[0]);
 		var lng = parseFloat(middle[1]);
 					
-		createInfoMarker(
-		new google.maps.LatLng(lat, lng),
-		lot.name,
-		populateLotHTML(lot.name, lot.description, lot.currentPassTypes));
+		createInfoMarker(id, new google.maps.LatLng(lat, lng),
+		lot.name, populateLotHTML(lot.name, lot.description, lot.currentPassTypes));
 	});
 }
 function createLotInfoMarkersByPassType(passType) {
@@ -352,22 +363,6 @@ function populateLotHTML(name, desc, passTypes) {
 	var text = "";
 	if (passTypes != null) {
 		$.each(passTypes, function(i) {
-			text += passTpassTypes[i].name + "<br>";
-		});	
-	}
-	else text = "Lot is currently closed.";
-	html = html.replace("{currentPassTypes}", text);
-	
-	return html;
-}
-function populateLotHTML(name, desc, passTypes) {
-	var html = settings.lotHTML;
-	html = html.replace("{lotName}", name);
-	html = html.replace("{lotDescription}", desc);
-
-	var text = "";
-	if (passTypes != null) {
-		$.each(passTypes, function(i) {
 			text += passTypes[i].name + "<br>";
 		});	
 	}
@@ -379,14 +374,12 @@ function populateLotHTML(name, desc, passTypes) {
 function createLotEditMarkers() {
 	$.each(lots, function(i) {
 		var lot = lots[i];
+		var id = lot.id;
 		var middle = lot.middle.split(",");
 		var lat = parseFloat(middle[0]);
 		var lng = parseFloat(middle[1]);
 		
-		createEditMarker(
-			new google.maps.LatLng(middle[0], middle[1]),
-			lot.name,
-			lot.id);
+		createEditMarker(id, new google.maps.LatLng(middle[0], middle[1]), lot.name);
 	});
 }
 function createWDIPMarker(latLng) {

@@ -143,6 +143,8 @@ $schemes = GetSchemes();
 			<p><strong>Parking Lots</strong> are sorted by <em>name</em>.</p>
 			<p>Hover over a <strong>Parking Lot</strong> to view its <em>description</em>.</p>
 			<p>Select <strong>Parking Lots</strong> to remove.</p>
+			<p>Hold <em>Shift</em> to make continuous selections.</p>
+			<p>Hold <em>Ctrl</em> to make discontinuous selections.</p>
 		</div>
 	</div>
 </div>

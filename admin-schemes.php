@@ -179,6 +179,8 @@ $schemes = GetSchemes();
 		<?php echo $ui_help_delete; ?>
 		<div id="delete_help_dialog" title="Delete Color Scheme Help">
 			<p>Select <strong>Color Schemes</strong> to delete.</p>
+			<p>Hold <em>Shift</em> to make continuous selections.</p>
+			<p>Hold <em>Ctrl</em> to make discontinuous selections.</p>
 		</div>
 	</div>
 </div>

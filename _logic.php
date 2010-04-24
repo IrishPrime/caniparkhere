@@ -1068,7 +1068,7 @@ function CreateExceptions($lots, $passTypes, $start, $end, $allow) {
 // If the object is new, returns the new object's unique id.
 function UpdatePassType($id, $newName) {
 	global $data;
-	if ($id == 0) return $data->insert_passType($name);
+	if ($id == 0) return $data->insert_passType($newName);
 	elseif ($id > 0) return $data->update_passType($id, $newName);
 }
 function UpdateLot($id, $name, $desc, $coords, $scheme) {

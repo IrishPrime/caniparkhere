@@ -145,6 +145,9 @@ $(document).ready(function() {
 			<p>Exceptions need only be defined when normal rules must be temporarily overwritten.</p>
 			<p>The <strong>Start Date/Time</strong> determines when the exception becomes active.</p>
 			<p>The <strong>End Date/Time</strong> determines when the exception is no longer needed and normal parking rules will resume.</p>
+			<p>Select <strong>Passes</strong> and <strong>Parking Lots</strong> the <strong>Exception</strong> will apply to.</p>
+			<p>Hold <em>Shift</em> to make continuous selections.</p>
+			<p>Hold <em>Ctrl</em> to make discontinuous selections.</p>
 			<p>Select <strong style="color: #00FF00;">Allow</strong> or <strong style="color: #FF0000;">Disallow</strong> to set the type of exception to be applied.</p>
 		</div>
 	</div>

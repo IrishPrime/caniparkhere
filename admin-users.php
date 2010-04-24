@@ -96,7 +96,8 @@ $(document).ready(function() {
 		<?php echo $ui_help_modify; ?>
 		<div id="modify_help_dialog" title="Demote from Administrator">
 			<p>Select <strong>Administrators</strong> to demote.</p>
-			<p>Hold <em>Shift</em> to (de)select a range or <em>Ctrl</em> to (de)select discontinuous items.</p>
+			<p>Hold <em>Shift</em> to make continuous selections.</p>
+			<p>Hold <em>Ctrl</em> to make discontinuous selections.</p>
 			<p>Take care not to demote yourself accidentally.</p>
 		</div>
 	</div>

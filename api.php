@@ -41,7 +41,7 @@ switch($_GET["function"]) {
 		break;
 	default:
 		@header("Content-Type: text/html");
-		echo "<p><a href=\"./api.php?function=Authenticate&email=test@example.com&password=secrets\">Authenticate</a>(user, passwordhash)<br/>\n";
+		echo "<p><a href=\"./api.php?function=Authenticate&email=test@example.com&passwordhash=secrets\">Authenticate</a>(user, passwordhash)<br/>\n";
 		echo "</p>\n";
 
 		echo "<p><a href=\"./api.php?function=CanIParkHere&latLng=&pass=1\">CanIParkHere</a>(latLng, pass)<br/>\n";

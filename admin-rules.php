@@ -188,6 +188,9 @@ $(document).ready(function() {
 			<p>The <strong>Start Time</strong> and <strong>End Time</strong> determine the range of times people with the selected <strong>Passes</strong> will be allowed to park in the selected <strong>Parking Lots</strong>.</p>
 			<p><strong>Dates</strong> can be typed in MM-DD-YYYY format. Especially useful for setting dates far in the future.</p>
 			<p>Check all <strong>Days</strong> the rule should apply to.</p>
+			<p>Select <strong>Passes</strong> and <strong>Parking Lots</strong> the <strong>Rules</strong> will apply to.</p>
+			<p>Hold <em>Shift</em> to make continuous selections.</p>
+			<p>Hold <em>Ctrl</em> to make discontinuous selections.</p>
 		</div>
 	</div>
 

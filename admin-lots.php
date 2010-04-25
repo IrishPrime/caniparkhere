@@ -2,11 +2,10 @@
 # Create/delete parking lots/areas.
 require("./auth.php");
 require_once("./_logic.php");
-// include("./adminMaps.php");
 
 echo "<div class=\"ui-widget\">\n";
 switch($_POST["action"]) {
-	case "create":
+	case "update":
 		$result = @UpdateLot($_POST["lot_list"], $_POST["lot_name"], $_POST["lot_description"], $_POST["lot_coords"], $_POST["lot_scheme"]);
 
 		if($result > 0) {
@@ -38,7 +37,7 @@ $schemes = GetSchemes();
 <script type="text/javascript">
 	var json_lots = jQuery.parseJSON('<?php echo json_encode($lots); ?>');
 	$(document).ready(function() {
-		$("#create_form").validate();
+		$("#update_form").validate();
 
 		$("#lot_list").bind("change keypress", function() {
 			if($("#lot_list option:selected").val() != 0) {
@@ -59,13 +58,13 @@ $schemes = GetSchemes();
 
 <div id="tabs">
 	<ul>
-		<li><a href="#create_edit_tab">Create/Edit Parking Lot</a></li>
+		<li><a href="#update_tab">Update Edit Parking Lots</a></li>
 		<li><a href="#delete_tab">Delete Parking Lots</a></li>
 	</ul>
 
 	<!-- Create/Edit Tab -->
-	<div id="create_edit_tab">
-		<form id="create_form" name="create" method="POST" action="">
+	<div id="update_tab">
+		<form id="update_form" name="update" method="POST" action="">
 			<label for="lot_name">Lot Name</label>
 			<input id="lot_name" name="lot_name" type="text" class="required" minlength="1"/>
 			<select id="lot_list" name="lot_list">
@@ -80,13 +79,12 @@ $schemes = GetSchemes();
 				?>
 				</optgroup>
 			</select>
+			<!-- Map -->
 			<div id="map_canvas" style="width: 100%; height: 65%;">
-				<script type="text/javascript">
-					LoadMap_Edit();
-				</script>
+				<script type="text/javascript">LoadMap_Edit();</script>
 			</div>
 			<label for="lot_coords">Coordinates</label>
-			<input type="text" id="lot_coords" name="lot_coords" class="required"/><br/>
+			<input type="text" id="lot_coords" name="lot_coords" readonly="readonly" class="required"/><br/>
 			<label for="lot_description">Description</label>
 			<textarea id="lot_description" name="lot_description" cols="40"></textarea>
 			<br/>
@@ -100,25 +98,33 @@ $schemes = GetSchemes();
 				?>
 				</optgroup>
 			</select>
-			<!-- Timed Options -->
-			<input type="hidden" name="action" value="create"/>
+			<br/>
+			<!-- Timed Options
+			<label for="update_timed">Timed Parking</label>
+			<input type="text" id="update_timed" name="update_timed" value="0" class="required number" min="-1"/>
+			-->
+			<input type="hidden" name="action" value="update"/>
 			<p><input type="submit" value="Save Parking Lot"/></p>
 		</form>
 		<?php echo $ui_help_create; ?>
-		<div id="create_help_dialog" title="Create Lot Help">
+		<div id="create_help_dialog" title="Update Lot Help">
 			<p>Enter a <strong>Lot Name</strong> or select an <strong>Existing Lot</strong> to edit.</p>
 			<h3>Create New Lot</h3>
 			<ol>
 				<li>Left click on the map to place the <strong>Starting Marker</strong> for a lot.</li>
-				<li>Left click to continue placing vertices to enclose the parking area.</li>
+				<li>Left click to continue placing markers to enclose the parking area.</li>
 				<li>Left click the <strong>Starting Marker</strong> to close the lot.</li>
-				<li>Right click on the map at any time to undo the last action.</li>
-				<li>Vertices may be dragged to reshape the lot.</li>
 			</ol>
-			<h3>Edit Existing Lot</h3>
-			<ol>
-				<li>Vertices may be dragged to reshape the lot.</li>
-			</ol>
+			<p>Markers may be dragged to reshape the lot.</p>
+			<p>Right click on a draggable marker to remove it.</p>
+			<!-- Timed Help
+			<h3>Timed Parking</h3>
+			<ul>
+				<li>-1: Metered</li>
+				<li>0: Not timed</li>
+				<li>n: Minutes</li>
+			</ul>
+			-->
 		</div>
 	</div>
 

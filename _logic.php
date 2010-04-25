@@ -518,8 +518,8 @@ class data {
 	}
 	
 	public function update_passType($id, $name) {
-		$sql = "UPDATE passTypes SET name = "
-			. $this->addSingleQuotes($name)
+		$sql = "UPDATE passTypes SET"
+			. " name = " . $this->addSingleQuotes($name)
 			. " WHERE id = $id";
 		return mysql_query($sql);
 	}
@@ -530,7 +530,17 @@ class data {
 		. " coords = " . $this->addSingleQuotes($coords) . ","
 		. " scheme = $scheme"
 		. " WHERE id = $id";
-		//debug($sql);
+		return mysql_query($sql);
+	}
+	public function update_scheme($id, $name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $fillOpacity) {
+		$sql = "UPDATE schemes SET"
+		. " name = " . $this->addSingleQuotes($name) . ","
+		. " lineColor = " . $this->addSingleQuotes($lineColor) . ","
+		. " lineWidth = " . $this->addSingleQuotes($lineWidth) . ","
+		. " lineOpacity = " . $this->addSingleQuotes($lineOpacity) . ","
+		. " fillColor = " . $this->addSingleQuotes($fillColor) . ","
+		. " fillOpacity = " . $this->addSingleQuotes($fillOpacity)
+		. " WHERE id = $id";
 		return mysql_query($sql);
 	}
 	
@@ -559,11 +569,22 @@ class data {
 		return mysql_query($sql);
 	}
 	public function delete_schemes($ids) {
-		$sql = "UPDATE lots SET scheme=0 WHERE scheme IN (". $ids . ")";
-		mysql_query($sql);
+		// Detele Schemes
 		$sql = "DELETE FROM schemes WHERE id IN (" . $ids . ")";
-		if (mysql_query($sql)) return mysql_affected_rows();
-		else return false;
+		mysql_query($sql);
+		$count = mysql_affected_rows();
+
+		// Find lowest scheme id remaining
+		$sql = "SELECT id FROM schemes ORDER BY id ASC";
+		$result = mysql_query($sql);
+		$row = mysql_fetch_array($result);
+		$low = $row[0];
+		// Set any lots using deleted schemes to use lowest scheme
+		$sql = "UPDATE lots SET scheme=$low WHERE scheme IN (". $ids . ")";
+		mysql_query($sql);
+
+		// Return number of schemes deleted
+		return $count;
 	}
 
 	private function whatPassTypesCanParkHere($id) {
@@ -632,6 +653,7 @@ class data {
 		//debug($exceptionPassTypes);
 		
 		// add any passType ids that are NOT in rules, but are allowed by exceptions
+		$allowedPassTypes = $rulePassTypes;
 		foreach ($exceptionPassTypes as $ept) {
 			$inRules = false;
 			foreach ($rulePassTypes as $rpt) {
@@ -812,7 +834,6 @@ class data {
 		$now = (int)$parkTimestamp->format('U');
 		$start = strtotime($exception["start"]);
 		$end = strtotime($exception["end"]);
-		//var_dump($now, $start, $end);
 		return ($start <= $now && $end >= $now ? true : false);
 	}
 	
@@ -1079,7 +1100,7 @@ function UpdateLot($id, $name, $desc, $coords, $scheme) {
 function UpdateScheme($id, $name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $fillOpacity) {
 	global $data;
 	if ($id == 0) return $data->insert_scheme($name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $fillOpacity);
-	//elseif ($id > 0) return $data->update_scheme($id, $name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $fillOpacity);
+	elseif ($id > 0) return $data->update_scheme($id, $name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $fillOpacity);
 }
 
 // Deletion methods.

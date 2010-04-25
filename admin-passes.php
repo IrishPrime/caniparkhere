@@ -7,14 +7,14 @@ require_once("./_logic.php");
 echo "<div class=\"ui-widget\">\n";
 switch($_POST["action"]) {
 	case "create":
-		$passID = @UpdatePassType($_POST["select_id"], $_POST["pass_name"]);
+		$passID = @UpdatePassType($_POST["update_id"], $_POST["pass_name"]);
 
-		if($passID > 0 && $_POST["select_id"] == 0) {
+		if($passID > 0 && $_POST["update_id"] == 0) {
 			printf("%sCreated Pass: <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["pass_name"]);
-		} elseif($passID > 0 && $_POST["select_id"] != 0) {
-			printf("%sRenamed Pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["select_id"], $_POST["pass_name"]);
-		} elseif($passID == 0 && $_POST["select_id"] != 0) {
-			printf("%sFailed to rename pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["select_id"], $_POST["pass_name"]);
+		} elseif($passID > 0 && $_POST["update_id"] != 0) {
+			printf("%sRenamed Pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["update_id"], $_POST["pass_name"]);
+		} elseif($passID == 0 && $_POST["update_id"] != 0) {
+			printf("%sFailed to rename pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["update_id"], $_POST["pass_name"]);
 		} else {
 			printf("%sFailed to create pass: <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["pass_name"]);
 		}
@@ -39,12 +39,12 @@ $passes = GetPassTypes("name");
 <script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
-		$("#create_form").validate();
+		$("#update_form").validate();
 		$("#delete_form").validate();
 
-		$("#select_id").bind("change keypress", function() {
-			if($("#select_id").val() == 0) $("#create_submit").attr("value", "Create Pass");
-			else $("#create_submit").attr("value", "Rename Pass");
+		$("#update_id").bind("change keypress", function() {
+			if($("#update_id").val() == 0) $("#update_form :submit").val("Create Pass");
+			else $("#update_form :submit").val("Rename Pass");
 		});
 	});
 </script>
@@ -57,8 +57,8 @@ $passes = GetPassTypes("name");
 
 	<div id="update_tab">
 		<form id="update_form" name="update" method="POST" action="">
-			<label for="select_id">Current Pass</label>
-			<select id="select_id" name="select_id">
+			<label for="update_id">Current Pass</label>
+			<select id="update_id" name="update_id">
 				<optgroup label="New Pass">
 					<option value="0">Create New Pass</option>
 				</optgroup>
@@ -72,7 +72,7 @@ $passes = GetPassTypes("name");
 				</optgroup>
 			</select>
 			<br/>
-			<label for="pass_name">New Pass Name</label>
+			<label for="pass_name">Pass Name</label>
 			<input id="pass_name" name="pass_name" type="text" class="required" minlength="1"/>
 			<input type="hidden" name="action" value="update"/>
 			<br/>

@@ -3,17 +3,16 @@
 
 echo "<div class=\"ui-widget\">\n";
 switch($_POST["action"]) {
-	case "create":
-		$result = @CreateScheme($_POST["create_name"], $_POST["create_line_color"], $_POST["create_line_width"], $_POST["create_line_opacity"], $_POST["create_fill_color"], $_POST["create_fill_opacity"]);
-
+	case "update":
+		$result = @UpdateScheme($_POST["update_id"], $_POST["update_name"], $_POST["update_line_color"], $_POST["update_line_width"], $_POST["update_line_opacity"], $_POST["update_fill_color"], $_POST["update_fill_opacity"]);
 		echo ($result != null) ? $ui_info : $ui_alert;
-		echo "\t\tCreating Color Scheme: <strong>".$_POST["create_name"]."</strong>\n\t</div>\n";
+		echo "\t\tUpdated Color Scheme: <strong>".$_POST["update_name"]."</strong>\n\t</div>\n";
 		break;
 	case "delete":
 		$result = @DeleteSchemes($_POST["delete_scheme"]);
 
-		echo $results > 0 ? $ui_info : $ui_alert;
-		echo "\t\tRules Deleted: <strong>".$results or "0"."</strong>\n\t</div>\n";
+		echo $result > 0 ? $ui_info : $ui_alert;
+		echo "\t\tSchemes Deleted: <strong>".$result."</strong>\n\t</div>\n";
 		break;
 	default:
 		break;
@@ -46,8 +45,10 @@ $schemes = GetSchemes();
 
 <script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
 <script type="text/javascript">
+	var json_schemes = jQuery.parseJSON('<?php echo json_encode($schemes); ?>');
+
 	$(document).ready(function() {
-		$("#create_form").validate({
+		$("#update_form").validate({
 			rules: {
 				create_name: {
 					required: true,
@@ -67,8 +68,22 @@ $schemes = GetSchemes();
 				},
 			}
 		});
-		$("#delete_form").validate({
-			rules: {
+		$("#delete_form").validate();
+
+		$("#update_id").bind("change keypress", function() {
+			if($("#update_id option:selected").val() != 0) {
+				$("#update_name").val($("#update_id option:selected").html());
+				$("#update_line_width").val(json_schemes[$("#update_id option:selected").val()].lineWidth);
+				$("#update_line_opacity").val(json_schemes[$("#update_id option:selected").val()].lineOpacity);
+				$("#update_fill_opacity").val(json_schemes[$("#update_id option:selected").val()].fillOpacity);
+				$("#update_form :submit").val("Update Color Scheme");
+				RGBFromHex(json_schemes[$("#update_id option:selected").val()].lineColor);
+			} else {
+				$("#update_name").val("");
+				$("#update_line_width").val("10");
+				$("#update_line_opacity").val("0.8");
+				$("#update_fill_opacity").val("0.3");
+				$("#update_form :submit").val("Create Color Scheme");
 			}
 		});
 	});
@@ -87,16 +102,28 @@ $schemes = GetSchemes();
 		return hex.join('').toUpperCase();
 	}
 
+	function RGBFromHex(hex) {
+		hex = (hex.charAt(0)=="#") ? hex.substring(1,7) : hex;
+		var r = parseInt((hex).substring(0,2),16),
+		g = parseInt((hex).substring(2,4),16),
+		b = parseInt((hex).substring(4,6),16);
+
+		$("#red").slider("value", r);
+		$("#green").slider("value", g);
+		$("#blue").slider("value", b);
+	}
+
 	function refreshSwatch() {
 		var red = $("#red").slider("value"),
 			green = $("#green").slider("value"),
 			blue = $("#blue").slider("value"),
-			hex = hexFromRGB(red, green, blue);
+			hex = hexFromRGB(red, green, blue),
 			hex2 = hexFromRGB(Math.floor(red * 0.9), Math.floor(green * 0.9), Math.floor(blue * 0.9));
 
 		$("#swatch").css("background-color", "#" + hex);
-		$("#create_line_color").val("#" + hex);
-		$("#create_fill_color").val("#" + hex2);
+		$("#swatch").css("border-color", "#" + hex);
+		$("#update_line_color").val("#" + hex);
+		$("#update_fill_color").val("#" + hex2);
 	}
 
 	$(function() {
@@ -112,48 +139,63 @@ $schemes = GetSchemes();
 		$("#green").slider("value", 140);
 		$("#blue").slider("value", 60);
 	});
+
 </script>
 
 <div id="tabs">
 	<ul>
-		<li><a href="#create_tab">Create Color Scheme</a></li>
+		<li><a href="#update_tab">Update Color Scheme</a></li>
 		<li><a href="#delete_tab">Delete Color Schemes</a></li>
 	</ul>
 
 	<!-- Create Tab -->
-	<div id="create_tab">
-		<form id="create_form" name="create" method="POST" action="">
-			<label for="create_name">Scheme Name</label>
-			<input type="text" name="create_name" class="required" minlength="1"/><br/>
+	<div id="update_tab">
+		<form id="update_form" name="update" method="POST" action="">
+			<label for="update_id">Current Scheme</label>
+			<select id="update_id" name="update_id">
+				<optgroup label="New Scheme">
+					<option value="0">Create New Scheme</option>
+				</optgroup>
+				<optgroup label="Existing Schemes">
+				<?php
+					foreach($schemes as $scheme) {
+						echo "<option value=\"".$scheme["id"]."\">".$scheme["name"]."</option>\n";
+					}
+				?>
+				</optgroup>
+			</select>
+			<br/>
 
-			<label for="create_line_width">Line Width</label>
-			<input type="text" name="create_line_width" value="10" class="required"/><br/>
+			<label for="update_name">Scheme Name</label>
+			<input type="text" id="update_name" name="update_name" class="required" minlength="1"/><br/>
 
-			<label for="create_line_opacity">Line Opacity</label>
-			<input type="text" name="create_line_opacity" value="0.8" class="required"/><br/>
+			<label for="update_line_width">Line Width</label>
+			<input type="text" id="update_line_width" name="update_line_width" value="10" class="required"/><br/>
 
-			<label for="create_fill_opacity">Fill Opacity</label>
-			<input type="text" name="create_fill_opacity" value="0.3" class="required"/><br/>
+			<label for="update_line_opacity">Line Opacity</label>
+			<input type="text" id="update_line_opacity" name="update_line_opacity" value="0.8" class="required"/><br/>
+
+			<label for="update_fill_opacity">Fill Opacity</label>
+			<input type="text" id="update_fill_opacity" name="update_fill_opacity" value="0.3" class="required"/><br/>
 
 			<p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
-			<span class="ui-icon ui-icon-gear" style="position:relative; float:left; margin:0 5px 0 0;"></span>
-			Line &amp; Fill Color</p>
+			<span class="ui-icon ui-icon-gear" style="position:relative; float:left; margin:0 5px 0 0;"></span>Line &amp; Fill Color</p>
 
 			<div id="red"></div>
 			<div id="green"></div>
 			<div id="blue"></div>
 
 			<div id="swatch" class="ui-widget-content ui-corner-all"></div>
-			<input type="hidden" name="create_line_color" id="create_line_color"/>
-			<input type="hidden" name="create_fill_color" id="create_fill_color"/>
+			<input type="hidden" id="update_line_color" name="update_line_color"/>
+			<input type="hidden" id="update_fill_color" name="update_fill_color"/>
 
-			<input type="hidden" name="action" value="create"/><br/>
+			<input type="hidden" name="action" value="update"/><br/>
 			<p><input type="submit" value="Create Color Scheme"/></p>
 		</form>
 		<?php echo $ui_help_create; ?>
-		<div id="create_help_dialog" title="Create Color Scheme Help">
+		<div id="create_help_dialog" title="Update Color Scheme Help">
 			<p>Create <strong>Color Schemes</strong> to make lots more easily identifiable.</p>
-			<p>The <strong>Scheme Name</strong> should be unique.</strong>
+			<p>The <strong>Scheme Name</strong> should be unique.</p>
 			<p><strong>Line Width</strong> specifies the width of the border around a parking lot in any map view.</p>
 			<p><strong>Line Opacity</strong> specifies the opacity of the border around a parking lot in any map view. A value of 1 creates an opaque border.</p>
 			<p><strong>Fill Opacity</strong> specifies the opacity of the area within the polygon which defines a parking lot. A value of 1 creates an opaque fill (not recommended).</p>

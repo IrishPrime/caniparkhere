@@ -32,7 +32,7 @@ CREATE TABLE `exceptions` (
   PRIMARY KEY (`id`),
   KEY `lot` (`lot`) USING BTREE,
   KEY `pass` (`passType`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -47,11 +47,12 @@ CREATE TABLE `lots` (
   `name` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT 'New Lot' COMMENT 'The name of the area.',
   `description` varchar(255) CHARACTER SET utf8 DEFAULT NULL COMMENT 'Description of the lot, helpful for users.',
   `coords` longtext CHARACTER SET utf8 COMMENT 'Lat/Long pairs to mark the boundaries of the lot.',
-  `timed` int(10) NOT NULL DEFAULT '0' COMMENT '-1 for metered lots.\r\n0 for non-timed lots.\r\n>0 specifies the time limit.',
+  `timed` int(10) NOT NULL DEFAULT '0' COMMENT '-1 for metered lots.\r\n0 for non-timed lots.\r\n>0 specifies the time limit in minutes.',
   `scheme` int(10) NOT NULL DEFAULT '1' COMMENT 'Which color scheme to apply to the lot.',
   PRIMARY KEY (`id`),
-  KEY `scheme` (`scheme`)
-) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+  KEY `scheme` (`scheme`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -64,8 +65,9 @@ DROP TABLE IF EXISTS `passTypes`;
 CREATE TABLE `passTypes` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 NOT NULL DEFAULT '' COMMENT 'Name of the pass type.',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=42 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -87,7 +89,7 @@ CREATE TABLE `rules` (
   PRIMARY KEY (`id`),
   KEY `lot` (`lot`),
   KEY `pass` (`passType`)
-) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,13 +102,14 @@ DROP TABLE IF EXISTS `schemes`;
 CREATE TABLE `schemes` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL COMMENT 'Name of the color scheme.',
-  `lineColor` varchar(255) CHARACTER SET latin1 NOT NULL COMMENT 'Color of the line applied to the border of areas in hex.',
-  `lineWidth` varchar(255) CHARACTER SET latin1 NOT NULL COMMENT 'Width of the line applied to borders in pixels.',
-  `lineOpacity` varchar(255) CHARACTER SET latin1 NOT NULL COMMENT 'Opacity of the line applied to borders.',
-  `fillColor` varchar(255) CHARACTER SET latin1 NOT NULL COMMENT 'Color applied to areas.',
-  `fillOpacity` varchar(255) CHARACTER SET latin1 NOT NULL COMMENT 'Opacity of color applied to areas.',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='Color schemes to make lots more recognizable at a glance.';
+  `lineColor` varchar(7) NOT NULL DEFAULT '#336699' COMMENT 'Color of the line applied to the border of areas in hex.',
+  `lineWidth` int(5) NOT NULL DEFAULT '10' COMMENT 'Width of the line applied to borders in pixels.',
+  `lineOpacity` decimal(3,2) NOT NULL DEFAULT '0.80' COMMENT 'Opacity of the line applied to borders.',
+  `fillColor` varchar(7) NOT NULL DEFAULT '#305989' COMMENT 'Color applied to areas.',
+  `fillOpacity` decimal(3,2) NOT NULL DEFAULT '0.30' COMMENT 'Opacity of color applied to areas.',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='Color schemes to make lots more recognizable at a glance.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,7 +126,7 @@ CREATE TABLE `settings` (
   `value` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user` (`user`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -142,8 +145,9 @@ CREATE TABLE `users` (
   `passType` int(10) unsigned DEFAULT NULL,
   `lastLoc` text CHARACTER SET utf8 COMMENT 'Latitude, Longitude',
   `admin` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether the user is an administrator.',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -155,4 +159,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2010-04-19 20:14:35
+-- Dump completed on 2010-04-24 19:05:35

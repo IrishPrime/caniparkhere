@@ -51,6 +51,7 @@ function initialize() {
 	
 	google.maps.event.addListener(map, 'click', function(point) {
 		var lotName = null;
+		/*
 		var inPolygon = false;
 		
 		for (x in lotPolygons) {
@@ -61,6 +62,7 @@ function initialize() {
 			}
 		}
 		if (!inPolygon) alert("You're outside. :-(");
+		*/
 		
 		
 		// === A method for testing if a point is inside a polygon
@@ -236,9 +238,8 @@ function writeCoords(clearAll) {
 	if (!clearAll) {	
 		for (var i = 0; i < editPoints.getLength(); i++) {
 			var point = editPoints.getAt(i);
-			output += point.lat().toFixed(6) + "," +
-				point.lng().toFixed(6);
-			if (i + 1 != editPoints.getLength()) output += ";";
+			output += point.lat().toFixed(6) + "," + point.lng().toFixed(6);
+			if (i + 1 != editPoints.getLength()) output += "; ";
 		}
 	}
 	
@@ -385,8 +386,8 @@ function createLotEditMarkers() {
 function createWDIPMarker(latLng) {
 		createInfoMarker(
 			latLng,
-			"You parked here!",
-			"You last parked at " + latLng.toString() + "!");
+			"You parked here.",
+			"You last parked at " + latLng.toString() + ".");
 }
 
 function LoadMap_CIPH() {

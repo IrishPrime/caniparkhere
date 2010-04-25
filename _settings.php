@@ -48,7 +48,7 @@ $title = array(
 $ui_alert = "\t<div class=\"ui-state-error ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n\t\t<span class=\"ui-icon ui-icon-alert\" style=\"position:relative; float:left; margin:.1em .3em 0 0;\"></span>\n";
 $ui_info = "\t<div class=\"ui-state-highlight ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n\t\t<span class=\"ui-icon ui-icon-info\" style=\"position:relative; float:left; margin:.1em .3em 0 0;\"></span>\n";
 
-// Help Dialogs
+// Dialogs
 $ui_help_create = "<a href=\"#\" id=\"create_help_opener\" class=\"ui-state-default ui-corner-all\" style=\"padding: .2em .8em .2em 1.4em;text-decoration: none;position: relative;\"><span class=\"ui-icon ui-icon-help\" style=\"margin:0 .2em 0 0; position:absolute; left:.2em; top:50%; margin-top:-8px;\"></span>Help</a>";
 $ui_help_delete = "<a href=\"#\" id=\"delete_help_opener\" class=\"ui-state-default ui-corner-all\" style=\"padding:.2em .8em .2em 1.4em; text-decoration:none; position:relative;\"><span class=\"ui-icon ui-icon-help\" style=\"margin:0 .2em 0 0; position:absolute; left:.2em; top:50%; margin-top:-8px;\"></span>Help</a>";
 $ui_help_modify = "<a href=\"#\" id=\"modify_help_opener\" class=\"ui-state-default ui-corner-all\" style=\"padding:.2em .8em .2em 1.4em; text-decoration:none; position:relative;\"><span class=\"ui-icon ui-icon-help\" style=\"margin: 0 .2em 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;\"></span>Help</a>";

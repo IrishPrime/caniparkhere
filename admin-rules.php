@@ -14,16 +14,14 @@ switch($_POST["action"]) {
 			(string)$startDate, (string)$endDate, (string)$startTime, (string)$endTime,
 			implode($_POST["create_days"], ","));
 
-		echo "<div class=\"ui-widget\">\n";
-		echo ($newRuleIDs != null) ? $ui_info : $ui_alert;
-		echo "\t\tRules Created: <strong>".count($newRuleIDs)."</strong>\n\t</div>\n</div>\n";
+		if($newRuleIDs != null) ui_info("Rules Created: <strong>".count($newRuleIDs)."</strong>");
+		else ui_alert("Rules Created: <strong>".count($newRuleIDs)."</strong>");
 		break;
 	case "delete":
 		$results = @DeleteRules($_POST["delete_rules"]);
 
-		echo "<div class=\"ui-widget\">\n";
-		echo $results ? $ui_info : $ui_alert;
-		echo "\t\tRules Deleted: <strong>".count($_POST["delete_rules"])."</strong>\n\t</div>\n</div>\n";
+		if($results) ui_info("Rules Deleted: <strong>".$results."</strong>");
+		else ui_alert("No Rules Deleted.");
 		break;
 	default:
 		break;
@@ -202,7 +200,8 @@ $(document).ready(function() {
 				if(is_array($lots)) {
 					foreach($lots as $lot) {
 						echo "\t<h2><a href=\"#\">".$lot["name"]."</a></h2>\n";
-						echo "\t<div>\t\t\t$ui_info<strong>".$lot["description"]."</strong></div>\n";
+						echo "\t<div>\n";
+						ui_info("<strong>".$lot["description"]."</strong>");
 
 						foreach($lot["dateRange"] as $date_range) {
 							echo "<p class=\"ui-state-default ui-corner-all ui-helper-clearfix\" style=\"padding:0px;\">";

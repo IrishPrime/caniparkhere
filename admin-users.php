@@ -4,38 +4,28 @@ require("./auth.php");
 require_once("./_settings.php");
 
 // Successful connection, setup queries
-echo "<div class=\"ui-widget\">\n";
 switch($_POST["action"]) {
 	case "promote":
 		$sql = "UPDATE users SET admin=1 WHERE email='".$_POST["promote_user"]."'";
-		echo "<div class=\"ui-widget\">\n";
-		if(mysql_query($sql)) {
-			printf("%sPromoted User: <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["promote_user"]);
-		} else {
-			printf("%sFailed to Promote User: <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["promote_user"]);
-		}
+
+		if(mysql_query($sql)) ui_info("Promoted User: <strong>".$_POST["promote_user"]."</strong>");
+		else ui_alert("Failed to Promote User: <strong>".$_POST["promote_user"]."</strong>");
 		break;
 	case "demote":
 		$sql = "UPDATE users SET admin=0 WHERE id IN (".implode(", ", $_POST["demote_user"]).")";
-		echo "<div class=\"ui-widget\">\n";
-		if(mysql_query($sql)) {
-			printf("%sDemoted User: <strong>%s</strong>\n\t</div>\n", $ui_info, count($_POST["demote_user"]));
-		} else {
-			printf("%sFailed to Demote User: <strong>%s</strong>\n\t</div>\n", $ui_alert, count($_POST["demote_user"]));
-		}
+
+		if(mysql_query($sql)) ui_info("Demoted User: <strong>".count($_POST["demote_user"])."</strong>");
+		else ui_alert("Failed to Demote User: <strong>".count($_POST["demote_user"])."</strong>");
 		break;
 	case "delete":
 		$sql = "DELETE from users WHERE email='".$_POST["delete_user"]."'";
-		if(mysql_query($sql)) {
-			printf("%sDeleted User: <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["delete_user"]);
-		} else {
-			printf("%sFailed to Delete User: <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["delete_user"]);
-		}
+
+		if(mysql_query($sql)) ui_info("Deleted User: <strong>".$_POST["delete_user"]."</strong>");
+		else ui_alert("Failed to Delete User: <strong>".$_POST["delete_user"]."</strong>");
 		break;
 	default:
 		break;
 }
-echo "</div>\n";
 
 $admins = GetAdmins();
 ?>

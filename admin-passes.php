@@ -4,34 +4,28 @@
 require("./auth.php");
 require_once("./_logic.php");
 
-echo "<div class=\"ui-widget\">\n";
 switch($_POST["action"]) {
-	case "create":
+	case "update":
 		$passID = @UpdatePassType($_POST["update_id"], $_POST["pass_name"]);
 
-		if($passID > 0 && $_POST["update_id"] == 0) {
-			printf("%sCreated Pass: <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["pass_name"]);
-		} elseif($passID > 0 && $_POST["update_id"] != 0) {
-			printf("%sRenamed Pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["update_id"], $_POST["pass_name"]);
-		} elseif($passID == 0 && $_POST["update_id"] != 0) {
-			printf("%sFailed to rename pass: <strong>%s</strong> to <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["update_id"], $_POST["pass_name"]);
-		} else {
-			printf("%sFailed to create pass: <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["pass_name"]);
-		}
+		if($passID > 0 && $_POST["update_id"] == 0)
+			ui_info("Created Pass: <strong>".$_POST["pass_name"]."</strong>");
+		elseif($passID > 0 && $_POST["update_id"] != 0)
+			ui_info("Renamed Pass: <strong>".$_POST["update_id"]."</strong> to <strong>".$_POST["pass_name"]."</strong>");
+		elseif($passID == 0 && $_POST["update_id"] != 0)
+			ui_alert("Failed to rename pass: <strong>".$_POST["update_id"]."</strong> to <strong>".$_POST["pass_name"]."</strong>");
+		else
+			ui_alert("Failed to create pass: <strong>".$_POST["pass_name"]."</strong>");
 		break;
 	case "delete":
 		$result = @DeletePassTypes($_POST["delete_passes"]);
 
-		if($result) {
-			printf("%sDeleted Passes: <strong>%d</strong>\n\t</div>\n", $ui_info, count($_POST["delete_passes"]));
-		} else {
-			printf("%sFailed to delete passes: <strong>%d</strong>\n\t</div>\n", $ui_alert, count($_POST["delete_passes"]));
-		}
+		if($result) ui_info("Deleted Passes: <strong>".count($_POST["delete_passes"])."</strong>");
+		else ui_alert("Failed to delete passes: <strong>".count($_POST["delete_passes"])."</strong>");
 		break;
 	default:
 		break;
 }
-echo "</div>\n";
 
 $passes = GetPassTypes("name");
 ?>

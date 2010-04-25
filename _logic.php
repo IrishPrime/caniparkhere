@@ -1,6 +1,8 @@
 <?php
 # Data manipulation and function library.
 # TODO: Reduce duplicate/redundant data returned.
+# TODO: GetLots should return only lot info, schemes/passes should be linked instead of embedded
+# TODO: Exceptions D:
 
 require_once("./_settings.php");
 
@@ -562,11 +564,11 @@ class data {
 	}
 	public function delete_rule($ids) {
 		$sql = "DELETE FROM rules WHERE id IN (" . $ids . ")";
-		return mysql_query($sql);
+		return mysql_affected_rows(mysql_query($sql));
 	}
 	public function delete_exception($ids) {
 		$sql = "DELETE FROM exceptions WHERE id IN (" . $ids . ")";
-		return mysql_query($sql);
+		return mysql_affected_rows(mysql_query($sql));
 	}
 	public function delete_schemes($ids) {
 		// Detele Schemes
@@ -601,9 +603,7 @@ class data {
 		//var_dump($lots, $exceptions);
 	
 		// copy passTypes allowed by current rules
-		$rulePassTypes = array();
-		// copy passTypes allowed/disallowed by current exceptions
-		$exceptionPassTypes = array();
+		$allowedPassTypes = array();
 		
 		// copy passTypes that are affected by current rules
 		if ($rules != null) {
@@ -622,7 +622,7 @@ class data {
 						if ($this->doesRuleApply($oldRule, $requestedTime)) {
 							if ($passTypes != null) {
 								foreach ($passTypes as $passType) {
-									$rulePassTypes[$passType["id"]] = $passType;
+									$allowedPassTypes[$passType["id"]] = $passType;
 								}
 							}
 						}
@@ -635,52 +635,20 @@ class data {
 		if ($exceptions != null) {
 			foreach ($exceptions as $exception) {
 				$passTypes = $exception["passTypes"];
-				
 				if ($this->doesExceptionApply($exception, $requestedTime)) {
 					if ($passTypes != null) {
 						foreach ($passTypes as $passType) {
-							$exceptionPassTypes[$passType["id"]] = $passType;
+							if ($exception["allowed"]) {
+								$allowedPassTypes[$passType["id"]] = $passType;
+							}
+							else {
+								unset($allowedPassTypes[$passType["id"]]);
+							}
 						}
 					}
 				}
 			}
 		}
-		
-		//echo("Checking lot $id\n");
-		//echo("BY RULES");
-		//debug($rulePassTypes);
-		//echo("BY EXCEPTIONS");
-		//debug($exceptionPassTypes);
-		
-		// add any passType ids that are NOT in rules, but are allowed by exceptions
-		$allowedPassTypes = $rulePassTypes;
-		foreach ($exceptionPassTypes as $ept) {
-			$inRules = false;
-			foreach ($rulePassTypes as $rpt) {
-				if ($ept["id"] == $rpt["id"]) {
-					$inRules = true;
-					break;
-				}
-			}
-			if (!$inRules && $ept["allowed"] == true) {
-				$allowedPassTypes[$ept["id"]] = $ept;
-			}
-		}
-		
-		//echo("Allowed Pass Types After Allowed Exceptions\n");
-		//debug($allowedPassTypes);
-		
-		// remove any passType ids that ARE in rules, but are not allowed by exceptions
-		foreach ($rulePassTypes as $rpt) {
-			foreach ($exceptionPassTypes as $ept) {
-				if ($ept["id"] == $rpt["id"] && $ept["allowed"] == false) {
-					unset($allowedPassTypes[$ept["id"]]);
-				}
-			}
-		}
-		
-		//echo("Allowed Pass Types After Disallowed Exceptions\n");
-		//debug($allowedPassTypes);
 		
 		return (count($allowedPassTypes) == 0 ? null : $allowedPassTypes);
 	}
@@ -1020,11 +988,30 @@ function GetExceptionsByLot($id = null) {
 	global $data;
 	return $data->get_exceptionsByLot($id);
 }
-function GetCurrentLot($point) {
-	global $data;
-	return $data->whereAmI($point);
-}
 
+// Logic functions.
+// Returns modified data from database.
+function WhereCanIPark($id) {
+	global $data;
+	$lots = $data->get_lots();
+	$allowedLots = array();
+	
+	if ($lots != null) {
+		foreach($lots as $lot) {
+			$currentPassTypes = $lot["currentPassTypes"];
+			if ($currentPassTypes != null) {
+				$found = false;
+				foreach($currentPassTypes as $passType) {
+					if ($passType["id"] == $id) {
+						$allowedLots[$lot["id"]] = $lot["name"];
+					}
+				}
+			}
+		}
+	}
+	
+	return $allowedLots;
+}
 function WhereDidIPark($id) {
 	global $data;
 	return $data->get_lastLoc($id);
@@ -1072,14 +1059,14 @@ function CreateRules($lots, $passTypes, $startDate, $endDate, $startTime, $endTi
 }
 function CreateExceptions($lots, $passTypes, $start, $end, $allow) {
 	global $data;
-	$exceptionIds = array();
+	$exceptionIDs = array();
 	foreach($lots as $lot) {
 		foreach($passTypes as $pass) {
 			$newId = $data->insert_exception($lot, $pass, $start, $end, $allow);
-			if($newId !== false) $exceptionIds[] = $newId;
+			if($newId !== false) $exceptionIDs[] = $newId;
 		}
 	}
-	if (count($exceptionIds > 0)) return $exceptionIds;
+	if (count($exceptionIDs > 0)) return $exceptionIDs;
 	else return false; // no ids to return
 }
 

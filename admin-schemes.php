@@ -1,23 +1,21 @@
 <?php
 # Create/Delete color schemes used by parking lots.
 
-echo "<div class=\"ui-widget\">\n";
 switch($_POST["action"]) {
 	case "update":
 		$result = @UpdateScheme($_POST["update_id"], $_POST["update_name"], $_POST["update_line_color"], $_POST["update_line_width"], $_POST["update_line_opacity"], $_POST["update_fill_color"], $_POST["update_fill_opacity"]);
-		echo ($result != null) ? $ui_info : $ui_alert;
-		echo "\t\tUpdated Color Scheme: <strong>".$_POST["update_name"]."</strong>\n\t</div>\n";
+		if($result != null) ui_info("Updated Color Scheme: <strong>".$_POST["update_name"]."</strong>");
+		else ui_alert("Updated Color Scheme: <strong>".$_POST["update_name"]."</strong>");
 		break;
 	case "delete":
 		$result = @DeleteSchemes($_POST["delete_scheme"]);
 
-		echo $result > 0 ? $ui_info : $ui_alert;
-		echo "\t\tSchemes Deleted: <strong>".$result."</strong>\n\t</div>\n";
+		if($result > 0) ui_info("Schemes Deleted: <strong>".$result."</strong>");
+		else ui_alert("Schemes Deleted: <strong>".$result."</strong>");
 		break;
 	default:
 		break;
 }
-echo "</div>\n";
 
 $schemes = GetSchemes();
 ?>

@@ -1,5 +1,5 @@
 <?php
-// Database info
+# Database info
 $mysql_server = "localhost:3306";
 $mysql_user = "mysql";
 $mysql_password = "cpsc123";
@@ -42,13 +42,9 @@ $title = array(
 	"wdip" => "Where Did I Park?",
 );
 
-// UI Elements
-# TODO: Should consider replacing with functions to generate UI elements to reduce duplicate code and avoid unclosed tags.
-# Be sure to close the <div> when using ui_alert or ui_info
-$ui_alert = "\t<div class=\"ui-state-error ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n\t\t<span class=\"ui-icon ui-icon-alert\" style=\"position:relative; float:left; margin:.1em .3em 0 0;\"></span>\n";
-$ui_info = "\t<div class=\"ui-state-highlight ui-corner-all\" style=\"margin-top: 0px; padding: 0 .7em;\">\n\t\t<span class=\"ui-icon ui-icon-info\" style=\"position:relative; float:left; margin:.1em .3em 0 0;\"></span>\n";
+# Dialogs
+// TODO: Should consider replacing with functions to generate UI elements to reduce duplicate code and avoid unclosed tags. Also move to index.php.
 
-// Dialogs
 $ui_help_create = "<a href=\"#\" id=\"create_help_opener\" class=\"ui-state-default ui-corner-all\" style=\"padding: .2em .8em .2em 1.4em;text-decoration: none;position: relative;\"><span class=\"ui-icon ui-icon-help\" style=\"margin:0 .2em 0 0; position:absolute; left:.2em; top:50%; margin-top:-8px;\"></span>Help</a>";
 $ui_help_delete = "<a href=\"#\" id=\"delete_help_opener\" class=\"ui-state-default ui-corner-all\" style=\"padding:.2em .8em .2em 1.4em; text-decoration:none; position:relative;\"><span class=\"ui-icon ui-icon-help\" style=\"margin:0 .2em 0 0; position:absolute; left:.2em; top:50%; margin-top:-8px;\"></span>Help</a>";
 $ui_help_modify = "<a href=\"#\" id=\"modify_help_opener\" class=\"ui-state-default ui-corner-all\" style=\"padding:.2em .8em .2em 1.4em; text-decoration:none; position:relative;\"><span class=\"ui-icon ui-icon-help\" style=\"margin: 0 .2em 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;\"></span>Help</a>";

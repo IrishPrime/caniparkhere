@@ -11,11 +11,7 @@ if(is_array($lots)) {
 	foreach($lots as $lot) {
 		echo "\t<h1><a href=\"#\">".$lot["name"]."</a></h1>";
 		echo "\t<div>";
-		echo "\t\t<div class=\"ui-widget\">\n";
-		echo "\t\t\t$ui_info";
-		echo "\t\t\t\t<strong>".$lot["description"]."</strong>\n";
-		echo "\t\t\t</div>\n";
-		echo "\t\t</div>\n";
+		ui_info("<strong>".$lot["description"]."</strong>");
 
 		foreach($lot["dateRange"] as $date_range) {
 			echo "<p class=\"ui-state-default ui-corner-all ui-helper-clearfix\" style=\"padding:0px;\">";

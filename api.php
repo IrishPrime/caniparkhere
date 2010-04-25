@@ -15,9 +15,6 @@ switch($_GET["function"]) {
 	case "CanIParkHere":
 		$result = CanIParkHere($_GET["latLng"], $_GET["pass"]);
 		break;
-	case "GetCurrentLot":
-		$result = GetCurrentLot($_GET["point"]);
-		break;
 	case "GetExceptionsByLot":
 		$result = GetExceptionsByLot($_GET["lot"]);
 		break;
@@ -36,21 +33,15 @@ switch($_GET["function"]) {
 	case "GetSettingsForUser":
 		$result = GetSettingsForUser($_GET["id"]);
 		break;
+	case "WhereCanIPark":
+		$result = WhereCanIPark($_GET["pass"]);
+		break;
 	case "WhereDidIPark":
 		$result = WhereDidIPark($_GET["id"]);
 		break;
 	default:
 		@header("Content-Type: text/html");
-		echo "<p><a href=\"./api.php?function=Authenticate&email=test@example.com&passwordhash=secrets\">Authenticate</a>(user, passwordhash)<br/>\n";
-		echo "</p>\n";
-
-		echo "<p><a href=\"./api.php?function=CanIParkHere&latLng=&pass=1\">CanIParkHere</a>(latLng, pass)<br/>\n";
-		echo "</p>\n";
-
 		echo "<p><a href=\"./api.php?function=GetExceptionsByLot&lot=1\">GetExceptionsByLot</a>(lot)<br/>\n";
-		echo "</p>\n";
-
-		echo "<p><a href=\"./api.php?function=GetCurrentLot\">GetCurrentLot</a>(point)<br/>\n";
 		echo "</p>\n";
 
 		echo "<p><a href=\"./api.php?function=GetLots\">GetLots</a>(sort)<br/>\n";
@@ -66,6 +57,15 @@ switch($_GET["function"]) {
 		echo "</p>\n";
 
 		echo "<p><a href=\"./api.php?function=GetSettingsForUser&id=0\">GetSettingsForUser</a>(id)<br/>\n";
+		echo "</p>\n";
+
+		echo "<p><a href=\"./api.php?function=Authenticate&email=test@example.com&passwordhash=secrets\">Authenticate</a>(user, passwordhash)<br/>\n";
+		echo "</p>\n";
+
+		echo "<p><a href=\"./api.php?function=CanIParkHere&latLng=&pass=1\">CanIParkHere</a>(latLng, pass)<br/>\n";
+		echo "</p>\n";
+
+		echo "<p><a href=\"./api.php?function=WhereCanIPark&pass=1\">WhereCanIPark</a>(pass)<br/>\n";
 		echo "</p>\n";
 
 		echo "<p><a href=\"./api.php?function=WhereDidIPark&id=1\">WhereDidIPark</a>(id)<br/>\n";

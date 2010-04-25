@@ -11,7 +11,8 @@ if(!empty($exceptions)) {
 	foreach($exceptions as $exception_group) {
 		// If the lot has exceptions construct a header
 		echo "\t<h1><a href=\"#\">".$exception_group["name"]."</a></h1>\n";
-		echo "\t<div>\n$ui_info\t\t\t<strong>".$exception_group["description"]."</strong>\n</div>\n";
+		echo "\t<div>\n";
+		ui_info("<strong>".$exception_group["description"]."</strong>");
 
 		foreach($exception_group["exceptions"] as $exception) {
 			// Print each exception

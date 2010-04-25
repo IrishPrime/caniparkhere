@@ -10,16 +10,14 @@ switch($_POST["action"]) {
 		$end = $_POST["create_end_date"]." ".$_POST["create_end_hour"].":".$_POST["create_end_minute"].":00";
 		$newExceptions = @CreateExceptions($_POST["create_lots"], $_POST["create_passes"], $start, $end, $_POST["allowance"]);
 
-		echo "<div class=\"ui-widget\">\n";
-		echo count($newExceptions) > 0 ? $ui_info : $ui_alert;
-		echo "\t\tExceptions Created: <strong>".count($newExceptions)."</strong>\n\t</div>\n</div>\n";
+		if(count($newExceptions) > 0) ui_info("Exceptions Created: <strong>".count($newExceptions)."</strong>");
+		else ui_alert("No Exceptions Created");
 		break;
 	case "delete":
-		$results = DeleteExceptions($_POST["delete_exceptions"]);
+		$results = @DeleteExceptions($_POST["delete_exceptions"]);
 
-		echo "<div class=\"ui-widget\">\n";
-		echo $results ? $ui_info : $ui_alert;
-		echo "\t\tExceptions Deleted: <strong>".count($_POST["delete_exceptions"])."</strong>\n\t</div>\n</div>\n";
+		if($results) ui_info("Exceptions Deleted: <strong>".count($_POST["delete_exceptions"])."</strong>");
+		else ui_alert("No Exceptions Deleted");
 		break;
 	default:
 		break;
@@ -162,7 +160,8 @@ $(document).ready(function() {
 						foreach($exceptions as $exception_group) {
 							// If the lot has exceptions construct a header
 							echo "\t<h2><a href=\"#\">".$exception_group["name"]."</a></h2>\n";
-							echo "\t<div>\n$ui_info\t\t\t<strong>".$exception_group["description"]."</strong>\n</div>\n";
+							echo "\t<div>\n";
+							ui_info("<strong>".$exception_group["description"]."</strong>");
 
 							foreach($exception_group["exceptions"] as $exception) {
 								// Print each exception

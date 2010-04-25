@@ -44,38 +44,30 @@ if(!empty($_POST)) {
 }
 
 // Feedback
-echo "<div class=\"ui-widget\">\n\t";
 switch($status) {
 	case 1:
 		// Created user
-		echo $ui_info;
-		echo "Successfully registered: ".$_POST["email"];
+		ui_info("Successfully registered: ".$_POST["email"]);
 		break;
 	case 2:
 		// Empty field
-		echo $ui_alert;
-		echo "All fields required.";
+		ui_alert("All fields required.");
 		break;
 	case 3:
 		// Password mismatch
-		echo $ui_alert;
-		echo "Password mismatch.";
+		ui_alert("Password mismatch.");
 		break;
 	case 4:
 		// MySQL Error
-		echo $ui_alert;
-		echo "Could not connect: ".mysql_error();
+		ui_alert("Could not connect: ".mysql_error());
 	case 5:
 		// E-Mail already registered
-		echo $ui_alert;
-		echo stripslashes($_POST["email"])." is already registered by ".stripslashes($row["fullName"]).".";
+		ui_alert(stripslashes($_POST["email"])." is already registered by ".stripslashes($row["fullName"]).".");
 		break;
 	default:
-		echo $ui_info;
-		echo "All fields required.";
+		ui_info("All fields required.");
 		break;
 	}
-echo "\n\t\t</div>\n\t</div>\n";
 ?>
 
 <script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>

@@ -3,30 +3,22 @@
 require("./auth.php");
 require_once("./_logic.php");
 
-echo "<div class=\"ui-widget\">\n";
 switch($_POST["action"]) {
 	case "update":
 		$result = @UpdateLot($_POST["lot_list"], $_POST["lot_name"], $_POST["lot_description"], $_POST["lot_coords"], $_POST["lot_scheme"]);
 
-		if($result > 0) {
-			printf("%sUpdated Lot: <strong>%s</strong>\n\t</div>\n", $ui_info, $_POST["lot_name"]);
-		} else {
-			printf("%sFailed to Create Lot: <strong>%s</strong>\n\t</div>\n", $ui_alert, $_POST["lot_name"]);
-		}
+		if($result > 0) ui_info("Updated Lot: <strong>".$_POST["lot_name"]."</strong>");
+		else ui_alert("Failed to Update Lot: <strong>".$_POST["lot_name"]."</strong>");
 		break;
 	case "delete":
 		$result = @DeleteLots($_POST["delete_lots"]);
 
-		if($result) {
-			printf("%sDeleted Lots: <strong>%d</strong>\n\t</div>\n", $ui_info, count($_POST["delete_lots"]));
-		} else {
-			printf("%sFailed to Delete Lots: <strong>%d</strong>\n\t</div>\n", $ui_alert, count($_POST["delete_lots"]));
-		}
+		if($result) ui_info("Deleted Lots: <strong>".count($_POST["delete_lots"])."</strong>");
+		else ui_alert("Failed to Delete Lots: <strong>".count($_POST["delete_lots"])."</strong>");
 		break;
 	default:
 		break;
 }
-echo "</div>\n";
 
 $lots = GetLots("name");
 $schemes = GetSchemes();
@@ -42,7 +34,6 @@ $schemes = GetSchemes();
 		$("#lot_list").bind("change keypress", function() {
 			if($("#lot_list option:selected").val() != 0) {
 				$("#lot_name").val($("#lot_list option:selected").html());
-				$("#lot_coords").val(json_lots[$("#lot_list option:selected").val()].coords);
 				$("#lot_description").val(json_lots[$("#lot_list option:selected").val()].description);
 				$("#lot_scheme").val(json_lots[$("#lot_list option:selected").val()].scheme.id);
 			} else {

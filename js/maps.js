@@ -218,7 +218,7 @@ function addNewPoint(point) {
 function startLot() {
 	isNew = true;
 	editPoints = new google.maps.MVCArray();
-	editLot = new google.maps.Polyline();
+	editLot = new google.maps.Polyline({strokeOpacity: 0.8, strokeWeight: 1});
 	editLot.setMap(map);
 	editLot.setPath(new google.maps.MVCArray([editPoints]));
 }
@@ -226,7 +226,7 @@ function startLot() {
 function closeLot() {
 	if (!isClosed && editLot && editPoints.length > 2) {
 		isClosed = true;
-		editLot = new google.maps.Polygon();
+		editLot = new google.maps.Polygon({strokeOpacity: 0.8, strokeWeight: 1});
 		editLot.setPaths(new google.maps.MVCArray([editPoints]));
 		editLot.setMap(map);
 	}
@@ -237,7 +237,7 @@ function uncloseLot() {
 	if (isClosed) {
 		editLot.setMap(null);
 		isClosed = false;
-		editLot = new google.maps.Polyline();
+		editLot = new google.maps.Polyline({strokeOpacity: 0.8, strokeWeight: 1});
 		editLot.setPath(new google.maps.MVCArray([editPoints]));
 		editLot.setMap(map);
 	}

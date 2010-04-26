@@ -208,7 +208,7 @@ $schemes = GetSchemes();
 				<optgroup label="Color Schemes">
 				<?php
 					foreach($schemes as $scheme) {
-						echo "<option value=\"".$scheme["id"]."\">".$scheme["name"]."</option>\n";
+						if($scheme["id"] > 1) echo "<option value=\"".$scheme["id"]."\">".$scheme["name"]."</option>\n";
 					}
 				?>
 				</optgroup>

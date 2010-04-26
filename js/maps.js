@@ -48,6 +48,7 @@ function initialize() {
 	// create map on page
 	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 	
+	/*
 	google.maps.event.addListener(map, 'click', function(point) {
 		var lotName = null;
 		var inPolygon = false;
@@ -93,7 +94,7 @@ function initialize() {
 			}
 			return oddNodes;
 		}
-	});
+	}); */
 }
 // creates specified polygon on map
 // reference stored in lotPolygons
@@ -421,7 +422,7 @@ function createWDIPMarker(latLng) {
 	createInfoMarker(0, latLng, "You parked @ " +  latLng.toString(), "");
 }
 
-function LoadMap_CIPH() {
+function LoadMap_CIPH(passType) {
 	$.getJSON(apiURL + "?function=GetSettingsForUser&id=0",
 		function(data) {
 			settings = data; // store settings, now create lots
@@ -433,6 +434,24 @@ function LoadMap_CIPH() {
 					lots = data; // store lot data, move to settings
 					createLotPolygons(); // grabs lot data
 					createLotInfoMarkers();
+					
+					if (passType != "") {
+						google.maps.event.addListener(map, 'click',
+							function(point) {
+								var latLng = point.latLng;
+								var lat = latLng.lat();
+								var lng = latLng.lng();
+								
+								// call CIPH
+								$.getJSON(apiURL + "?function=CanIParkHere&latLng=" + lat + "," + lng + "&pass=" + passType,
+									function(response) {
+										if (response.lotName != null)
+											alert("Can I park in " + response.lotName + "?\n"
+												+ (response.ciph ? "Yes\n" : "No\n")
+												+ "You're at (" + lat + ", " + lng + ").");
+									});
+							});
+					}
 				});
 		});
 }

@@ -967,7 +967,7 @@ function CanIParkHere($location, $passType) {
 		$allowedLots = WhereCanIPark($passType);
 		
 		$ciph = array_key_exists($lot["id"], $allowedLots);
-		$lotName = ($lot != null ? $lot["name"] : "You are not currently in a lot.");
+		$lotName = ($lot != null ? $lot["name"] : null);
 		
 		$answer = array(
 			"ciph" => $ciph,

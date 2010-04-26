@@ -74,13 +74,13 @@ $passes = GetPassTypes("name");
 		</form>
 		<?php echo $ui_help_create; ?>
 		<div id="create_help_dialog" title="Update Pass Help">
-			<h3>Create New Pass</h3>
+			<h3>New Pass</h3>
 			<ol>
 				<li>Select <strong>Create New Pass</strong>.</li>
 				<li>Enter the name of the <strong>Pass Type</strong> to create.</li>
 			</ol>
 
-			<h3>Rename Pass</h3>
+			<h3>Existing Pass</h3>
 			<ol>
 				<li>Select an <strong>Existing Pass</strong> to rename.</li>
 				<li>Enter the new name of the <strong>Pass Type</strong>.</li>

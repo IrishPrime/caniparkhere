@@ -808,131 +808,75 @@ class data {
 	public function whereAmI($point) {
 		$lots = $this->get_lots();
 		foreach($lots as $lot) {
-			//if ($this->pointInPolygon($point, $lot["coords"])) {
-			if ($this->pointInPolygon($point, $lot["coords"])) {
-				return $lot; //["id"];
+			if ($this->isInPolygon($point, $lot["coords"])) {
+				return $lot;
 			}
 		}
-	}
-	private function pointInPolygon($point, $polygon, $pointOnVertex = true) {
-        // Transform string coordinates into arrays with x and y values
-        $point = $this->pointStringToCoordinates($point);
-		//echo("You are at...");
-		//debug($point);
-        $vertices = array(); 
-        foreach ($polygon as $vertex) {
-            $vertices[] = $this->pointStringToCoordinates($vertex); 
-        }
-		
-		// if the last vertice doesn't connect, connect it
-		if ($vertices[count($vertices)] != $verticies[0]) {
-			$vertices[] = $verticies[0];
-		}
-		//echo("The vertices of the lot are...");
-		//debug($vertices);
-        
-        // Check if the point sits exactly on a vertex
-        if ($pointOnVertex == true and $this->pointOnVertex($point, $vertices) == true) {
-            //return "vertex";
-			return true;
-        }
-        
-        // Check if the point is inside the polygon or on the boundary
-        $intersections = 0; 
-        $vertices_count = count($vertices);
-    
-        for ($i=1; $i < $vertices_count; $i++) {
-            $vertex1 = $vertices[$i-1]; 
-            $vertex2 = $vertices[$i];
-            if ($vertex1['y'] == $vertex2['y'] and $vertex1['y'] == $point['y'] and $point['x'] > min($vertex1['x'], $vertex2['x']) and $point['x'] < max($vertex1['x'], $vertex2['x'])) { // Check if point is on an horizontal polygon boundary
-                return true;
-				//return "boundary";
-            }
-            if ($point['y'] > min($vertex1['y'], $vertex2['y']) and $point['y'] <= max($vertex1['y'], $vertex2['y']) and $point['x'] <= max($vertex1['x'], $vertex2['x']) and $vertex1['y'] != $vertex2['y']) { 
-                $xinters = floatval(floatval($point['y'] - $vertex1['y']) * floatval($vertex2['x'] - $vertex1['x']) / floatval($vertex2['y'] - $vertex1['y']) + floatval($vertex1['x'])); 
-                if ($xinters == $point['x']) { // Check if point is on the polygon boundary (other than horizontal)
-                    return true;
-					//return "boundary";
-                }
-                if ($vertex1['x'] == $vertex2['x'] || $point['x'] <= $xinters) {
-                    $intersections++; 
-                }
-            } 
-        } 
-        // If the number of edges we passed through is even, then it's in the polygon. 
-        if ($intersections % 2 != 0) {
-            return true;
-			//return "inside";
-        } else {
-			return false;
-            //return "outside";
-        }
-    }
-	private function pnPoly($point, $polygon) {
-		$point = $this->pointStringToCoordinates($point);
-		$vertices = array(); 
-        foreach ($polygon as $vertex) {
-            $vertices[] = $this->pointStringToCoordinates($vertex); 
-        }
-		$numVertices = count($polygon);
-		$inPoly = false;
-		
-		echo("\n");
-		for ($i = 0, $j = ($numVertices - 1); $i < $numVertices; $j = $i++) {
-			echo("At point $i of $numVertices\n");
-			
-			$xdiff = floatval($vertices[$j]["x"] - $vertices[$i]["x"]);
-			$ydiff = floatval($point["y"] - $vertices[$i]["y"]);
-			$divisor = floatval($vertices[$j]["y"] - $vertices[$i]["y"] + $vertices[$i]["x"]);
-			$check = floatval($xdiff * $ydiff / $divisor);
-			
-			
-			echo("\n");
-			
-			echo("Is (" . $vertices[$i]["y"] . " > " . $point["y"] . ") != (" . $vertices[$j]["y"] . " > " . $point["y"] . ")?\n");
-			echo(" AND\n");
-			echo("Is (" . $point["x"] . " <\n");
-			echo("  (" . $vertices[$j]["x"] . " - " . $vertices[$i]["x"] . ") = " . $xdiff . "\n");
-			echo("  (" . $point["y"] . " - " . $vertices[$i]["y"] . ") = " . $ydiff . "\n");
-			echo("  (" . $vertices[$j]["y"] . " - " . $vertices[$i]["y"] . " + " . $vertices[$i]["x"] . ") = " . $divisor . "\n");
-			echo("Is (" . $point["x"] . " < " . $check . ")?\n");
-			
-			if ((
-				(($vertices[$i]["y"] > $point["y"]) != ($vertices[$j]["y"] > $point["y"]))
-				&& ($point["x"] < $check))) {
-				echo("TRUE, switching inPoly to $inPoly\n");
-				$inPoly = !$inPoly;
-			}
-			
-			echo("\n");
-		}
-		return inPoly;
 	}
 	private function isInPolygon($point, $polygon) {
-		/*
 		$point = $this->pointStringToCoordinates($point);
-		$vertices = array(); 
+		$path = array(); 
         foreach ($polygon as $vertex) {
-            $vertices[] = $this->pointStringToCoordinates($vertex); 
+            $path[] = $this->pointStringToCoordinates($vertex); 
         }
-		$numVertices = count($polygon);
-		$inPoly = false;
 		
-		$i = 0;
-		$j = $numVertices
-		for ($i = 0; $i < $numVertices; $i++) {
-			$inPoly = !$inPoly;
+		//echo("Point is ");
+		//debug($point);
+		
+		//echo("Path is ");
+		//debug($path);
+		
+		$j = 0;
+		$oddNodes = false;
+		$x = floatval($point["x"]);
+		$y = floatval($point["y"]);
+		$pathLength = count($path);
+		
+		for ($i = 0; $i < $pathLength; $i++) {
+			$j++;
+			if ($j == $pathLength) $j = 0;
+			
+			$iLat = floatval($path[$i]["y"]);
+			$iLng = floatval($path[$i]["x"]);
+			$jLat = floatval($path[$j]["y"]);
+			$jLng = floatval($path[$j]["x"]);
+			
+			//echo("x = $x\n");
+			//echo("y = $y\n");
+			//echo("iLat = $iLat\n");
+			//echo("iLng = $iLng\n");
+			//echo("jLat = $jLat\n");
+			//echo("jLng = $jLng\n");
+			
+			$a = floatval($y - $iLat);
+			$b = floatval($jLat - $iLat);
+			$c = floatval($jLng - $iLng);
+			$d = ($b == 0 ? 0 : floatval($iLng + $a / $b * $c));
+			
+			//echo("$iLat < $y = ");
+			//echo ($iLat < $y ? "Yup.\n" : "Nope.\n");
+			//echo("$jLat >= $y = ");
+			//echo ($jLat >= $y ? "Yup.\n" : "Nope.\n");
+			//echo("$jLat < $y = ");
+			//echo ($jLat < $y ? "Yup.\n" : "Nope.\n");
+			//echo("$iLat >= $y = ");
+			//echo ($iLat >= $y ? "Yup.\n" : "Nope.\n");
+			
+			//echo("$iLng + ($a) / ($b) * ($c)\n");
+			//echo("$d < $x = ");
+			//echo ($d < $x ? "Yup.\n" : "Nope.\n");
+			
+			if ((($iLat < $y) && ($jLat >= $y)) 
+				|| (($jLat < $y) && ($iLat >= $y))) {
+				if ($d < $x ) {
+				  $oddNodes = !$oddNodes;
+				}
+			}
+			//echo("\n");
 		}
+		//echo ("\n");
 		
-		return $inPoly;
-		*/
-	}
-	private function pointOnVertex($point, $vertices) {
-        foreach($vertices as $vertex) {
-            if ($point == $vertex) {
-                return true;
-            }
-        }
+		return $oddNodes;
 	}
 	private function pointStringToCoordinates($pointString) {
         $coordinates = explode(",", $pointString);
@@ -1017,27 +961,20 @@ function WhereDidIPark($id) {
 	return $data->get_lastLoc($id);
 }
 function CanIParkHere($location, $passType) {
-	global $data;
-	$lot = $data->whereAmI($location);
-	$ciph = false;
-	$lotName = "You are not currently in a lot.";
-	if ($lot != null) {
-		$lotName = $lot["name"];
-		if ($lot["currentPassTypes"] != null) {
-			foreach($lot["currentPassTypes"] as $passType) {
-				if ($passType["id"] == $passType) {
-					$ciph = true;
-					break;
-				}
-			}
-		}
+	if ($location != null) {
+		global $data;
+		$lot = $data->whereAmI($location);
+		$allowedLots = WhereCanIPark($passType);
+		
+		$ciph = array_key_exists($lot["id"], $allowedLots);
+		$lotName = ($lot != null ? $lot["name"] : "You are not currently in a lot.");
+		
+		$answer = array(
+			"ciph" => $ciph,
+			"lotName" => $lotName
+		);
+		return $answer;
 	}
-	
-	$answer = array(
-		"ciph" => $ciph,
-		"lotName" => $lotName
-	);
-	return $answer;
 }
 
 // Creation methods.

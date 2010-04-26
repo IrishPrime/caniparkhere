@@ -36,11 +36,13 @@ $schemes = GetSchemes();
 				$("#lot_name").val($("#lot_list option:selected").html());
 				$("#lot_description").val(json_lots[$("#lot_list option:selected").val()].description);
 				$("#lot_scheme").val(json_lots[$("#lot_list option:selected").val()].scheme.id);
+				$("#update_form :submit").val("Update Parking Lot");
 			} else {
 				$("#lot_name").val("");
 				$("#lot_coords").val("");
 				$("#lot_description").val("");
 				$("#lot_scheme").val($("#lot_scheme option").val());
+				$("#update_form :submit").val("Create Parking Lot");
 			}
 			SelectLot($("#lot_list option:selected").val());
 		});
@@ -95,19 +97,32 @@ $schemes = GetSchemes();
 			<input type="text" id="update_timed" name="update_timed" value="0" class="required number" min="-1"/>
 			-->
 			<input type="hidden" name="action" value="update"/>
-			<p><input type="submit" value="Save Parking Lot"/></p>
+			<p><input type="submit" value="Create Parking Lot"/></p>
 		</form>
 		<?php echo $ui_help_create; ?>
 		<div id="create_help_dialog" title="Update Lot Help">
-			<p>Enter a <strong>Lot Name</strong> or select an <strong>Existing Lot</strong> to edit.</p>
-			<h3>Create New Lot</h3>
+			<h3>New Lot</h3>
 			<ol>
-				<li>Left click on the map to place the <strong>Starting Marker</strong> for a lot.</li>
-				<li>Left click to continue placing markers to enclose the parking area.</li>
-				<li>Left click the <strong>Starting Marker</strong> to close the lot.</li>
+				<li>Enter a <strong>Lot Name</strong>.</li>
+				<li>Left click to place markers to enclose the parking area.</li>
+				<li>Enter a <strong>Description</strong> for the lot, such as nearby landmarks.</li>
+				<li>Select a <strong>Color Scheme</strong> for the lot.</li>
 			</ol>
-			<p>Markers may be dragged to reshape the lot.</p>
-			<p>Right click on a draggable marker to remove it.</p>
+
+			<h3>Existing Lots</h3>
+			<ol>
+				<li>Select an <strong>Existing Lot</strong> to edit.</li>
+				<li><strong>Lot Name</strong>, <strong>Description</strong>, and <strong>Color Scheme</strong> may all be edited.</li>
+				<li>The <strong>Parking Lot</strong> itself may be reshaped.</li>
+			</ol>
+
+			<h3>General</h3>
+			<ol>
+				<li>Red markers may be dragged to reshape the lot.</li>
+				<li>Right click on a draggable (red) marker to remove it.</li>
+				<li>Lots cannot be saved until the polygon is closed. Left click a marker to close the lot polygon.</li>
+				<li>Only one lot can be created (or edited) at a time.</li>
+			</ol>
 			<!-- Timed Help
 			<h3>Timed Parking</h3>
 			<ul>

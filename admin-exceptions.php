@@ -16,7 +16,7 @@ switch($_POST["action"]) {
 	case "delete":
 		$results = @DeleteExceptions($_POST["delete_exceptions"]);
 
-		if($results) ui_info("Exceptions Deleted: <strong>".count($_POST["delete_exceptions"])."</strong>");
+		if($results > 0) ui_info("Exceptions Deleted: <strong>".count($_POST["delete_exceptions"])."</strong>");
 		else ui_alert("No Exceptions Deleted");
 		break;
 	default:

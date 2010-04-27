@@ -94,10 +94,10 @@ class data {
 		// constructor (connects to mysql server and changes to CIPH database)
 
 		// create connection
-		$conn = mysql_connect($mysql_server, $mysql_user, $mysql_password) or die("Can't connect to MySQL server: " . mysql_error());
+		$conn = mysql_connect(MYSQL_SERVER, MYSQL_USER, MYSQL_PASSWORD) or die("Can't connect to MySQL server: " . mysql_error());
 
 		// open database
-		mysql_select_db($mysql_db_name, $conn) or die("Can't open database: " . mysql_error());
+		mysql_select_db(MYSQL_DB, $conn) or die("Can't open database: " . mysql_error());
 	}
 
 	private function create_admins($result) {
@@ -568,7 +568,8 @@ class data {
 	}
 	public function delete_exception($ids) {
 		$sql = "DELETE FROM exceptions WHERE id IN (" . $ids . ")";
-		return mysql_affected_rows(mysql_query($sql));
+		mysql_query($sql);
+		return mysql_affected_rows();
 	}
 	public function delete_schemes($ids) {
 		// Detele Schemes

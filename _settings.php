@@ -1,16 +1,16 @@
 <?php
 # Database info
-$mysql_server = "localhost:3306";
-$mysql_user = "mysql";
-$mysql_password = "cpsc123";
-$mysql_db_name = "ciph";
+define(MYSQL_SERVER, "localhost:3306");
+define(MYSQL_USER, "mysql");
+define(MYSQL_PASSWORD, "cpsc123");
+define(MYSQL_DB, "ciph");
 
 // WARNING: Changing the password salt on a live system will cause all accounts to quit working.
 // If the password salt is changed it will also need to be changed in the Android application.
 // This prevents the need to send unencrypted passwords while maintaining the password salt.
-$password_salt = "C!p|-|4Mg501337";
-$session_duration = 60*60*24*365;
-$maintainer_email = "";
+define(SALT, "C!p|-|4Mg501337");
+define(SESSION_DURATION, 60*60*24*365);
+define(MAINTAINER, "");
 
 $dotw = array(
 	0 => "Sunday",

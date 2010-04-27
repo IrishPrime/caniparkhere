@@ -1,32 +1,9 @@
 <?php
-# Edit the current user's profile.
+# Edit the current user's profile. Form must submit to a different file to set new cookies.
 require_once("./_logic.php");
 $passes = GetPassTypes("name");
 
-// Successful connection, setup queries
-@array_map(addslashes, $_POST);
-
-switch($_POST["action"]) {
-	case "user_edit":
-		$sql = "SELECT id, password, CONCAT_WS(' ', firstName, lastName) AS fullName FROM users WHERE email='".stripslashes($_POST["edit_email"])."'";
-		$result = mysql_query($sql);
-		$row = mysql_fetch_assoc($result);
-		if(mysql_num_rows($result) == 0 || ((mysql_num_rows($result) == 1) && ($_COOKIE["auth"] == $row["password"] && $_COOKIE["id"] == $row["id"]))) {
-			$sql = "UPDATE users SET firstName='".$_POST["edit_fname"]."', lastName='".$_POST["edit_lname"]."', email='".$_POST["edit_email"]."', password='".sha1($_POST["edit_pass1"].$password_salt)."', passType='".$_POST["edit_passtype"]."' WHERE id='".addslashes($_COOKIE["id"])."' AND password='".$_COOKIE["auth"]."'";
-		} else {
-			unset($sql);
-		}
-		break;
-	case "user_delete":
-		$sql = "DELETE FROM users WHERE id='".addslashes($_COOKIE["id"])."' AND password='".sha1($_POST["delete_password"].$password_salt)."'";
-		break;
-	default:
-		unset($sql);
-		break;
-}
-
-if(isset($sql)) $result = @mysql_query($sql);
-$sql = "SELECT * FROM users WHERE id='".addslashes($_COOKIE["id"])."'";
+$sql = "SELECT * FROM users WHERE id='".addslashes($_COOKIE["id"])."' AND password='".$_COOKIE["auth"]."'";
 $result = @mysql_query($sql);
 $row = @mysql_fetch_assoc($result);
 ?>
@@ -47,7 +24,7 @@ $(document).ready(function() {
 
 	<!-- Edit Tab -->
 	<div id="edit_tab">
-		<form name="user_edit" id="user_edit" method="POST" action="?page=user-profile">
+		<form name="user_edit" id="user_edit" method="POST" action="./user-profile-exec.php">
 			<label for="edit_fname">First Name</label>
 			<input id="edit_fname" name="edit_fname" type="text" value="<?php echo stripslashes($row["firstName"]); ?>" class="required" minlength="2"/><br/>
 
@@ -82,7 +59,7 @@ $(document).ready(function() {
 
 	<!-- Delete Tab -->
 	<div id="delete_tab">
-		<form name="user_delete" id="user_delete" method="POST" action="?page=user-profile">
+		<form name="user_delete" id="user_delete" method="POST" action="./user-profile-exec.php">
 			<label for="delete_password">Password</label>
 			<input type="password" name="delete_password" id="delete_password" value="" class="required"/>
 			<input type="hidden" name="action" value="user_delete"/>

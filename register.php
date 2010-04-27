@@ -19,8 +19,8 @@ if(!empty($_POST)) {
 	}
 
 	// Create connection
-	mysql_connect($mysql_server, $mysql_user, $mysql_password) or $status = 4;
-	mysql_select_db($mysql_db_name) or $status = 4;
+	mysql_connect(MYSQL_SERVER, MYSQL_USER, MYSQL_PASSWORD) or $status = 4;
+	mysql_select_db(MYSQL_DB) or $status = 4;
 
 	// Look for user
 	$sql = "SELECT CONCAT_WS(' ', firstName, lastName) AS fullName FROM users WHERE email='".$_POST["email"]."'";
@@ -33,7 +33,7 @@ if(!empty($_POST)) {
 		$sql .= $_POST["fname"] . "', '";
 		$sql .= $_POST["lname"] . "', '";
 		$sql .= $_POST["email"] . "', '";
-		$sql .= sha1($_POST["pass1"].$password_salt) . "', '";
+		$sql .= sha1($_POST["pass1"].SALT) . "', '";
 		$sql .= $_POST["passtype"] . "')";
 		(mysql_query($sql) and $status = 1) or $status = 4;
 	} else {

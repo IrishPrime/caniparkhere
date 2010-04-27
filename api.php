@@ -41,22 +41,22 @@ switch($_GET["function"]) {
 		break;
 	default:
 		@header("Content-Type: text/html");
+		echo "<p><a href=\"./api.php?function=GetLots\">GetLots</a>([sort])<br/>\n";
+		echo "</p>\n";
+
 		echo "<p><a href=\"./api.php?function=GetExceptionsByLot&lot=1\">GetExceptionsByLot</a>(lot)<br/>\n";
-		echo "</p>\n";
-
-		echo "<p><a href=\"./api.php?function=GetLots\">GetLots</a>(sort)<br/>\n";
-		echo "</p>\n";
-
-		echo "<p><a href=\"./api.php?function=GetPassTypes\">GetPassTypes</a>(sort)<br/>\n";
 		echo "</p>\n";
 
 		echo "<p><a href=\"./api.php?function=GetRulesByLot&lot=1\">GetRulesByLot</a>(lot)<br/>\n";
 		echo "</p>\n";
 
-		echo "<p><a href=\"./api.php?function=GetSchemes\">GetSchemes</a>(id)<br/>\n";
+		echo "<p><a href=\"./api.php?function=GetPassTypes\">GetPassTypes</a>([sort])<br/>\n";
 		echo "</p>\n";
 
-		echo "<p><a href=\"./api.php?function=GetSettingsForUser&id=0\">GetSettingsForUser</a>(id)<br/>\n";
+		echo "<p><a href=\"./api.php?function=GetSchemes\">GetSchemes</a>([id])<br/>\n";
+		echo "</p>\n";
+
+		echo "<p><a href=\"./api.php?function=GetSettingsForUser&id=0\">GetSettingsForUser</a>([id])<br/>\n";
 		echo "</p>\n";
 
 		echo "<p><a href=\"./api.php?function=Authenticate&email=test@example.com&passwordhash=secrets\">Authenticate</a>(user, passwordhash)<br/>\n";

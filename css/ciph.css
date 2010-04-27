@@ -100,19 +100,9 @@ body {
 	margin: 0px;
 }
 
-fieldset {
-	clear: both;
-	padding-bottom: 0px;
-}
-
-input {
-	margin-bottom: 5px;
-}
-
 label {
 	display: inline-block;
-	margin-bottom: 5px;
-	vertical-align: top;
+	vertical-align: center;
 	min-width: 10em;
 }
 

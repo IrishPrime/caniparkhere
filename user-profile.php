@@ -34,11 +34,11 @@ $(document).ready(function() {
 			<label for="edit_email">E-Mail</label>
 			<input id="edit_email" name="edit_email" type="text" value="<?php echo stripslashes($row["email"]); ?>" class="required email" minlength="2"/><br/>
 
-			<label for="edit_pass1">Password</label>
-			<input id="edit_pass1" name="edit_pass1" type="password" value="" class="required" minlength="8"/><br/>
+			<label for="edit_password_1">Password</label>
+			<input id="edit_password_1" name="edit_password_1" type="password" value="" class="required" minlength="8"/><br/>
 
-			<label for="edit_pass2">Confirm</label>
-			<input id="edit_pass2" name="edit_pass2" type="password" value="" class="required" minlength="8"/><br/>
+			<label for="edit_password_2">Confirm</label>
+			<input id="edit_password_2" name="edit_password_2" type="password" value="" class="required" equalTo="#edit_password_1"/><br/>
 
 			<label for="edit_passtype">Pass</label>
 			<select id="edit_passtype" name="edit_passtype">

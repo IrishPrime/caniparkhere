@@ -14,7 +14,7 @@ if(!empty($_POST)) {
 	}
 
 	// Password mismatch?
-	if(strcmp($_POST["pass1"], $_POST["pass2"]) != 0) {
+	if(strcmp($_POST["password_1"], $_POST["password_2"]) != 0) {
 		$status = 3;
 	}
 
@@ -33,7 +33,7 @@ if(!empty($_POST)) {
 		$sql .= $_POST["fname"] . "', '";
 		$sql .= $_POST["lname"] . "', '";
 		$sql .= $_POST["email"] . "', '";
-		$sql .= sha1($_POST["pass1"].SALT) . "', '";
+		$sql .= sha1($_POST["password_1"].SALT) . "', '";
 		$sql .= $_POST["passtype"] . "')";
 		(mysql_query($sql) and $status = 1) or $status = 4;
 	} else {
@@ -92,11 +92,11 @@ switch($status) {
 			<label for="email">E-Mail</label>
 			<input id="email" name="email" type="text" class="required email"/><br/>
 
-			<label for="pass1">Password</label>
-			<input id="pass1" name="pass1" type="password" class="required" minlength="8"/><br/>
+			<label for="password_1">Password</label>
+			<input id="password_1" name="password_1" type="password" class="required" minlength="8"/><br/>
 
-			<label for="pass2">Confirm</label>
-			<input id="pass2" name="pass2" type="password" class="required" minlength="8"/><br/>
+			<label for="password_2">Confirm</label>
+			<input id="password_2" name="password_2" type="password" class="required" equalTo="#password_1"/><br/>
 
 			<label for="passtype">Pass Type</label>
 			<select id="passtype" name="passtype">

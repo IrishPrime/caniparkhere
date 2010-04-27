@@ -13,9 +13,9 @@ switch($_POST["action"]) {
 		$row = mysql_fetch_assoc($result);
 		// Ensure unique e-mail address and user authenticity
 		if(mysql_num_rows($result) == 0 || ((mysql_num_rows($result) == 1) && ($_COOKIE["auth"] == $row["password"] && $_COOKIE["id"] == $row["id"]))) {
-			$new_pass = sha1($_POST["edit_pass1"].SALT);
+			$new_password = sha1($_POST["edit_password_1"].SALT);
 			$sql = "UPDATE users SET firstName='".$_POST["edit_fname"]."', lastName='".$_POST["edit_lname"]
-				. "', email='".$_POST["edit_email"]."', password='$new_pass', passType='".$_POST["edit_passtype"]
+				. "', email='".$_POST["edit_email"]."', password='$new_password', passType='".$_POST["edit_passtype"]
 				. "' WHERE id='".addslashes($_COOKIE["id"])."' AND password='".$_COOKIE["auth"]."'";
 		} else {
 			unset($sql);
@@ -37,7 +37,7 @@ if(isset($sql)) {
 		session_regenerate_id();
 		// Update cookie values
 		setcookie("id", $row["id"], time()+SESSION_DURATION);
-		setcookie("auth", $new_pass, time()+SESSION_DURATION);
+		setcookie("auth", $new_password, time()+SESSION_DURATION);
 		setcookie("admin", $row["admin"], time()+SESSION_DURATION);
 		setcookie("passType", $_POST["edit_passtype"], time()+SESSION_DURATION);
 	}

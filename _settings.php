@@ -43,8 +43,7 @@ $title = array(
 );
 
 # Dialogs
-// TODO: Should consider replacing with functions to generate UI elements to reduce duplicate code and avoid unclosed tags. Also move to index.php.
-
+// TODO: Should consider replacing with functions to generate UI elements to reduce duplicate. Also move to index.php.
 $ui_help_create = "<a href=\"#\" id=\"create_help_opener\" class=\"ui-state-default ui-corner-all\" style=\"padding: .2em .8em .2em 1.4em;text-decoration: none;position: relative;\"><span class=\"ui-icon ui-icon-help\" style=\"margin:0 .2em 0 0; position:absolute; left:.2em; top:50%; margin-top:-8px;\"></span>Help</a>";
 $ui_help_delete = "<a href=\"#\" id=\"delete_help_opener\" class=\"ui-state-default ui-corner-all\" style=\"padding:.2em .8em .2em 1.4em; text-decoration:none; position:relative;\"><span class=\"ui-icon ui-icon-help\" style=\"margin:0 .2em 0 0; position:absolute; left:.2em; top:50%; margin-top:-8px;\"></span>Help</a>";
 $ui_help_modify = "<a href=\"#\" id=\"modify_help_opener\" class=\"ui-state-default ui-corner-all\" style=\"padding:.2em .8em .2em 1.4em; text-decoration:none; position:relative;\"><span class=\"ui-icon ui-icon-help\" style=\"margin: 0 .2em 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;\"></span>Help</a>";

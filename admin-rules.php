@@ -20,7 +20,7 @@ switch($_POST["action"]) {
 	case "delete":
 		$results = @DeleteRules($_POST["delete_rules"]);
 
-		if($results) ui_info("Rules Deleted: <strong>".$results."</strong>");
+		if($results > 0) ui_info("Rules Deleted: <strong>".$results."</strong>");
 		else ui_alert("No Rules Deleted.");
 		break;
 	default:

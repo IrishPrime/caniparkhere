@@ -9,7 +9,6 @@ if(!empty($_POST)) {
 	foreach($_POST as &$item) {
 		# jQuery should prevent the form from being submitted without all required fields, but just in case...
 		if(empty($item)) die("Incomplete form.");
-		$item = addslashes($item);
 	}
 
 	if($fp = @fopen(SETTINGS_FILE, "w")) {
@@ -66,14 +65,18 @@ if(!empty($_POST)) {
 
 		@fclose($fp);
 
-		@include(SETTINGS_FILE);
-		@mysql_connect(MYSQL_SERVER, MYSQL_USER, MYSQL_PASSWORD);
-		@mysql_select_db(MYSQL_DB);
-		@mysql_query("SOURCE ./sql/ciph_schema.sql");
-		@mysql_query("INSERT INTO `users` VALUES ('1', '".$_POST["install_admin_fname"]."', '".$_POST["install_admin_lname"]."', '".$_POST["install_admin_email"]."', '".sha1($_POST["install_admin_password_1"].SALT)."', '', '', '1')");
-		@mysql_query("UPDATE `settings` SET value='".$_POST["install_map_coords"]."' WHERE id='1'");
-		@mysql_query("UPDATE `settings` SET value='".$_POST["install_map_zoom"]."' WHERE id='6'");
-		@mysql_close();
+		include(SETTINGS_FILE);
+		mysql_connect(MYSQL_SERVER, MYSQL_USER, MYSQL_PASSWORD) or die(mysql_error());
+		mysql_select_db(MYSQL_DB) or die(mysql_error());
+		$schema = explode(";", file_get_contents("./sql/ciph_schema.sql"));
+
+		foreach($schema as $query) {
+			mysql_query($query);
+		}
+		mysql_query("INSERT INTO `users` VALUES ('1', '".$_POST["install_admin_fname"]."', '".$_POST["install_admin_lname"]."', '".$_POST["install_admin_email"]."', '".sha1($_POST["install_admin_password_1"].SALT)."', '', '', '1')");
+		mysql_query("UPDATE `settings` SET value='".$_POST["install_map_coords"]."' WHERE id='1'");
+		mysql_query("UPDATE `settings` SET value='".$_POST["install_map_zoom"]."' WHERE id='6'");
+		mysql_close();
 
 		header("location: ./index.php");
 	} else {
@@ -130,7 +133,7 @@ if(!empty($_POST)) {
 						required: true,
 					},
 					install_admin_password_2: {
-						equalTo: "#password_1",
+						equalTo: "#install_admin_password_1",
 					},
 					install_map_coords: {
 						required: true,

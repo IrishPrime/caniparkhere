@@ -564,7 +564,8 @@ class data {
 	}
 	public function delete_rule($ids) {
 		$sql = "DELETE FROM rules WHERE id IN (" . $ids . ")";
-		return mysql_affected_rows(mysql_query($sql));
+		mysql_query($sql);
+		return mysql_affected_rows();
 	}
 	public function delete_exception($ids) {
 		$sql = "DELETE FROM exceptions WHERE id IN (" . $ids . ")";

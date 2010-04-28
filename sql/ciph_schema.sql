@@ -1,18 +1,4 @@
-/*
-Source Server Version : 50137
-Source Database       : ciph
-
-Target Server Type    : MYSQL
-Target Server Version : 50137
-File Encoding         : 65001
-
-Date: 2010-04-27 22:11:20
-*/
-
 SET FOREIGN_KEY_CHECKS=0;
--- ----------------------------
--- Table structure for `exceptions`
--- ----------------------------
 DROP TABLE IF EXISTS `exceptions`;
 CREATE TABLE `exceptions` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -25,14 +11,6 @@ CREATE TABLE `exceptions` (
   KEY `lot` (`lot`) USING BTREE,
   KEY `pass` (`passType`) USING BTREE
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
-
--- ----------------------------
--- Records of exceptions
--- ----------------------------
-
--- ----------------------------
--- Table structure for `lots`
--- ----------------------------
 DROP TABLE IF EXISTS `lots`;
 CREATE TABLE `lots` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -45,14 +23,6 @@ CREATE TABLE `lots` (
   UNIQUE KEY `name` (`name`),
   KEY `scheme` (`scheme`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
-
--- ----------------------------
--- Records of lots
--- ----------------------------
-
--- ----------------------------
--- Table structure for `passTypes`
--- ----------------------------
 DROP TABLE IF EXISTS `passTypes`;
 CREATE TABLE `passTypes` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -60,14 +30,6 @@ CREATE TABLE `passTypes` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
-
--- ----------------------------
--- Records of passTypes
--- ----------------------------
-
--- ----------------------------
--- Table structure for `rules`
--- ----------------------------
 DROP TABLE IF EXISTS `rules`;
 CREATE TABLE `rules` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -82,14 +44,6 @@ CREATE TABLE `rules` (
   KEY `lot` (`lot`),
   KEY `pass` (`passType`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
-
--- ----------------------------
--- Records of rules
--- ----------------------------
-
--- ----------------------------
--- Table structure for `schemes`
--- ----------------------------
 DROP TABLE IF EXISTS `schemes`;
 CREATE TABLE `schemes` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -102,10 +56,6 @@ CREATE TABLE `schemes` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='Color schemes to make lots more recognizable at a glance.';
-
--- ----------------------------
--- Records of schemes
--- ----------------------------
 INSERT INTO `schemes` VALUES ('1', 'Default', '#336699', '10', '1.00', '#305989', '0.30');
 INSERT INTO `schemes` VALUES ('2', 'Black', '#000000', '10', '1.00', '#000000', '0.30');
 INSERT INTO `schemes` VALUES ('3', 'White', '#FFFFFF', '10', '1.00', '#FFFFFF', '0.30');
@@ -114,10 +64,6 @@ INSERT INTO `schemes` VALUES ('5', 'Blue', '#0000FF', '10', '1.00', '#0000FF', '
 INSERT INTO `schemes` VALUES ('6', 'Green', '#00B400', '10', '1.00', '#00A200', '0.30');
 INSERT INTO `schemes` VALUES ('7', 'Orange', '#FF9933', '10', '1.00', '#E5892D', '0.30');
 INSERT INTO `schemes` VALUES ('8', 'Yellow', '#FFFF00', '10', '1.00', '#E5E500', '0.30');
-
--- ----------------------------
--- Table structure for `settings`
--- ----------------------------
 DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -127,20 +73,12 @@ CREATE TABLE `settings` (
   PRIMARY KEY (`id`),
   KEY `user` (`user`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
-
--- ----------------------------
--- Records of settings
--- ----------------------------
 INSERT INTO `settings` VALUES ('1', '0', 'mapCenter', '34.6766, -82.8343');
 INSERT INTO `settings` VALUES ('2', '0', 'mapTypeId', 'google.maps.MapTypeId.ROADMAP');
 INSERT INTO `settings` VALUES ('3', '0', 'markerImage', './images/clemsonPaw.png');
 INSERT INTO `settings` VALUES ('4', '0', 'markerShadow', 'http://www.google.com/mapfiles/shadow50.png');
 INSERT INTO `settings` VALUES ('5', '0', 'lotHTML', '<b>{lotName}</b><br><i>{lotDescription}</i><br><br><u>Who Can Park Here?</u><br>{currentPassTypes}');
 INSERT INTO `settings` VALUES ('6', '0', 'mapZoom', '16');
-
--- ----------------------------
--- Table structure for `users`
--- ----------------------------
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -154,7 +92,3 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
-
--- ----------------------------
--- Records of users
--- ----------------------------

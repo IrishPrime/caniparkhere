@@ -419,7 +419,7 @@ function createLotEditMarkers() {
 	});
 }
 function createWDIPMarker(latLng) {
-	createInfoMarker(0, latLng, "You parked @ " +  latLng.toString(), "");
+	createInfoMarker(0, latLng, "You parked at " +  latLng.toString());
 }
 
 function LoadMap_CIPH(passType) {

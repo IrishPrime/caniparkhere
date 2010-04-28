@@ -68,10 +68,10 @@
 <!-- Footer -->
 <div id="footer">
 	<small>&copy; Michael O'Neill &amp; Matthew Burkhard 2010</small><br/>
-	<img src="./images/php-power-micro2.png" alt="PHP" border="0"/>
-	<img src="./images/MySQL.gif" alt="MySQL" border="0"/>
-	<img src="./images/Google-Maps.gif" alt="Google Maps" border="0"/>
-	<img src="./images/ui-jquery.png" alt="jQuery UI" border="0"/>
+	<a href="http://www.php.net/"><img src="./images/php-power-micro2.png" alt="PHP" border="0"/></a>
+	<a href="http://www.mysql.com/"><img src="./images/MySQL.gif" alt="MySQL" border="0"/></a>
+	<a href="http://maps.google.com/"><img src="./images/Google-Maps.gif" alt="Google Maps" border="0"/></a>
+	<a href="http://jqueryui.com/"><img src="./images/ui-jquery.png" alt="jQuery UI" border="0"/></a>
 </div>
 </body>
 </html>

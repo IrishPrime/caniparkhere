@@ -167,7 +167,7 @@ if(!empty($_POST)) {
 						<br/>
 
 						<label for="install_mysql_port">MySQL Port</label>
-						<input id="install_mysql_port" name="install_mysql_port" type="text"/>
+						<input id="install_mysql_port" name="install_mysql_port" type="text" value="3306"/>
 						<br/>
 
 						<label for="install_mysql_user">MySQL User</label>
@@ -180,7 +180,7 @@ if(!empty($_POST)) {
 
 						<label for="install_mysql_database">MySQL Database</label>
 						<input id="install_mysql_database" name="install_mysql_database" type="text"/>
-						<br/>
+						<hr/>
 
 						<label for="install_admin_fname">Admin. First Name</label>
 						<input id="install_admin_fname" name="install_admin_fname" type="text"/>
@@ -200,14 +200,14 @@ if(!empty($_POST)) {
 
 						<label for="install_admin_password_2">Confirm Password</label>
 						<input id="install_admin_password_2" name="install_admin_password_2" type="password"/>
-						<br/>
+						<hr/>
 
 						<label for="install_map_coords">Map Center (Lat, Lng)</label>
-						<input id="install_map_coords" name="install_map_coords" type="text"/>
+						<input id="install_map_coords" name="install_map_coords" type="text" value="34.6766, -82.8343"/>
 						<br/>
 
 						<label for="install_map_zoom">Map Zoom</label>
-						<input id="install_map_zoom" name="install_map_zoom" type="text"/>
+						<input id="install_map_zoom" name="install_map_zoom" type="text" value="16"/>
 						<br/>
 
 						<p><input type="submit" value="Install CIPH"/></p>
@@ -216,17 +216,25 @@ if(!empty($_POST)) {
 					<!-- Help -->
 					<a href="#" id="create_help_opener" class="ui-state-default ui-corner-all" style="padding: .2em .8em .2em 1.4em;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin:0 .2em 0 0; position:absolute; left:.2em; top:50%; margin-top:-8px;"></span>Help</a>
 					<div id="create_help_dialog" title="Install Help">
+						<h2>MySQL</h2>
+						<p>Your network administrator should provide you with the following information.</p>
 						<p><strong>MySQL Server</strong>: Hostname or IP address of MySQL server on which to install Can I Park Here? localhost or 127.0.0.1 if the MySQL server will always be on the same system as the website.</p>
-						<p><strong>MySQL Port</strong>: Port on which MySQL accepts connections.</p>
+						<p><strong>MySQL Port</strong>: Port on which MySQL accepts connections. 3306 is the default, contact your network administrator to confirm.</p>
 						<p><strong>MySQL User</strong>: MySQL user name with <em>DROP</em>, <em>CREATE</em>, <em>INSERT</em> and <em>DELETE</em> permissions. Using root is strongly discouraged.</p>
 						<p><strong>MySQL Password</strong>: Password for the associated <strong>MySQL User</strong>.</p>
 						<p><strong>MySQL Database</strong>: The name of the database in which <em>Can I Park Here?</em> will create tables. The database should be created by your network or systems administrator and permissions granted to the <strong>MySQL User</strong> you wish to use. Existing tables will be dropped.</p>
+
+						<h2>Administrator</h2>
+						<p>The account created here will be used to log into the <em>Can I Park Here?</em> website. This account will have permission to create and edit <em>Parking Lots</em>, <em>Pass Types</em>, <em>Rules</em>, <em>Exceptions</em>, and <em>Color Schemes</em>. This account will also be able to promote additional users to an administrator level with the same permissions.</p>
 						<p><strong>Admin. First Name</strong>: Your first name.</p>
 						<p><strong>Admin. Last Name</strong>: Your last name.</p>
 						<p><strong>Admin. E-Mail</strong>: The e-mail address you wish to login with.</p>
 						<p><strong>Admin. Password</strong>: The password for your account, not the <strong>MySQL User</strong>.</p>
-						<p><strong>Confirm Password</strong>: Your password will be salted and hashed with SHA-1 encryption.</p>
-						<p><strong>Map Center (Lat, Lng)</strong>: <em>Latitude</em> and <em>Longitude</em> on which the map should center. <a href="http://www.itouchmap.com/latlong.html" target="blank">This</a> tool may be helpful.</p>
+						<p><strong>Confirm Password</strong>: Your password will be salted and hashed with SHA-1 encryption. This means you will not be able to retrieve your password in clear text or have it sent to you.</p>
+
+						<h2>Map</h2>
+						<p>The default settings for the map displayed on the <em>Can I Park Here?</em> and <em>Where Can I Park?</em> pages. <em>Where Did I Park?</em> may start at this location, but will center on the user's last known location.</p>
+						<p><strong>Map Center (Lat, Lng)</strong>: <em>Latitude</em> and <em>Longitude</em> on which the map should center. Use the map on the right side of the page to select the default view.</p>
 						<p><strong>Map Zoom</strong>: The default zoom level of all maps displayed on the site. The previous tool should be helpful for this, as well.</p>
 					</div>
 				</div>

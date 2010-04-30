@@ -3,10 +3,10 @@
 
 # Defined for interal use only. Do not modify.
 @define("SETTINGS_FILE", "./_settings.php");
-//if(is_file(SETTINGS_FILE)) die("Can I Park Here? appears to be installed.");
+if(is_file(SETTINGS_FILE)) die("Can I Park Here? appears to be installed.");
 
 if(!empty($_POST)) {
-	if(!get_magic_quotes_gpc()) array_walk($_POST, addslashes);
+	if(!get_magic_quotes_gpc()) array_walk_recursive($_POST, addslashes);
 	foreach($_POST as &$item) {
 		# jQuery should prevent the form from being submitted without all required fields, but just in case...
 		if(empty($item)) die("Incomplete form.");
@@ -75,8 +75,8 @@ if(!empty($_POST)) {
 			mysql_query($query);
 		}
 		mysql_query("INSERT INTO `users` VALUES ('1', '".$_POST["install_admin_fname"]."', '".$_POST["install_admin_lname"]."', '".$_POST["install_admin_email"]."', '".sha1($_POST["install_admin_password_1"].SALT)."', '', '', '1')");
-		preg_replace("[\(|\)]", "", $_POST["install_map_coords"]);
-		mysql_query("UPDATE `settings` SET value='".$_POST["install_map_coords"]."' WHERE id='1'");
+		$extract = preg_replace("/\((.+)\)/", "$1", $_POST["install_map_coords"]);
+		mysql_query("UPDATE `settings` SET value='$extract' WHERE id='1'");
 		mysql_query("UPDATE `settings` SET value='".$_POST["install_map_zoom"]."' WHERE id='6'");
 		mysql_close();
 

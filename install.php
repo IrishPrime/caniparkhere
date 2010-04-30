@@ -6,10 +6,11 @@
 if(is_file(SETTINGS_FILE)) die("Can I Park Here? appears to be installed.");
 
 if(!empty($_POST)) {
-	if(!get_magic_quotes_gpc()) array_walk_recursive($_POST, addslashes);
-	foreach($_POST as &$item) {
+	if(!get_magic_quotes_gpc()) array_map("addslashes", $_POST);
+	foreach($_POST as $k => $v) {
 		# jQuery should prevent the form from being submitted without all required fields, but just in case...
-		if(empty($item)) die("Incomplete form.");
+		if(empty($_POST["$k"])) die("Incomplete form.");
+		else $_POST["$k"] = addslashes($v);
 	}
 
 	if($fp = @fopen(SETTINGS_FILE, "w")) {

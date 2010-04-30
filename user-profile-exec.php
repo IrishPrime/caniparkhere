@@ -1,6 +1,6 @@
 <?php
 require_once("./_settings.php");
-@array_map(addslashes, $_POST);
+if(!get_magic_quotes_gpc()) @array_map(addslashes, $_POST);
 
 // Create connection
 mysql_connect(MYSQL_SERVER, MYSQL_USER, MYSQL_PASSWORD) or die("Could not connect: " . mysql_error());

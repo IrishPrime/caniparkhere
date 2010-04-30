@@ -2,7 +2,7 @@
 # Install Can I Park Here? on a new system.
 
 # Defined for interal use only. Do not modify.
-define(SETTINGS_FILE, "./_settings.php");
+@define(SETTINGS_FILE, "./_settings.php");
 if(is_file(SETTINGS_FILE)) die("Can I Park Here? appears to be installed.");
 
 if(!empty($_POST)) {
@@ -92,15 +92,56 @@ if(!empty($_POST)) {
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 		<style type="text/css">@import url("./css/ciph.css");</style>
 		<style type="text/css">@import url("./css/jquery-ui-1.8.custom.css");</style>
-		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
-		<script type="text/javascript" src="http://code.google.com/apis/gears/gears_init.js"></script>
+		<title>Can I Park Here? - Install</title>
 		<script type="text/javascript" src="./js/jquery-1.4.2.min.js"></script>
 		<script type="text/javascript" src="./js/jquery-ui-1.8.custom.min.js"></script>
 		<script type="text/javascript" src="./js/ciph.js"></script>
-		<title>Can I Park Here? - Install</title>
+		<script type="text/javascript" src="http://code.google.com/apis/gears/gears_init.js"></script>
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
 		<script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
 		<script type="text/javascript">
+		var map;
+		function initialize() {
+
+			var myOptions = {
+				center: new google.maps.LatLng(0, 0),
+				disableDoubleClickZoom: true,
+				mapTypeControl: true,
+				mapTypeControlOptions: { style: google.maps.MapTypeControlStyle.DROPDOWN_MENU },
+				mapTypeId: google.maps.MapTypeId.ROADMAP,
+				navigationControl: true,
+				navigationControlOptions: { style: google.maps.NavigationControlStyle.SMALL },
+				scaleControl: false,
+				scrollwheel: true,
+				zoom: 1,
+			}
+
+			// create map on page
+			map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+			google.maps.event.addListener(map, 'center_changed',
+				function() {
+					writeCenter();
+				});
+
+			google.maps.event.addListener(map, 'zoom_changed',
+				function() {
+					writeZoom();
+				});
+
+			//write first time
+			writeCenter();
+			writeZoom();
+
+			function writeCenter() {
+				document.getElementById("install_map_coords").value = map.getCenter().toString();
+			}
+			function writeZoom() {
+				document.getElementById("install_map_zoom").value = map.getZoom().toString();
+			}
+		}
 		$(document).ready(function() {
+			initialize();
 			$("#install_form").validate({
 				rules: {
 					install_mysql_server: {
@@ -161,6 +202,10 @@ if(!empty($_POST)) {
 
 				<!-- Install -->
 				<div id="install_tab">
+
+					<!-- Map -->
+					<div id="map_canvas" style="height:600px; position:absolute; left:380px; right:5px;"></div>
+
 					<form id="install_form" method="POST" action="">
 						<label for="install_mysql_server">MySQL Server</label>
 						<input id="install_mysql_server" name="install_mysql_server" type="text"/>
@@ -214,7 +259,7 @@ if(!empty($_POST)) {
 					</form>
 
 					<!-- Help -->
-					<a href="#" id="create_help_opener" class="ui-state-default ui-corner-all" style="padding: .2em .8em .2em 1.4em;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin:0 .2em 0 0; position:absolute; left:.2em; top:50%; margin-top:-8px;"></span>Help</a>
+					<a href="#" id="create_help_opener" class="ui-state-default ui-corner-all" style="padding: .2em .8em .2em 1.4em;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin:0 .2em 0 0; position:absolute; left:.2em; top:50%; margin-top:-8px;"></span>Help</a><br/><br/><br/><br/><br/><br/><br/>
 					<div id="create_help_dialog" title="Install Help">
 						<h2>MySQL</h2>
 						<p>Your network administrator should provide you with the following information.</p>

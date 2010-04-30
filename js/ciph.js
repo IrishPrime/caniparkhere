@@ -23,7 +23,7 @@ $(document).ready(function() {
 	$("#create_help_dialog, #delete_help_dialog, #modify_help_dialog").dialog({
 		autoOpen: false,
 		closeOnEscape: true,
-		width: 600,
+		width: 700,
 		show: "drop",
 		hide: "drop",
 	});

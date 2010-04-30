@@ -175,6 +175,7 @@ if(!empty($_POST)) {
 					},
 					install_admin_password_1: {
 						required: true,
+						minLength: 8,
 					},
 					install_admin_password_2: {
 						equalTo: "#install_admin_password_1",

@@ -2,7 +2,7 @@
 # List all rules, sorted by lot or permit type.
 require_once("./_logic.php");
 
-$lots = GetRulesByLot($_GET["lot"]);
+@$lots = GetRulesByLot($_GET["lot"]);
 ?>
 
 <div id="accordion">

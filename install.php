@@ -2,10 +2,11 @@
 # Install Can I Park Here? on a new system.
 
 # Defined for interal use only. Do not modify.
-@define(SETTINGS_FILE, "./_settings.php");
+@define("SETTINGS_FILE", "./_settings.php");
 if(is_file(SETTINGS_FILE)) die("Can I Park Here? appears to be installed.");
 
 if(!empty($_POST)) {
+	if(!get_magic_quotes_gpc()) array_walk(addslashes, $_POST);
 	foreach($_POST as &$item) {
 		# jQuery should prevent the form from being submitted without all required fields, but just in case...
 		if(empty($item)) die("Incomplete form.");
@@ -14,17 +15,17 @@ if(!empty($_POST)) {
 	if($fp = @fopen(SETTINGS_FILE, "w")) {
 		@fwrite($fp, "<?php\n");
 		@fwrite($fp, "# Database info\n");
-		@fwrite($fp, "define(MYSQL_SERVER, \"".$_POST["install_mysql_server"].":".$_POST["install_mysql_port"]."\");\n");
-		@fwrite($fp, "define(MYSQL_USER, \"".$_POST["install_mysql_user"]."\");\n");
-		@fwrite($fp, "define(MYSQL_PASSWORD, \"".$_POST["install_mysql_password"]."\");\n");
-		@fwrite($fp, "define(MYSQL_DB, \"".$_POST["install_mysql_database"]."\");\n\n");
+		@fwrite($fp, "@define(\"MYSQL_SERVER\", \"".$_POST["install_mysql_server"].":".$_POST["install_mysql_port"]."\");\n");
+		@fwrite($fp, "@define(\"MYSQL_USER\", \"".$_POST["install_mysql_user"]."\");\n");
+		@fwrite($fp, "@define(\"MYSQL_PASSWORD\", \"".$_POST["install_mysql_password"]."\");\n");
+		@fwrite($fp, "@define(\"MYSQL_DB\", \"".$_POST["install_mysql_database"]."\");\n\n");
 
 		@fwrite($fp, "// WARNING: Changing the password salt on a live system will cause all accounts to quit working.\n");
 		@fwrite($fp, "// If the password salt is changed it will also need to be changed in the Android application.\n");
 		@fwrite($fp, "// This prevents the need to send unencrypted passwords while maintaining the password salt.\n");
-		@fwrite($fp, "define(SALT, \"C!p|-|4Mg501337\");\n");
-		@fwrite($fp, "define(SESSION_DURATION, 60*60*24*365);\n");
-		@fwrite($fp, "define(MAINTAINER, \"".$_POST["install_admin_email"]."\");\n\n");
+		@fwrite($fp, "@define(\"SALT\", \"C!p|-|4Mg501337\");\n");
+		@fwrite($fp, "@define(\"SESSION_DURATION\", 60*60*24*365);\n");
+		@fwrite($fp, "@define(\"MAINTAINER\", \"".$_POST["install_admin_email"]."\");\n\n");
 
 		@fwrite($fp, "\$dotw = array(\n");
 			@fwrite($fp, "\t0 => \"Sunday\",\n");

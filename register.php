@@ -1,6 +1,7 @@
 <?php
 require_once("./_logic.php");
 $passes = GetPassTypes("name");
+$status = 0;
 
 if(!empty($_POST)) {
 	// Check and escape input

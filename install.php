@@ -3,10 +3,10 @@
 
 # Defined for interal use only. Do not modify.
 @define("SETTINGS_FILE", "./_settings.php");
-if(is_file(SETTINGS_FILE)) die("Can I Park Here? appears to be installed.");
+//if(is_file(SETTINGS_FILE)) die("Can I Park Here? appears to be installed.");
 
 if(!empty($_POST)) {
-	if(!get_magic_quotes_gpc()) array_walk(addslashes, $_POST);
+	if(!get_magic_quotes_gpc()) array_walk($_POST, addslashes);
 	foreach($_POST as &$item) {
 		# jQuery should prevent the form from being submitted without all required fields, but just in case...
 		if(empty($item)) die("Incomplete form.");
@@ -75,6 +75,7 @@ if(!empty($_POST)) {
 			mysql_query($query);
 		}
 		mysql_query("INSERT INTO `users` VALUES ('1', '".$_POST["install_admin_fname"]."', '".$_POST["install_admin_lname"]."', '".$_POST["install_admin_email"]."', '".sha1($_POST["install_admin_password_1"].SALT)."', '', '', '1')");
+		preg_replace("[\(|\)]", "", $_POST["install_map_coords"]);
 		mysql_query("UPDATE `settings` SET value='".$_POST["install_map_coords"]."' WHERE id='1'");
 		mysql_query("UPDATE `settings` SET value='".$_POST["install_map_zoom"]."' WHERE id='6'");
 		mysql_close();
@@ -204,9 +205,6 @@ if(!empty($_POST)) {
 				<!-- Install -->
 				<div id="install_tab">
 
-					<!-- Map -->
-					<div id="map_canvas" style="height:600px; position:absolute; left:380px; right:5px;"></div>
-
 					<form id="install_form" method="POST" action="">
 						<label for="install_mysql_server">MySQL Server</label>
 						<input id="install_mysql_server" name="install_mysql_server" type="text"/>
@@ -260,7 +258,8 @@ if(!empty($_POST)) {
 					</form>
 
 					<!-- Help -->
-					<a href="#" id="create_help_opener" class="ui-state-default ui-corner-all" style="padding: .2em .8em .2em 1.4em;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin:0 .2em 0 0; position:absolute; left:.2em; top:50%; margin-top:-8px;"></span>Help</a><br/><br/><br/><br/><br/><br/><br/>
+					<a href="#" id="create_help_opener" class="ui-state-default ui-corner-all" style="padding: .2em .8em .2em 1.4em;text-decoration: none;position: relative;"><span class="ui-icon ui-icon-help" style="margin:0 .2em 0 0; position:absolute; left:.2em; top:50%; margin-top:-8px;"></span>Help</a>
+
 					<div id="create_help_dialog" title="Install Help">
 						<h2>MySQL</h2>
 						<p>Your network administrator should provide you with the following information.</p>
@@ -280,10 +279,13 @@ if(!empty($_POST)) {
 
 						<h2>Map</h2>
 						<p>The default settings for the map displayed on the <em>Can I Park Here?</em> and <em>Where Can I Park?</em> pages. <em>Where Did I Park?</em> may start at this location, but will center on the user's last known location.</p>
-						<p><strong>Map Center (Lat, Lng)</strong>: <em>Latitude</em> and <em>Longitude</em> on which the map should center. Use the map on the right side of the page to select the default view.</p>
+						<p><strong>Map Center (Lat, Lng)</strong>: <em>Latitude</em> and <em>Longitude</em> on which the map should center. Use the map at the bottom of the page to select the default view.</p>
 						<p><strong>Map Zoom</strong>: The default zoom level of all maps displayed on the site. The previous tool should be helpful for this, as well.</p>
 					</div>
 				</div>
+					<!-- Map -->
+					<div id="map_canvas" style="height:600px; width:100%;"></div>
+
 			</div>
 		</div>
 

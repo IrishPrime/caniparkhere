@@ -1,5 +1,6 @@
 <?php
 	session_start();
+	error_reporting(E_ALL ^ E_NOTICE);
 	require_once("./_logic.php");
 
 	isset($_GET["page"]) ? $page = $_GET["page"] : $page = "ciph";

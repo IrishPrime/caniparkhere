@@ -2,8 +2,8 @@
 # Data manipulation and function library.
 # TODO: Reduce duplicate/redundant data returned.
 # TODO: GetLots should return only lot info, schemes/passes should be linked instead of embedded
-# TODO: Exceptions D:
 
+error_reporting(E_ALL ^ E_NOTICE);
 require_once("./_settings.php");
 
 class cdl {
@@ -146,7 +146,6 @@ class data {
 					"currentPassTypes" => $currentPasses); // array
 			}
 		}
-		//debug($lots);
 		return $lots;
 	}
 	private function findLatLngAverage($coords) {
@@ -164,8 +163,6 @@ class data {
 
 		$latAvg /= count($lats);
 		$lngAvg /= count($lngs);
-		//echo "Lat Avg = $latAvg<br>";
-		//echo "Lng Avg = $lngAvg<br>";
 		return "$latAvg, $lngAvg";
 	}
 	private function create_passTypes($result) {
@@ -182,11 +179,11 @@ class data {
 	}
 	private function create_rulesByLots($result) {
 		$rules = null;
-		
+
 		// if there are rules to sort
 		if (mysql_num_rows($result) != 0) {
 			$rules = array();
-			
+
 			// loop through and create lot arrays
 			while ($row = mysql_fetch_assoc($result)) {
 				// keys
@@ -195,7 +192,7 @@ class data {
 				$timeRange = "[" . $row["startTime"] . "][" . $row["endTime"] . "]";
 				$dow = "[" . $row["days"] . "]";
 				$passType = $row["passType"];
-				
+
 				// check for and create lot data
 				if (!array_key_exists($lot, $rules)) {
 					$rules[$lot] = array(
@@ -203,7 +200,7 @@ class data {
 						"description" => $row["lotDescription"],
 						"dateRange" => array());
 				}
-				
+
 				// check for and create dateRange data
 				if (!array_key_exists($dateRange, $rules[$lot]["dateRange"])) {
 					$rules[$lot]["dateRange"][$dateRange] = array(
@@ -211,7 +208,7 @@ class data {
 						"endDate" => $row["endDate"],
 						"timeRange" => array());
 				}
-				
+
 				// check for and create timeRange data
 				if(!array_key_exists($timeRange, $rules[$lot]["dateRange"][$dateRange]["timeRange"])) {
 					$rules[$lot]["dateRange"][$dateRange]["timeRange"][$timeRange] = array(
@@ -219,14 +216,14 @@ class data {
 						"endTime" => $row["endTime"],
 						"dow" => array());
 				}
-				
+
 				// check for and create dow data
 				if (!array_key_exists($dow, $rules[$lot]["dateRange"][$dateRange]["timeRange"][$timeRange]["dow"])) {
 					$rules[$lot]["dateRange"][$dateRange]["timeRange"][$timeRange]["dow"][$dow] = array(
 						"days" => $row["days"],
 						"passTypes" => array());
 				}
-				
+
 				// special passType object
 				// the array path will have been created by this point
 				$rules[$lot]["dateRange"][$dateRange]["timeRange"][$timeRange]["dow"][$dow]["passTypes"][$passType] = array(
@@ -239,11 +236,11 @@ class data {
 	}
 	private function create_exceptionsByLot($result) {
 		$exceptions = null;
-		
+
 		// if there are rules to sort
 		if (mysql_num_rows($result) != 0) {
 			$exceptions = array();
-			
+
 			// loop through and create lot arrays
 			while ($row = mysql_fetch_assoc($result)) {
 				// keys
@@ -253,7 +250,7 @@ class data {
 					"[" . $row["end"] . "]" .
 					"[" . $row["allowed"] . "]";
 				$passType = $row["passType"];
-				
+
 				// check for and create lot data
 				if (!array_key_exists($lot, $exceptions)) {
 					$exceptions[$lot] = array(
@@ -261,7 +258,7 @@ class data {
 						"description" => $row["lotDescription"],
 						"exceptions" => array());
 				}
-				
+
 				// check for and create dateRange data
 				if (!array_key_exists($exceptionKey, $exceptions[$lot]["exceptions"])) {
 					$exceptions[$lot]["exceptions"][$exceptionKey] = array(
@@ -270,7 +267,7 @@ class data {
 						"allowed" => $row["allowed"],
 						"passTypes" => array());
 				}
-				
+
 				// special passType object
 				// the array path will have been created by this point
 				$exceptions[$lot]["exceptions"][$exceptionKey]["passTypes"][$passType] = array(
@@ -302,7 +299,7 @@ class data {
 		if (mysql_num_rows($result) != 0) {
 			$scheme = array();
 			$row = mysql_fetch_assoc($result);
-			
+
 			$scheme = array(
 				"id" => $row["id"],
 				"name" => $row["name"],
@@ -343,7 +340,6 @@ class data {
 		if ($ids != null) $sql .= " WHERE id in (" . $ids . ")";
 		if ($sortColumn == null) $sortColumn = "name";
 		$sql .= " ORDER BY " . $sortColumn . " ASC";
-		//debug($sql);
 
 		$result = mysql_query($sql);
 		if (!$result) die("MySQL error: get_lots($ids)");
@@ -392,7 +388,7 @@ class data {
 			. " inner join passTypes on passTypes.id = rules.passType";
 		if ($id != null) $sql .= " where lot in (" . $id . ")";
 		$sql .= " order by lotName, endDate desc, endTime desc, days asc, passTypeName";
-		
+
 		$result = mysql_query($sql);
 		if (!$result) die("MySQL error: get_rulesByLots($id)");
 		else return $this->create_rulesByLots($result); 
@@ -417,7 +413,7 @@ class data {
 		$sql .= " order by id";
 		$result = mysql_query($sql);
 		$user = null;
-		
+
 		if ($id != null) {
 			$sql = "select passType, lastLoc from users";
 			$sql .= " where id in (" . $id . ")";
@@ -425,7 +421,7 @@ class data {
 			if(!$user) die("MySQL error: get_settingByUser($id)");
 			if ($id == 0) $user = null; // no global
 		}
-		
+
 		if (!$result) die("MySQL error: get_settingsByUser($id)");
 		else return $this->create_settings($result, $user);
 	}
@@ -512,13 +508,13 @@ class data {
 			. $this->addSingleQuotes($lineOpacity) . ", "
 			. $this->addSingleQuotes($fillColor) . ", "
 			. $this->addSingleQuotes($fillOpacity) . ")";
-			
-			$result = mysql_query($sql);
-			
-			if ($result) return mysql_insert_id();
-			else return false;
+
+		$result = mysql_query($sql);
+
+		if ($result) return mysql_insert_id();
+		else return false;
 	}
-	
+
 	public function update_passType($id, $name) {
 		$sql = "UPDATE passTypes SET"
 			. " name = " . $this->addSingleQuotes($name)
@@ -527,25 +523,25 @@ class data {
 	}
 	public function update_lot($id, $name, $desc, $coords, $scheme) {
 		$sql = "UPDATE lots SET"
-		. " name = " . $this->addSingleQuotes($name) . ","
-		. " description = " . $this->addSingleQuotes($desc) . ","
-		. " coords = " . $this->addSingleQuotes($coords) . ","
-		. " scheme = $scheme"
-		. " WHERE id = $id";
+			. " name = " . $this->addSingleQuotes($name) . ","
+			. " description = " . $this->addSingleQuotes($desc) . ","
+			. " coords = " . $this->addSingleQuotes($coords) . ","
+			. " scheme = $scheme"
+			. " WHERE id = $id";
 		return mysql_query($sql);
 	}
 	public function update_scheme($id, $name, $lineColor, $lineWidth, $lineOpacity, $fillColor, $fillOpacity) {
 		$sql = "UPDATE schemes SET"
-		. " name = " . $this->addSingleQuotes($name) . ","
-		. " lineColor = " . $this->addSingleQuotes($lineColor) . ","
-		. " lineWidth = " . $this->addSingleQuotes($lineWidth) . ","
-		. " lineOpacity = " . $this->addSingleQuotes($lineOpacity) . ","
-		. " fillColor = " . $this->addSingleQuotes($fillColor) . ","
-		. " fillOpacity = " . $this->addSingleQuotes($fillOpacity)
-		. " WHERE id = $id";
+			. " name = " . $this->addSingleQuotes($name) . ","
+			. " lineColor = " . $this->addSingleQuotes($lineColor) . ","
+			. " lineWidth = " . $this->addSingleQuotes($lineWidth) . ","
+			. " lineOpacity = " . $this->addSingleQuotes($lineOpacity) . ","
+			. " fillColor = " . $this->addSingleQuotes($fillColor) . ","
+			. " fillOpacity = " . $this->addSingleQuotes($fillOpacity)
+			. " WHERE id = $id";
 		return mysql_query($sql);
 	}
-	
+
 	public function delete_lot($ids) {
 		$sql = "DELETE FROM rules WHERE lot IN (" . $ids . ")";
 		mysql_query($sql);
@@ -602,11 +598,10 @@ class data {
 		$rules = $lots[$id]["dateRange"];
 		$lots = $this->get_exceptionsByLot($id);
 		$exceptions = $lots[$id]["exceptions"];
-		//var_dump($lots, $exceptions);
-	
+
 		// copy passTypes allowed by current rules
 		$allowedPassTypes = array();
-		
+
 		// copy passTypes that are affected by current rules
 		if ($rules != null) {
 			foreach ($rules as $dateRange) {
@@ -632,7 +627,7 @@ class data {
 				}
 			}
 		}
-		
+
 		// copy passTypes that are affected by current exceptions
 		if ($exceptions != null) {
 			foreach ($exceptions as $exception) {
@@ -651,162 +646,46 @@ class data {
 				}
 			}
 		}
-		
+
 		return (count($allowedPassTypes) == 0 ? null : $allowedPassTypes);
 	}
 	private function doesRuleApply($rule, $parkTimestamp) {
+		// make sure you're in date range
+		// compares unix time formatted now and start/end dates of rule
+		$now = (int)$parkTimestamp->format('U');
+		$start = strtotime($rule["startDate"] . ' 00:00:00');
+		$end = strtotime($rule["endDate"] . ' 23:59:59');
+		if(!($start <= $now && $end >= $now)) return false;
 
-		$inDateRange = false;
-		$inTimeRange = false;
-		$inDayOfWeek = false;
+		// make sure you're in time range
+		// uses current date + start and end times to see if you're in correct time
+		$nowTime = date_parse($parkTimestamp->format('Y-m-d H:i:s'));
+		$startTime = explode(":", $rule["startTime"]);
+		$start = new DateTime();
+		$start->setDate($nowTime["year"], $nowTime["month"], $nowTime["day"]);
+		$start->setTime($startTime[0], $startTime[1], $startTime[2]);
 
-		// parse times and dates
-		$park = getdate($parkTimestamp->format('U')); //->format('Y-m-d G:i')
-		$startDate = date_parse((string)$rule["startDate"]);
-		$startTime = date_parse((string)$rule["startTime"]);
-		$endDate = date_parse((string)$rule["endDate"]);
-		$endTime = date_parse((string)$rule["endTime"]);
+		$endTime = explode(":", $rule["endTime"]);
+		$end = new DateTime();
+		$end->setDate($nowTime["year"], $nowTime["month"], $nowTime["day"]);
+		$end->setTime($endTime[0], $endTime[1], $endTime[2]);
+		if(!($start->format("U") <= $now && $end->format("U") >= $now)) echo false;
 
-		// create cdls
-		$years = new cdl(null, null);
-		$months = new cdl(null, null);
-		$startMonthDays = new cdl(null, null);
-		$endMonthDays = new cdl(null, null);
-		$hours = new cdl(null, null);
-		$startHourMinutes = new cdl(null, null);
-		$endHourMinutes = new cdl(null, null);
-		$weekDays = new cdl($rule["days"], null);
-
-		// populate cdls
-		$years->addSeq($startDate["year"], $endDate["year"]);
-		//echo "Years " . $years->cdl() . "<br>";
-
-		$months->addCircularSeq($startDate["month"], $endDate["month"], 1, 12);
-		//echo "Months " . $months->cdl() . "<br>";
-
-		if ($startDate["month"] == $endDate["month"]) {
-			$startMonthDays->addSeq($startDate["day"], $endDate["day"]);
-			//echo "Start Month Days " . $startMonthDays->cdl() . "<br>";
-			$endMonthDays->addSeq($startDate["day"], $endDate["day"]);
-			//echo "End Month Days " . $endMonthDays->cdl() . "<br>";
-		}
-		else {
-			$startMonthDays->addSeq($startDate["day"], 31);
-			//echo "Start Month Days " . $startMonthDays->cdl() . "<br>";
-			$endMonthDays->addSeq(1, $endDate["day"]);
-			//echo "End Month Days " . $endMonthDays->cdl() . "<br>";
-		}
-
-		$hours->addCircularSeq($startTime["hour"], $endTime["hour"], 0, 24);
-		//echo "Hours " . $hours->cdl() . "<br>";
-		if ($startTime["minute"] == $endTime["minute"]) {
-			$startHourMinutes->addSeq($startTime["minute"], $endTime["minute"]);
-			//echo "Start Hour Minutes " . $startHourMinutes->cdl() . "<br>";
-			$endHourMinutes->addSeq($startTime["minute"], $endTime["minute"]);
-			//echo "End Hour Minutes " . $endHourMinutes->cdl() . "<br>";
-		}
-		else {
-			$startHourMinutes->addSeq($startTime["minute"], 60);
-			//echo "Start Hour Minutes " . $startHourMinutes->cdl() . "<br>";
-			$endHourMinutes->addSeq(0, $endTime["minute"]);
-			//echo "End Hour Minutes " . $endHourMinutes->cdl() . "<br>";
-		}
-
-		// print data
-		//echo "Years " . $years->cdl() . "<br>";
-		//echo "Months " . $months->cdl() . "<br>";
-		//echo "Start Month Days " . $startMonthDays->cdl() . "<br>";
-		//echo "End Month Days " . $endMonthDays->cdl() . "<br>";
-		//echo "Hours " . $hours->cdl() . "<br>";
-		//echo "Start Hour Minutes " . $startHourMinutes->cdl() . "<br>";
-		//echo "End Hour Minutes " . $endHourMinutes->cdl() . "<br>";
-
-		//echo "Start rule logic.<br>";
-
-		// rule logic
-		//echo "Is the year " . $park["year"] . " in the range (" . $years->cdl() . ")? ";
-		if ($years->contains($park["year"])) {
-			//echo "Yes<br>Is the month " . $park["mon"] . " in the range (" . $months->cdl() . ")? ";
-			if ($months->contains($park["mon"])) {
-				if ($years->isStartNum($park["year"]) && $months->isStartNum($park["mon"])) {
-					//echo "Yes<br>In start month/year; is the day " . $park["mday"] . " in the range (" . $startMonthDays->cdl() . ")? ";
-					if ($startMonthDays->contains($park["mday"])) {
-						//echo "Yes<br><b>Date in range.</b>";
-						$inDateRange = true;
-					}
-					//else
-					//echo "<b>No.</b>";
-				}
-				elseif ($years->isEndNum($park["year"]) && $months->isEndNum($park["mon"])){
-					//echo "Yes<br>In end month/year; is the day " . $park["mday"] . " in the range (" . $endMonthDays->cdl() . ")? ";
-					if ($endMonthDays->contains($park["mday"])) {
-						//echo "Yes<br><b>Date in range.</b>";
-						$inDateRange = true;
-					}
-					//else
-					//echo "<b>No.</b>";
-				}
-				else {
-					//echo "Yes<br><b>Date in range.</b>";
-					$inDateRange = true;
-				}
-			}
-			//else
-			//echo "<b>No.</b>";
-		}
-		//else
-		//echo "<b>No.</b>";
-		//echo "<br>";
-
-		//echo "Is the hour " . $park["hours"] . " in the range (" . $hours->cdl() . ")?";
-		if ($hours->contains($park["hours"])) {
-			if ($hours->isStartNum($park["hours"])) {
-				//echo "Yes<br>In first defined hour; is the minute " . $park["minutes"] . " in the range (" . $startHourMinutes->cdl() . ")? ";
-				if ($startHourMinutes->contains($park["minutes"])) {	
-					//echo "Yes<br><b>Time in range.</b>";
-					$inTimeRange = true;
-				}
-				//else
-				//echo "<b>No.</b>";
-			}
-			elseif ($hours->isEndNum($park["hours"])) {
-				//echo "Yes<br>In last defined hour; is the minute " . $park["minutes"] . " in the range (" . $endHourMinutes->cdl() . ")? ";
-				if ($endHourMinutes->contains($park["minutes"])) {
-					//echo "Yes<br><b>Time in range.</b>";
-					$inTimeRange = true;
-				}
-				//else
-				//echo "<b>No.</b>";
-			}
-			else {
-				//echo "Yes<br><b>Time in range.</b>";
-				$inTimeRange = true;
-			}
-		}
-		//else
-		//echo "<b>No.</b>";
-		//echo "<br>";
-
-		//echo "Is the day of the week " . $park["wday"] . " in the range (" . $weekDays->cdl() . ")? ";
-		if ($weekDays->contains($park["wday"])) {
-			//echo "Yes<br><b>Day of week in range.</b>";
-			$inDayOfWeek = true;
-		}
-		//else
-		//echo "<b>No.</b>";
-
-		//echo "<br>";
-
-		if ($inDateRange && $inTimeRange && $inDayOfWeek) return true;
-		else return false;
+		// make sure you're in day of week
+		$now = getdate($parkTimestamp->format('U'));
+		$haystack = explode(",", $rule["days"]);
+		$found = array_search($now["wday"], $haystack);
+		if($found === false) return false;
+		else return true;
 	}
+
 	private function doesExceptionApply($exception, $parkTimestamp) {
 		$now = (int)$parkTimestamp->format('U');
 		$start = strtotime($exception["start"]);
 		$end = strtotime($exception["end"]);
 		return ($start <= $now && $end >= $now ? true : false);
 	}
-	
+
 	public function whereAmI($point) {
 		$lots = $this->get_lots();
 		foreach($lots as $lot) {
@@ -818,81 +697,52 @@ class data {
 	private function isInPolygon($point, $polygon) {
 		$point = $this->pointStringToCoordinates($point);
 		$path = array(); 
-        foreach ($polygon as $vertex) {
-            $path[] = $this->pointStringToCoordinates($vertex); 
-        }
-		
-		//echo("Point is ");
-		//debug($point);
-		
-		//echo("Path is ");
-		//debug($path);
-		
+		foreach ($polygon as $vertex) {
+			$path[] = $this->pointStringToCoordinates($vertex); 
+		}
+
 		$j = 0;
 		$oddNodes = false;
 		$x = floatval($point["x"]);
 		$y = floatval($point["y"]);
 		$pathLength = count($path);
-		
+
 		for ($i = 0; $i < $pathLength; $i++) {
 			$j++;
 			if ($j == $pathLength) $j = 0;
-			
+
 			$iLat = floatval($path[$i]["y"]);
 			$iLng = floatval($path[$i]["x"]);
 			$jLat = floatval($path[$j]["y"]);
 			$jLng = floatval($path[$j]["x"]);
-			
-			//echo("x = $x\n");
-			//echo("y = $y\n");
-			//echo("iLat = $iLat\n");
-			//echo("iLng = $iLng\n");
-			//echo("jLat = $jLat\n");
-			//echo("jLng = $jLng\n");
-			
+
 			$a = floatval($y - $iLat);
 			$b = floatval($jLat - $iLat);
 			$c = floatval($jLng - $iLng);
 			$d = ($b == 0 ? 0 : floatval($iLng + $a / $b * $c));
-			
-			//echo("$iLat < $y = ");
-			//echo ($iLat < $y ? "Yup.\n" : "Nope.\n");
-			//echo("$jLat >= $y = ");
-			//echo ($jLat >= $y ? "Yup.\n" : "Nope.\n");
-			//echo("$jLat < $y = ");
-			//echo ($jLat < $y ? "Yup.\n" : "Nope.\n");
-			//echo("$iLat >= $y = ");
-			//echo ($iLat >= $y ? "Yup.\n" : "Nope.\n");
-			
-			//echo("$iLng + ($a) / ($b) * ($c)\n");
-			//echo("$d < $x = ");
-			//echo ($d < $x ? "Yup.\n" : "Nope.\n");
-			
-			if ((($iLat < $y) && ($jLat >= $y)) 
-				|| (($jLat < $y) && ($iLat >= $y))) {
+
+			if ((($iLat < $y) && ($jLat >= $y)) || (($jLat < $y) && ($iLat >= $y))) {
 				if ($d < $x ) {
-				  $oddNodes = !$oddNodes;
+					$oddNodes = !$oddNodes;
 				}
 			}
-			//echo("\n");
-		}
-		//echo ("\n");
-		
-		return $oddNodes;
-	}
-	private function pointStringToCoordinates($pointString) {
-        $coordinates = explode(",", $pointString);
-        return array("x" => $coordinates[0], "y" => $coordinates[1]);
-    }
-	
-	public function close_me() {
-		// disconnect mysql connection
-		mysql_close();
 	}
 
-	function __destruct() {
-		$this->close_me();
-	}
+	return $oddNodes;
+}
+private function pointStringToCoordinates($pointString) {
+	$coordinates = explode(",", $pointString);
+	return array("x" => $coordinates[0], "y" => $coordinates[1]);
+}
+
+public function close_me() {
+	// disconnect mysql connection
+	mysql_close();
+}
+
+function __destruct() {
+	$this->close_me();
+}
 
 }
 
@@ -941,7 +791,7 @@ function WhereCanIPark($id) {
 	global $data;
 	$lots = $data->get_lots();
 	$allowedLots = array();
-	
+
 	if ($lots != null) {
 		foreach($lots as $lot) {
 			$currentPassTypes = $lot["currentPassTypes"];
@@ -955,7 +805,7 @@ function WhereCanIPark($id) {
 			}
 		}
 	}
-	
+
 	return $allowedLots;
 }
 function WhereDidIPark($id) {
@@ -967,10 +817,10 @@ function CanIParkHere($location, $passType) {
 		global $data;
 		$lot = $data->whereAmI($location);
 		$allowedLots = WhereCanIPark($passType);
-		
+
 		$ciph = array_key_exists($lot["id"], $allowedLots);
 		$lotName = ($lot != null ? $lot["name"] : null);
-		
+
 		$answer = array(
 			"ciph" => $ciph,
 			"lotName" => $lotName

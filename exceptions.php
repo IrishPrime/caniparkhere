@@ -28,8 +28,9 @@ if(!empty($exceptions)) {
 		}
 		echo "\t</div>\n";
 	}
-}
+} else {
 	echo "<h1><a href=\"#\">Order</a></h1>\n";
 	echo "<div>No exceptions defined.</div>\n";
+}
 ?>
 </div>

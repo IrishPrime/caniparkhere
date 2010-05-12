@@ -5,8 +5,8 @@
 @define("SETTINGS_FILE", "./_settings.php");
 if(is_file(SETTINGS_FILE)) die("Can I Park Here? appears to be installed.");
 
+print_r($_POST);
 if(!empty($_POST)) {
-	if(!get_magic_quotes_gpc()) array_map("addslashes", $_POST);
 	foreach($_POST as $k => $v) {
 		# jQuery should prevent the form from being submitted without all required fields, but just in case...
 		if(empty($_POST["$k"])) die("Incomplete form.");
@@ -75,7 +75,7 @@ if(!empty($_POST)) {
 		foreach($schema as $query) {
 			mysql_query($query);
 		}
-		mysql_query("INSERT INTO `users` VALUES ('1', '".$_POST["install_admin_fname"]."', '".$_POST["install_admin_lname"]."', '".$_POST["install_admin_email"]."', '".sha1($_POST["install_admin_password_1"].SALT)."', '', '', '1')");
+		mysql_query("INSERT INTO `users` VALUES ('1', '".$_POST["install_admin_fname"]."', '".$_POST["install_admin_lname"]."', '".$_POST["install_admin_email"]."', '".sha1($_POST["install_admin_password_1"].SALT)."', '1', '', '1')");
 		$extract = preg_replace("/\((.+)\)/", "$1", $_POST["install_map_coords"]);
 		mysql_query("UPDATE `settings` SET value='$extract' WHERE id='1'");
 		mysql_query("UPDATE `settings` SET value='".$_POST["install_map_zoom"]."' WHERE id='6'");
@@ -101,7 +101,7 @@ if(!empty($_POST)) {
 		<script type="text/javascript" src="./js/ciph.js"></script>
 		<script type="text/javascript" src="http://code.google.com/apis/gears/gears_init.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
-		<script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
+		<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.7/jquery.validate.min.js"></script>
 		<script type="text/javascript">
 		var map;
 		function initialize() {
@@ -144,7 +144,6 @@ if(!empty($_POST)) {
 			}
 		}
 		$(document).ready(function() {
-			initialize();
 			$("#install_form").validate({
 				rules: {
 					install_mysql_server: {
@@ -165,9 +164,11 @@ if(!empty($_POST)) {
 					},
 					install_admin_fname: {
 						required: true,
+						minLength: 2,
 					},
 					install_admin_lname: {
 						required: true,
+						minLength: 2,
 					},
 					install_admin_email: {
 						required: true,
@@ -189,6 +190,8 @@ if(!empty($_POST)) {
 					},
 				},
 			});
+
+			initialize();
 		});
 		</script>
 	</head>
@@ -209,7 +212,7 @@ if(!empty($_POST)) {
 
 					<form id="install_form" method="POST" action="">
 						<label for="install_mysql_server">MySQL Server</label>
-						<input id="install_mysql_server" name="install_mysql_server" type="text"/>
+						<input id="install_mysql_server" name="install_mysql_server" type="text" class="required"/>
 						<br/>
 
 						<label for="install_mysql_port">MySQL Port</label>

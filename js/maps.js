@@ -487,18 +487,23 @@ function LoadMap_WDIP(user) {
 			$.getJSON(apiURL + "?function=GetLots",
 				function(data) {
 					lots = data; // store lot data, move to settings
-					createLotPolygons(); // grabs lot data
-					createLotInfoMarkers();
+
+					if(data != null) {
+						createLotPolygons(); // grabs lot data
+						createLotInfoMarkers();
+					}
 					
 					$.getJSON(apiURL + "?function=WhereDidIPark&id=" + user,
 						function(data) {
-							var point = data.lastLoc.split(",");
-							var lat = parseFloat(point[0]);
-							var lng = parseFloat(point[1]);
-							lastLoc = new google.maps.LatLng(lat, lng);
-							
-							createWDIPMarker(lastLoc);
-							map.panTo(lastLoc);
+							if(data != "") {
+								var point = data.lastLoc.split(",");
+								var lat = parseFloat(point[0]);
+								var lng = parseFloat(point[1]);
+								lastLoc = new google.maps.LatLng(lat, lng);
+								
+								createWDIPMarker(lastLoc);
+								map.panTo(lastLoc);
+							}
 						});
 				});
 		});

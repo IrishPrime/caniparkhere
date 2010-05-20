@@ -5,7 +5,6 @@
 @define("SETTINGS_FILE", "./_settings.php");
 if(is_file(SETTINGS_FILE)) die("Can I Park Here? appears to be installed.");
 
-print_r($_POST);
 if(!empty($_POST)) {
 	foreach($_POST as $k => $v) {
 		# jQuery should prevent the form from being submitted without all required fields, but just in case...

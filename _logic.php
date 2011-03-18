@@ -15,6 +15,7 @@ class cdl {
 		if ($delimiter != null) $this->delimiter = $delimiter;
 		if ($cdl != null) $this->cdl = explode($this->delimiter, $cdl);
 	}
+
 	public function add($item) {
 		$this->cdl[] = (int)$item;
 	}
@@ -85,7 +86,6 @@ class cdl {
 }
 
 class data {
-
 	private $conn;
 	private $sql;
 
@@ -276,7 +276,6 @@ class data {
 					"name" => $row["passTypeName"]);
 			}
 		}
-		//print_r($exceptions);
 		return $exceptions;
 	}
 	private function create_settings($result, $user) {
@@ -550,6 +549,7 @@ class data {
 		$sql = "DELETE FROM lots WHERE id IN (" . $ids . ")";
 		return mysql_query($sql);
 	}
+
 	public function delete_passType($ids) {
 		$sql = "DELETE FROM rules WHERE passType IN (" . $ids . ")";
 		mysql_query($sql);
@@ -558,16 +558,19 @@ class data {
 		$sql = "DELETE FROM passTypes WHERE id IN (" . $ids . ")";
 		return mysql_query($sql);
 	}
+
 	public function delete_rule($ids) {
 		$sql = "DELETE FROM rules WHERE id IN (" . $ids . ")";
 		mysql_query($sql);
 		return mysql_affected_rows();
 	}
+
 	public function delete_exception($ids) {
 		$sql = "DELETE FROM exceptions WHERE id IN (" . $ids . ")";
 		mysql_query($sql);
 		return mysql_affected_rows();
 	}
+
 	public function delete_schemes($ids) {
 		// Detele Schemes
 		$sql = "DELETE FROM schemes WHERE id IN (" . $ids . ")";
@@ -649,6 +652,7 @@ class data {
 
 		return (count($allowedPassTypes) == 0 ? null : $allowedPassTypes);
 	}
+
 	private function doesRuleApply($rule, $parkTimestamp) {
 		// make sure you're in date range
 		// compares unix time formatted now and start/end dates of rule
@@ -694,6 +698,7 @@ class data {
 			}
 		}
 	}
+
 	private function isInPolygon($point, $polygon) {
 		$point = $this->pointStringToCoordinates($point);
 		$path = array(); 
@@ -726,24 +731,19 @@ class data {
 					$oddNodes = !$oddNodes;
 				}
 			}
+		}
+
+		return $oddNodes;
 	}
 
-	return $oddNodes;
-}
-private function pointStringToCoordinates($pointString) {
-	$coordinates = explode(",", $pointString);
-	return array("x" => $coordinates[0], "y" => $coordinates[1]);
-}
+	private function pointStringToCoordinates($pointString) {
+		$coordinates = explode(",", $pointString);
+		return array("x" => $coordinates[0], "y" => $coordinates[1]);
+	}
 
-public function close_me() {
-	// disconnect mysql connection
-	mysql_close();
-}
-
-function __destruct() {
-	$this->close_me();
-}
-
+	function __destruct() {
+		mysql_close();
+	}
 }
 
 $data = new data();

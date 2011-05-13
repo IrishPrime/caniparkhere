@@ -1,4 +1,5 @@
 #menu {
+	background: #363636;
 	position: relative;
 	top: 0px;
 	left: 0px;
@@ -6,6 +7,7 @@
 }
 
 #menu a {
+	background: #363636;
 	color: #999999;
 	display: block;
 	float: left;
@@ -76,6 +78,7 @@
 }
 
 #login {
+	background: #363636;
 	float: right;
 }
 

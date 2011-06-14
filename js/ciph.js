@@ -1,6 +1,9 @@
 $(document).ready(function() {
 	// Tabs
-	$("#tabs").tabs({ fx: { opacity: "toggle", duration: "fast" } });
+	$("#tabs").tabs({
+		fx: { opacity: "toggle",
+				duration: "fast" }
+	});
 
 	// Accordions
 	$("#accordion").accordion({

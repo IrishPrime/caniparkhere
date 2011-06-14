@@ -27,7 +27,7 @@ $passes = GetPassTypes("name");
 $lots = GetLots("name");
 ?>
 
-<script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.8/jquery.validate.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#create_form").validate();

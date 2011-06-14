@@ -93,10 +93,10 @@ if(!empty($_POST)) {
 		<meta http-equiv="X-UA-Compatible" content="IE=8"/>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 		<style type="text/css">@import url("./css/ciph.css");</style>
-		<style type="text/css">@import url("./css/jquery-ui-1.8.10.custom.css");</style>
+		<style type="text/css">@import url("./css/jquery-ui-1.8.13.custom.css");</style>
 		<title>Can I Park Here? - Install</title>
-		<script type="text/javascript" src="./js/jquery-1.5.1.min.js"></script>
-		<script type="text/javascript" src="./js/jquery-ui-1.8.10.custom.min.js"></script>
+		<script type="text/javascript" src="./js/jquery-1.6.1.min.js"></script>
+		<script type="text/javascript" src="./js/jquery-ui-1.8.13.custom.min.js"></script>
 		<script type="text/javascript" src="./js/ciph.js"></script>
 		<script type="text/javascript" src="http://code.google.com/apis/gears/gears_init.js"></script>
 		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>

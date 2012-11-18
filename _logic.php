@@ -594,7 +594,7 @@ class data {
 		// returns array of passTypes, null = no pass types
 
 		// set requested timestamp
-		$requestedTime = new DateTime("now");
+		$requestedTime = new DateTime(null, new DateTimeZone('America/New_York'));
 
 		// get rules & exceptions
 		$lots = $this->get_rulesByLot($id);

@@ -5,6 +5,7 @@
 
 error_reporting(E_ALL ^ E_NOTICE);
 require_once("./_settings.php");
+date_default_timezone_set('America/New_York');
 
 class cdl {
 	private $cdl = null;
@@ -594,7 +595,7 @@ class data {
 		// returns array of passTypes, null = no pass types
 
 		// set requested timestamp
-		$requestedTime = new DateTime(null, new DateTimeZone('America/New_York'));
+		$requestedTime = new DateTime();
 
 		// get rules & exceptions
 		$lots = $this->get_rulesByLot($id);
